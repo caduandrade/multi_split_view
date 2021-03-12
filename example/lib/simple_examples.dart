@@ -36,7 +36,16 @@ class SimpleExamples extends StatefulWidget {
   _SimpleExamplesState createState() => _SimpleExamplesState();
 }
 
-enum Example { horizontal, horizontal_with_weight, change_size, vertical,horizontal_vertical }
+enum Example {
+  horizontal,
+  horizontal_with_weight,
+  change_size,
+  vertical,
+  horizontal_vertical,
+  divider_color,
+  divider_thickness,
+  minimal_weight
+}
 
 extension ParseToString on Example {
   String name() {
@@ -84,10 +93,16 @@ class _SimpleExamplesState extends State<SimpleExamples> {
       return _horizontal_with_weight();
     } else if (_example == Example.change_size) {
       return _change_size();
-    }    else if (_example == Example.vertical) {
+    } else if (_example == Example.vertical) {
       return _vertical();
     } else if (_example == Example.horizontal_vertical) {
       return _horizontal_vertical();
+    } else if (_example == Example.divider_color) {
+      return _dividercolor();
+    } else if (_example == Example.divider_thickness) {
+      return _dividerthickness();
+    } else if (_example == Example.minimal_weight) {
+      return _minimalweight();
     }
     return Center(child: Text('?'));
   }
@@ -129,7 +144,36 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
     Widget child4 = _buildContent(4);
-    return MultiSplitView.vertical(children: [MultiSplitView.horizontal(children: [child1, child2, child3]), child4]);
+    return MultiSplitView.vertical(children: [
+      MultiSplitView.horizontal(children: [child1, child2, child3]),
+      child4
+    ]);
+  }
+
+  Widget _dividercolor() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    return MultiSplitView.horizontal(
+        children: [child1, child2], dividerColor: Colors.black);
+  }
+
+  Widget _dividerthickness() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    return MultiSplitView.horizontal(
+        children: [child1, child2, child3], dividerThickness: 30);
+  }
+
+  Widget _minimalweight() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    Widget child4 = _buildContent(4);
+    return MultiSplitView.vertical(children: [
+      MultiSplitView.horizontal(children: [child1, child2], minimalWeight: .40),
+      MultiSplitView.horizontal(children: [child3, child4])
+    ]);
   }
 
   Widget _buildContent(int number) {
