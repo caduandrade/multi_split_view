@@ -9,6 +9,7 @@ class MultiSplitViewExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -59,7 +60,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
     MultiSplitView multiSplitView = MultiSplitView.horizontal(
         children: children,
-        controller: WeightController(weights: [0.1]),
+        controller: MultiSplitViewController(weights: [0.1]),
         onSizeChange: _onSizeChange);
 
     return Scaffold(

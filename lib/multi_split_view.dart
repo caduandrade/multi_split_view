@@ -17,10 +17,13 @@ class MultiSplitView extends StatefulWidget {
 
   final bool _horizontal;
   final List<Widget> children;
-  final WeightController controller;
+  final MultiSplitViewController controller;
   final double dividerThickness;
+  /// Defines the divider color. The default value is defined by [MultiSplitView.defaultDividerColor] constant.
   final Color dividerColor;
+  /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
   final double minimalWeight;
+  // Function to listen any children size change.
   final OnSizeChange _onSizeChange;
 
   MultiSplitView._(
@@ -45,9 +48,10 @@ class MultiSplitView extends StatefulWidget {
     }
   }
 
+  /// Creates a horizontal split view
   factory MultiSplitView.horizontal(
       {@required List<Widget> children,
-      WeightController controller,
+      MultiSplitViewController controller,
       double dividerThickness = MultiSplitView.defaultDividerThickness,
       Color dividerColor = MultiSplitView.defaultDividerColor,
       double minimalWeight = MultiSplitView.defaultMinimalWeight,
@@ -59,9 +63,10 @@ class MultiSplitView extends StatefulWidget {
         dividerColor, minimalWeight, onSizeChange);
   }
 
+  /// Creates a vertical split view
   factory MultiSplitView.vertical(
       {@required List<Widget> children,
-      WeightController controller,
+      MultiSplitViewController controller,
       double dividerThickness = MultiSplitView.defaultDividerThickness,
       Color dividerColor = MultiSplitView.defaultDividerColor,
       double minimalWeight = MultiSplitView.defaultMinimalWeight,
@@ -82,7 +87,7 @@ class MultiSplitView extends StatefulWidget {
 
 class _MultiSplitViewState extends State<MultiSplitView> {
   double _totalDividerSize;
-  WeightController _controller;
+  MultiSplitViewController _controller;
   double _initialDragPos = 0;
   double _initialChild1Weight = 0;
   double _initialChild2Weight = 0;
@@ -95,7 +100,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     super.initState();
     _totalDividerSize = (widget.children.length - 1) * widget.dividerThickness;
     _controller =
-        widget.controller != null ? widget.controller : WeightController();
+        widget.controller != null ? widget.controller : MultiSplitViewController();
     _controller._validateAndAdjust(
         widget.children.length, widget.minimalWeight);
   }
@@ -285,19 +290,19 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   }
 }
 
-class WeightController {
+class MultiSplitViewController {
   static const double _lowerPrecision = 0.9999999999999;
   static const double _higherPrecision = 1.0000000000001;
 
   List<double> _weights;
 
-  WeightController._(this._weights);
+  MultiSplitViewController._(this._weights);
 
-  factory WeightController({List<double> weights}) {
+  factory MultiSplitViewController({List<double> weights}) {
     if (weights == null) {
       weights = List.empty(growable: true);
     }
-    return WeightController._(weights);
+    return MultiSplitViewController._(weights);
   }
 
   UnmodifiableListView<double> get weights => UnmodifiableListView(_weights);
@@ -316,11 +321,11 @@ class WeightController {
     }
 
     if (adjustedWeights.length == childrenCount &&
-        weightSum > WeightController._higherPrecision) {
+        weightSum > MultiSplitViewController._higherPrecision) {
       throw Exception('The sum of the weights cannot exceed 1: $weightSum');
     }
     if (adjustedWeights.length < childrenCount) {
-      if (weightSum >= WeightController._lowerPrecision) {
+      if (weightSum >= MultiSplitViewController._lowerPrecision) {
         // new child has been added. Set the minimum weight for it, removing an equal amount of the others that have available weight.
         int addedChildrenCount = childrenCount - adjustedWeights.length;
 

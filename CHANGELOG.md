@@ -1,3 +1,8 @@
+## 0.0.3
+
+* *WeightController* renamed to *MultiSplitViewController*
+* Adding content to the *README*
+
 ## 0.0.2
 
 * Adding example
