@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Null safety
+
 ## 0.0.3
 
 * *WeightController* renamed to *MultiSplitViewController*

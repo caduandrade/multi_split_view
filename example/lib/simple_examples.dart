@@ -36,7 +36,7 @@ class SimpleExamples extends StatefulWidget {
   _SimpleExamplesState createState() => _SimpleExamplesState();
 }
 
-enum Example { horizontal, horizontal_with_weight, change_size }
+enum Example { horizontal, horizontal_with_weight, change_size, vertical,horizontal_vertical }
 
 extension ParseToString on Example {
   String name() {
@@ -84,6 +84,10 @@ class _SimpleExamplesState extends State<SimpleExamples> {
       return _horizontal_with_weight();
     } else if (_example == Example.change_size) {
       return _change_size();
+    }    else if (_example == Example.vertical) {
+      return _vertical();
+    } else if (_example == Example.horizontal_vertical) {
+      return _horizontal_vertical();
     }
     return Center(child: Text('?'));
   }
@@ -112,6 +116,20 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         children: [child1, child2],
         onSizeChange: (childIndex1, childIndex2) => print(
             'Index of children who changed size: $childIndex1 and $childIndex2'));
+  }
+
+  Widget _vertical() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    return MultiSplitView.vertical(children: [child1, child2]);
+  }
+
+  Widget _horizontal_vertical() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    Widget child4 = _buildContent(4);
+    return MultiSplitView.vertical(children: [MultiSplitView.horizontal(children: [child1, child2, child3]), child4]);
   }
 
   Widget _buildContent(int number) {
