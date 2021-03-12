@@ -8,7 +8,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 * Configurable weights for children
 * Automatic calculation of weights for:
   * Child added without defined weight
-  * Weight redistribution when a child is removed.
+  * Weight redistribution when a child is removed
 * Listener to detect children size changes
 
 ## Examples
