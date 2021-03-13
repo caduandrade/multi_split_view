@@ -3,18 +3,20 @@ library multi_split_view;
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class MultiSplitView extends StatefulWidget {
+  static const Axis defaultAxis = Axis.horizontal;
   static const Color defaultDividerColor = Colors.white;
   static const double defaultDividerThickness = 5.0;
   static const double defaultMinimalWeight = .05;
   static const double minimalWidgetWeightLowerLimit = 0.01;
   static const double minimalWidgetWeightUpperLimit = 0.9;
 
-  final bool _horizontal;
+  final Axis axis;
   final List<Widget> children;
   final MultiSplitViewController? controller;
   final double dividerThickness;
@@ -25,17 +27,22 @@ class MultiSplitView extends StatefulWidget {
   /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
   final double minimalWeight;
   // Function to listen any children size change.
-  final OnSizeChange? _onSizeChange;
+  final OnSizeChange? onSizeChange;
 
-  MultiSplitView._(
-    this._horizontal,
-    this.children,
+  /// Creates an [MultiSplitView].
+  ///
+  /// The default value for [axis] argument is [Axis.horizontal].
+  /// The [children] argument is required.
+  /// The [dividerThickness] argument must also be positive.
+  MultiSplitView({
+    this.axis = MultiSplitView.defaultAxis,
+    required this.children,
     this.controller,
-    this.dividerThickness,
-    this.dividerColor,
-    this.minimalWeight,
-    this._onSizeChange,
-  ) {
+    this.dividerThickness = MultiSplitView.defaultDividerThickness,
+    this.dividerColor = MultiSplitView.defaultDividerColor,
+    this.minimalWeight = MultiSplitView.defaultMinimalWeight,
+    this.onSizeChange,
+  }) {
     if (dividerThickness <= 0) {
       throw Exception('The thickness of the divider must be positive.');
     }
@@ -49,35 +56,8 @@ class MultiSplitView extends StatefulWidget {
     }
   }
 
-  /// Creates a horizontal split view
-  factory MultiSplitView.horizontal(
-      {required List<Widget> children,
-      MultiSplitViewController? controller,
-      double dividerThickness = MultiSplitView.defaultDividerThickness,
-      Color dividerColor = MultiSplitView.defaultDividerColor,
-      double minimalWeight = MultiSplitView.defaultMinimalWeight,
-      OnSizeChange? onSizeChange}) {
-    return MultiSplitView._(true, children, controller, dividerThickness,
-        dividerColor, minimalWeight, onSizeChange);
-  }
-
-  /// Creates a vertical split view
-  factory MultiSplitView.vertical(
-      {required List<Widget> children,
-      MultiSplitViewController? controller,
-      double dividerThickness = MultiSplitView.defaultDividerThickness,
-      Color dividerColor = MultiSplitView.defaultDividerColor,
-      double minimalWeight = MultiSplitView.defaultMinimalWeight,
-      OnSizeChange? onSizeChange}) {
-    return MultiSplitView._(false, children, controller, dividerThickness,
-        dividerColor, minimalWeight, onSizeChange);
-  }
-
   @override
   State createState() => _MultiSplitViewState();
-
-  bool get horizontal => _horizontal;
-  bool get vertical => !_horizontal;
 }
 
 class _MultiSplitViewState extends State<MultiSplitView> {
@@ -121,7 +101,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           children
               .add(Positioned(child: Container(color: widget.dividerColor)));
         }
-        if (widget.horizontal) {
+        if (widget.axis == Axis.horizontal) {
           _populateHorizontalChildren(context, constraints, children);
         } else {
           _populateVerticalChildren(context, constraints, children);
@@ -237,6 +217,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     _initialChild1Size = totalChildrenSize * _initialChild1Weight;
   }
 
+  /// Calculates the new weights and sets if they are different from the current one.
   _updateDifferentWeights(int childIndex, double diffPos) {
     double newChild1Weight =
         ((_initialChild1Size + diffPos) * _initialChild1Weight) /
@@ -256,12 +237,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         _controller._weights[childIndex] = newChild1Weight;
         _controller._weights[childIndex + 1] = newChild2Weight;
       });
-      if (widget._onSizeChange != null) {
-        widget._onSizeChange!(childIndex, childIndex + 1);
+      if (widget.onSizeChange != null) {
+        widget.onSizeChange!(childIndex, childIndex + 1);
       }
     }
   }
 
+  /// Builds an [Offset] for cursor position.
   Offset _position(BuildContext context, Offset globalPosition) {
     final RenderBox container = context.findRenderObject() as RenderBox;
     return container.globalToLocal(globalPosition);
@@ -274,6 +256,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         (totalChildrenSize * totalRemainingWeight);
   }
 
+  /// Builds a [Positioned] using the [_DistanceFrom] parameters.
   Positioned _buildPositioned(
       {required _DistanceFrom distance, required Widget child}) {
     return Positioned(
@@ -293,6 +276,9 @@ class MultiSplitViewController {
 
   MultiSplitViewController._(this._weights);
 
+  /// Creates an [MultiSplitViewController].
+  ///
+  /// The sum of the [weights] cannot exceed 1.
   factory MultiSplitViewController({List<double>? weights}) {
     if (weights == null) {
       weights = List.empty(growable: true);

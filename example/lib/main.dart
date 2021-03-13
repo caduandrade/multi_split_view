@@ -58,7 +58,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
       children.add(view);
     }
 
-    MultiSplitView multiSplitView = MultiSplitView.horizontal(
+    MultiSplitView multiSplitView = MultiSplitView(
         children: children,
         controller: MultiSplitViewController(weights: [0.1]),
         onSizeChange: _onSizeChange);

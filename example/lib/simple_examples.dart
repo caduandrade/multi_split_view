@@ -111,7 +111,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
-    return MultiSplitView.horizontal(children: [child1, child2, child3]);
+    return MultiSplitView(children: [child1, child2, child3]);
   }
 
   Widget _horizontal_with_weight() {
@@ -119,7 +119,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
     // setting 10% of weight for the first child
-    return MultiSplitView.horizontal(
+    return MultiSplitView(
         children: [child1, child2, child3],
         controller: MultiSplitViewController(weights: [0.1]));
   }
@@ -127,7 +127,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
   Widget _change_size() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
-    return MultiSplitView.horizontal(
+    return MultiSplitView(
         children: [child1, child2],
         onSizeChange: (childIndex1, childIndex2) => print(
             'Index of children who changed size: $childIndex1 and $childIndex2'));
@@ -136,7 +136,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
   Widget _vertical() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
-    return MultiSplitView.vertical(children: [child1, child2]);
+    return MultiSplitView(axis: Axis.vertical, children: [child1, child2]);
   }
 
   Widget _horizontal_vertical() {
@@ -144,8 +144,8 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
     Widget child4 = _buildContent(4);
-    return MultiSplitView.vertical(children: [
-      MultiSplitView.horizontal(children: [child1, child2, child3]),
+    return MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2, child3]),
       child4
     ]);
   }
@@ -153,7 +153,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
   Widget _dividercolor() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
-    return MultiSplitView.horizontal(
+    return MultiSplitView(
         children: [child1, child2], dividerColor: Colors.black);
   }
 
@@ -161,7 +161,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
-    return MultiSplitView.horizontal(
+    return MultiSplitView(
         children: [child1, child2, child3], dividerThickness: 30);
   }
 
@@ -170,9 +170,9 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
     Widget child4 = _buildContent(4);
-    return MultiSplitView.vertical(children: [
-      MultiSplitView.horizontal(children: [child1, child2], minimalWeight: .40),
-      MultiSplitView.horizontal(children: [child3, child4])
+    return MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalWeight: .40),
+      MultiSplitView(children: [child3, child4])
     ]);
   }
 

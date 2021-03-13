@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Replacing bool primitive with the Axis class
+
 ## 1.0.0
 
 * Null safety
