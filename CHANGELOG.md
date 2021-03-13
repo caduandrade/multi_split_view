@@ -1,3 +1,7 @@
+## 1.1.0+1
+
+* Fixing the README
+
 ## 1.1.0
 
 * Replacing bool primitive with the Axis class

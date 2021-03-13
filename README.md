@@ -1,6 +1,6 @@
 # multi_split_view
 
-[![Pub](https://img.shields.io/pub/v/multi_split_view.svg)][pub]
+![Pub](https://img.shields.io/pub/v/multi_split_view.svg)
 
 A widget to provides horizontal or vertical multiple split view for Flutter.
 
