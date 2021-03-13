@@ -1,5 +1,7 @@
 # multi_split_view
 
+[![Pub](https://img.shields.io/pub/v/multi_split_view.svg)][pub]
+
 A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![animated](https://raw.githubusercontent.com/caduandrade/multi_split_view_images/main/animated.gif)
