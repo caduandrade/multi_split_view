@@ -1,7 +1,6 @@
 # multi_split_view
 
-[![pub](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view)
-[![donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?hosted_button_id=XX4FHWMJ66YSW)
+[![pub](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view) [![pub2](https://img.shields.io/badge/Flutter-%E2%9D%A4-red)](https://flutter.dev/)
 
 A widget to provides horizontal or vertical multiple split view for Flutter.
 
@@ -9,7 +8,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 * Horizontal or vertical
 * Configurable weights for children
-* Automatic calculation of weights for:
+* Automatic calculation of weights when:
   * Child added without defined weight
   * Weight redistribution when a child is removed
 * Listener to detect children size changes
@@ -91,8 +90,3 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
         onSizeChange: (childIndex1, childIndex2) => print(
             'Index of children who changed size: $childIndex1 and $childIndex2'));
 ```
-
-## TODO
-
-* Documentation
-* Test
