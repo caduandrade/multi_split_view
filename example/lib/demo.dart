@@ -1,11 +1,20 @@
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
-void main() => runApp(SimpleExamplesApp());
+void main() => runApp(MultiSplitViewDemo());
 
-class SimpleExamplesApp extends StatelessWidget {
+typedef MenuItemWidgetBuilder = Widget Function();
+
+class MenuItem {
+  MenuItem(this.name, this.builder);
+
+  final String name;
+  final MenuItemWidgetBuilder builder;
+}
+
+class MultiSplitViewDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,30 +45,30 @@ class SimpleExamples extends StatefulWidget {
   _SimpleExamplesState createState() => _SimpleExamplesState();
 }
 
-enum Example {
-  horizontal,
-  horizontal_with_weight,
-  change_size,
-  vertical,
-  horizontal_vertical,
-  divider_color,
-  divider_thickness,
-  minimal_weight
-}
-
-extension ParseToString on Example {
-  String name() {
-    return this.toString().split('.').last;
-  }
-}
-
 class _SimpleExamplesState extends State<SimpleExamples> {
-  Example _example = Example.horizontal;
+  late List<MenuItem> _menuItems;
+  MenuItem? _currentMenuItem;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuItems = [
+      MenuItem('Horizontal', _horizontalExample),
+      MenuItem('Horizontal with weight', _horizontalWithWeightExample),
+      MenuItem('Change size', _changeSizeExample),
+      MenuItem('Vertical', _verticalExample),
+      MenuItem('Horizontal and vertical', _horizontalVerticalExample),
+      MenuItem('Divider color', _dividerColorExample),
+      MenuItem('Divider thickness', _dividerThicknessExample),
+      MenuItem('Minimal weight', _minimalWeightExample)
+    ];
+    _currentMenuItem = _menuItems.first;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buttons = List.empty(growable: true);
-    Example.values.forEach((example) {
+    List<Widget> buttons = [];
+    _menuItems.forEach((example) {
       buttons.add(_buildButton(example));
     });
     Widget menu = Container(
@@ -67,7 +76,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         child: SingleChildScrollView(child: Column(children: buttons)),
         color: Colors.white);
     return Scaffold(
-        key: Key(_example.name()),
+        key: Key(_currentMenuItem!.name),
         body: Row(
           children: [
             menu,
@@ -75,7 +84,9 @@ class _SimpleExamplesState extends State<SimpleExamples> {
                 child: Container(
                     child: Center(
                         child: SizedBox(
-                            child: _buildExample(), width: 400, height: 300)),
+                            child: _currentMenuItem!.builder(),
+                            width: 400,
+                            height: 300)),
                     padding: EdgeInsets.all(16),
                     color: Colors.white))
           ],
@@ -85,36 +96,14 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         );
   }
 
-  Widget _buildExample() {
-    print(_example);
-    if (_example == Example.horizontal) {
-      return _horizontal();
-    } else if (_example == Example.horizontal_with_weight) {
-      return _horizontal_with_weight();
-    } else if (_example == Example.change_size) {
-      return _change_size();
-    } else if (_example == Example.vertical) {
-      return _vertical();
-    } else if (_example == Example.horizontal_vertical) {
-      return _horizontal_vertical();
-    } else if (_example == Example.divider_color) {
-      return _dividercolor();
-    } else if (_example == Example.divider_thickness) {
-      return _dividerthickness();
-    } else if (_example == Example.minimal_weight) {
-      return _minimalweight();
-    }
-    return Center(child: Text('?'));
-  }
-
-  Widget _horizontal() {
+  Widget _horizontalExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
     return MultiSplitView(children: [child1, child2, child3]);
   }
 
-  Widget _horizontal_with_weight() {
+  Widget _horizontalWithWeightExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
@@ -124,7 +113,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         controller: MultiSplitViewController(weights: [0.1]));
   }
 
-  Widget _change_size() {
+  Widget _changeSizeExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     return MultiSplitView(
@@ -133,13 +122,13 @@ class _SimpleExamplesState extends State<SimpleExamples> {
             'Index of children who changed size: $childIndex1 and $childIndex2'));
   }
 
-  Widget _vertical() {
+  Widget _verticalExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     return MultiSplitView(axis: Axis.vertical, children: [child1, child2]);
   }
 
-  Widget _horizontal_vertical() {
+  Widget _horizontalVerticalExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
@@ -150,14 +139,14 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     ]);
   }
 
-  Widget _dividercolor() {
+  Widget _dividerColorExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     return MultiSplitView(
         children: [child1, child2], dividerColor: Colors.black);
   }
 
-  Widget _dividerthickness() {
+  Widget _dividerThicknessExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
@@ -165,7 +154,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         children: [child1, child2, child3], dividerThickness: 30);
   }
 
-  Widget _minimalweight() {
+  Widget _minimalWeightExample() {
     Widget child1 = _buildContent(1);
     Widget child2 = _buildContent(2);
     Widget child3 = _buildContent(3);
@@ -183,14 +172,13 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     );
   }
 
-  TextButton _buildButton(Example example) {
+  TextButton _buildButton(MenuItem newMenuItem) {
     return TextButton(
-        child: Text(example.name()),
+        child: Text(newMenuItem.name),
         onPressed: () {
-          print('button: ' + example.name());
-          if (_example != example) {
+          if (_currentMenuItem != newMenuItem) {
             setState(() {
-              _example = example;
+              _currentMenuItem = newMenuItem;
             });
           }
         });
