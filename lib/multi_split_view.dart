@@ -281,7 +281,7 @@ class MultiSplitViewController {
   /// The sum of the [weights] cannot exceed 1.
   factory MultiSplitViewController({List<double>? weights}) {
     if (weights == null) {
-      weights = List.empty(growable: true);
+      weights = [];
     }
     return MultiSplitViewController._(weights);
   }
@@ -292,8 +292,8 @@ class MultiSplitViewController {
     List<double> adjustedWeights = List.empty(growable: true);
 
     double weightSum = 0;
-    for (int i = 0; i < weights.length && i < childrenCount; i++) {
-      double weight = weights[i];
+    for (int i = 0; i < _weights.length && i < childrenCount; i++) {
+      double weight = _weights[i];
       if (weight <= 0) {
         throw Exception('Weight needs to be positive: $weight');
       }
