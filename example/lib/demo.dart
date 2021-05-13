@@ -60,7 +60,8 @@ class _SimpleExamplesState extends State<SimpleExamples> {
       MenuItem('Horizontal and vertical', _horizontalVerticalExample),
       MenuItem('Divider color', _dividerColorExample),
       MenuItem('Divider thickness', _dividerThicknessExample),
-      MenuItem('Minimal weight', _minimalWeightExample)
+      MenuItem('Minimal weight', _minimalWeightExample),
+      MenuItem('Minimal size', _minimalSizeExample)
     ];
     _currentMenuItem = _menuItems.first;
   }
@@ -161,6 +162,17 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child4 = _buildContent(4);
     return MultiSplitView(axis: Axis.vertical, children: [
       MultiSplitView(children: [child1, child2], minimalWeight: .40),
+      MultiSplitView(children: [child3, child4])
+    ]);
+  }
+
+  Widget _minimalSizeExample() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    Widget child4 = _buildContent(4);
+    return MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalSize: 100),
       MultiSplitView(children: [child3, child4])
     ]);
   }

@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Allow to set minimum child size in pixels
+
 ## 1.1.0+2
 
 * Fixing the README
