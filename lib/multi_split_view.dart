@@ -109,11 +109,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           _controller._validateAndAdjust(widget.children.length, minimalWeight);
           _needAdjustWeights = false;
         }
-        List<Widget> children = List.empty(growable: true);
-        if (widget.dividerColor != null) {
-          children
-              .add(Positioned(child: Container(color: widget.dividerColor)));
-        }
+        List<Widget> children = [];
         if (widget.axis == Axis.horizontal) {
           _populateHorizontalChildren(
               context, constraints, children, minimalWeight);

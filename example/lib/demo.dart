@@ -59,6 +59,8 @@ class _SimpleExamplesState extends State<SimpleExamples> {
       MenuItem('Vertical', _verticalExample),
       MenuItem('Horizontal and vertical', _horizontalVerticalExample),
       MenuItem('Divider color', _dividerColorExample),
+      MenuItem('Divider color - transparent child',
+          _dividerColorTransparentChildExample),
       MenuItem('Divider thickness', _dividerThicknessExample),
       MenuItem('Minimal weight', _minimalWeightExample),
       MenuItem('Minimal size', _minimalSizeExample)
@@ -145,6 +147,13 @@ class _SimpleExamplesState extends State<SimpleExamples> {
     Widget child2 = _buildContent(2);
     return MultiSplitView(
         children: [child1, child2], dividerColor: Colors.black);
+  }
+
+  Widget _dividerColorTransparentChildExample() {
+    Widget child1 = Center(child: Text('A'));
+    Widget child2 = Center(child: Text('B'));
+    return MultiSplitView(
+        children: [child1, child2], dividerColor: Colors.yellow);
   }
 
   Widget _dividerThicknessExample() {

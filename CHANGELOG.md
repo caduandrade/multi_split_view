@@ -1,3 +1,8 @@
+## 1.2.1
+
+* Bugfix
+  * Divider color also sets the background color
+
 ## 1.2.0
 
 * Allow to set minimum child size in pixels
