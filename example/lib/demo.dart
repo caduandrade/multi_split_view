@@ -63,7 +63,8 @@ class _SimpleExamplesState extends State<SimpleExamples> {
           _dividerColorTransparentChildExample),
       MenuItem('Divider thickness', _dividerThicknessExample),
       MenuItem('Minimal weight', _minimalWeightExample),
-      MenuItem('Minimal size', _minimalSizeExample)
+      MenuItem('Minimal size', _minimalSizeExample),
+      MenuItem('Divider painter', _dividerPainterExample)
     ];
     _currentMenuItem = _menuItems.first;
   }
@@ -203,5 +204,45 @@ class _SimpleExamplesState extends State<SimpleExamples> {
             });
           }
         });
+  }
+
+  Widget _dividerPainterExample() {
+    var dividerPainter = (Axis axis, Canvas canvas, Size size) {
+      var paint = Paint()
+        ..style = PaintingStyle.stroke
+        ..color = Colors.black
+        ..isAntiAlias = true;
+      if (axis == Axis.vertical) {
+        double dashHeight = 9, dashSpace = 5, startY = 0;
+        while (startY < size.height) {
+          canvas.drawLine(Offset(size.width / 2, startY),
+              Offset(size.width / 2, startY + dashHeight), paint);
+          startY += dashHeight + dashSpace;
+        }
+      } else {
+        double dashWidth = 9, dashSpace = 5, startX = 0;
+        while (startX < size.width) {
+          canvas.drawLine(Offset(startX, size.height / 2),
+              Offset(startX + dashWidth, size.height / 2), paint);
+          startX += dashWidth + dashSpace;
+        }
+      }
+    };
+
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    Widget child4 = _buildContent(4);
+    return MultiSplitView(
+        axis: Axis.vertical,
+        children: [
+          MultiSplitView(
+              children: [child1, child2, child3],
+              dividerThickness: 10,
+              dividerPainter: dividerPainter),
+          child4
+        ],
+        dividerThickness: 10,
+        dividerPainter: dividerPainter);
   }
 }

@@ -23,6 +23,9 @@ class MultiSplitView extends StatefulWidget {
   /// Defines the divider color. The default value is [NULL].
   final Color? dividerColor;
 
+  /// Defines a divider painter. The default value is [NULL].
+  final DividerPainter? dividerPainter;
+
   /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
   final double? minimalWeight;
 
@@ -40,16 +43,16 @@ class MultiSplitView extends StatefulWidget {
   /// The default value for [axis] argument is [Axis.horizontal].
   /// The [children] argument is required.
   /// The [dividerThickness] argument must also be positive.
-  MultiSplitView({
-    this.axis = MultiSplitView.defaultAxis,
-    required this.children,
-    this.controller,
-    this.dividerThickness = MultiSplitView.defaultDividerThickness,
-    this.dividerColor,
-    this.minimalWeight,
-    this.minimalSize,
-    this.onSizeChange,
-  }) {
+  MultiSplitView(
+      {this.axis = MultiSplitView.defaultAxis,
+      required this.children,
+      this.controller,
+      this.dividerThickness = MultiSplitView.defaultDividerThickness,
+      this.dividerColor,
+      this.minimalWeight,
+      this.minimalSize,
+      this.onSizeChange,
+      this.dividerPainter}) {
     if (dividerThickness <= 0) {
       throw Exception('The thickness of the divider must be positive.');
     }
@@ -169,18 +172,17 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           child: MouseRegion(
             cursor: SystemMouseCursors.resizeColumn,
             child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onHorizontalDragStart: (detail) {
-                final pos = _position(context, detail.globalPosition);
-                _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
-              },
-              onHorizontalDragUpdate: (detail) {
-                final pos = _position(context, detail.globalPosition);
-                double diffX = pos.dx - _initialDragPos;
-                _updateDifferentWeights(childIndex, diffX, minimalWeight);
-              },
-              child: Container(color: widget.dividerColor),
-            ),
+                behavior: HitTestBehavior.translucent,
+                onHorizontalDragStart: (detail) {
+                  final pos = _position(context, detail.globalPosition);
+                  _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
+                },
+                onHorizontalDragUpdate: (detail) {
+                  final pos = _position(context, detail.globalPosition);
+                  double diffX = pos.dx - _initialDragPos;
+                  _updateDifferentWeights(childIndex, diffX, minimalWeight);
+                },
+                child: _buildDividerWidget(Axis.vertical)),
           ),
         ));
         childDistance.left = dividerDistance.left + widget.dividerThickness;
@@ -219,23 +221,34 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           child: MouseRegion(
             cursor: SystemMouseCursors.resizeRow,
             child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onVerticalDragStart: (detail) {
-                final pos = _position(context, detail.globalPosition);
-                _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
-              },
-              onVerticalDragUpdate: (detail) {
-                final pos = _position(context, detail.globalPosition);
-                double diffY = pos.dy - _initialDragPos;
-                _updateDifferentWeights(childIndex, diffY, minimalWeight);
-              },
-              child: Container(color: widget.dividerColor),
-            ),
+                behavior: HitTestBehavior.translucent,
+                onVerticalDragStart: (detail) {
+                  final pos = _position(context, detail.globalPosition);
+                  _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
+                },
+                onVerticalDragUpdate: (detail) {
+                  final pos = _position(context, detail.globalPosition);
+                  double diffY = pos.dy - _initialDragPos;
+                  _updateDifferentWeights(childIndex, diffY, minimalWeight);
+                },
+                child: _buildDividerWidget(Axis.horizontal)),
           ),
         ));
         childDistance.top = dividerDistance.top + widget.dividerThickness;
       }
     }
+  }
+
+  /// Builds a widget for the divider depending on whether [dividerPainter]
+  /// has been set.
+  Widget _buildDividerWidget(Axis axis) {
+    if (widget.dividerPainter != null) {
+      return ClipRect(
+          child: CustomPaint(
+              child: Container(color: widget.dividerColor),
+              painter: _DividerPainterWrapper(axis, widget.dividerPainter!)));
+    }
+    return Container(color: widget.dividerColor);
   }
 
   _updateInitialValues(int childIndex, double pos, double totalChildrenSize) {
@@ -390,6 +403,7 @@ class MultiSplitViewController {
   }
 }
 
+/// Defines distance from edges.
 class _DistanceFrom {
   double top;
   double left;
@@ -400,3 +414,25 @@ class _DistanceFrom {
 }
 
 typedef OnSizeChange = Function(int childIndex1, int childIndex2);
+
+/// Defines the custom painter for the divider using a [DividerPainter].
+class _DividerPainterWrapper extends CustomPainter {
+  _DividerPainterWrapper(this.axis, this.dividerPainter);
+
+  /// The divider axis
+  final Axis axis;
+  final DividerPainter dividerPainter;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    dividerPainter(axis, canvas, size);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+/// Defines a painter for the divider.
+typedef DividerPainter = Function(Axis axis, Canvas canvas, Size size);

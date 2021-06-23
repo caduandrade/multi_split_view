@@ -1,6 +1,7 @@
 ## 1.3.0
 
 * The default divider color has been changed to null (transparent)
+* Customizable painter for the divider
 
 ## 1.2.1
 
