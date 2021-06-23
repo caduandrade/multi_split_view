@@ -26,7 +26,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 * [Minimal child weight](#minimal-child-weight)
 * [Listener](#listener)
 
-### Horizontal
+## Horizontal
 
 ```dart
     MultiSplitView(children: [child1, child2, child3]);
@@ -34,7 +34,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![horizontal](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal.png)
 
-### Vertical
+## Vertical
 
 ```dart
     MultiSplitView(axis: Axis.vertical, children: [child1, child2]);
@@ -42,7 +42,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![vertical](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/vertical.png)
 
-### Horizontal and vertical
+## Horizontal and vertical
 
 ```dart
     MultiSplitView(axis: Axis.vertical, children: [
@@ -53,7 +53,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![horizontalvertical](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal_vertical.png)
 
-### Setting the weight
+## Setting the weight
 
 ```dart
     // setting 10% of weight for the first child
@@ -64,7 +64,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![horizontalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal_weight.png)
 
-### Divider color
+## Divider color
 
 The default color is `NULL`.
 
@@ -75,7 +75,7 @@ The default color is `NULL`.
 
 ![dividercolor](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_color.png)
 
-### Divider thickness
+## Divider thickness
 
 ```dart
     MultiSplitView(
@@ -84,7 +84,7 @@ The default color is `NULL`.
 
 ![dividerthickness](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_thickness.png)
 
-### Divider custom painter
+## Divider custom painter
 
 ```dart
     var dividerPainter = (Axis axis, Canvas canvas, Size size) {
@@ -124,7 +124,7 @@ The default color is `NULL`.
 
 ![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
 
-### Minimal child weight
+## Minimal child weight
 
 ```dart
     MultiSplitView(axis: Axis.vertical, children: [
@@ -135,7 +135,7 @@ The default color is `NULL`.
 
 ![minimalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/minimal_weight.gif)
 
-### Minimal child size in pixels
+## Minimal child size in pixels
 
 Used if `minimalWeight` has not been set.
 The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
@@ -147,7 +147,7 @@ The size will be converted into weight and will respect the limit defined by the
     ]);
 ```
 
-### Listener
+## Listener
 
 ```dart
     MultiSplitView(
