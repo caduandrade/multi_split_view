@@ -10,7 +10,6 @@ import 'package:flutter/widgets.dart';
 
 class MultiSplitView extends StatefulWidget {
   static const Axis defaultAxis = Axis.horizontal;
-  static const Color defaultDividerColor = Colors.white;
   static const double defaultDividerThickness = 5.0;
   static const double defaultMinimalWeight = .05;
   static const double minimalWidgetWeightLowerLimit = 0.01;
@@ -21,7 +20,7 @@ class MultiSplitView extends StatefulWidget {
   final MultiSplitViewController? controller;
   final double dividerThickness;
 
-  /// Defines the divider color. The default value is defined by [MultiSplitView.defaultDividerColor] constant.
+  /// Defines the divider color. The default value is [NULL].
   final Color? dividerColor;
 
   /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
@@ -46,7 +45,7 @@ class MultiSplitView extends StatefulWidget {
     required this.children,
     this.controller,
     this.dividerThickness = MultiSplitView.defaultDividerThickness,
-    this.dividerColor = MultiSplitView.defaultDividerColor,
+    this.dividerColor,
     this.minimalWeight,
     this.minimalSize,
     this.onSizeChange,
