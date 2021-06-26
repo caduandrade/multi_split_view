@@ -64,7 +64,8 @@ class _SimpleExamplesState extends State<SimpleExamples> {
       MenuItem('Divider thickness', _dividerThicknessExample),
       MenuItem('Minimal weight', _minimalWeightExample),
       MenuItem('Minimal size', _minimalSizeExample),
-      MenuItem('Divider painter', _dividerPainterExample)
+      MenuItem('Divider painter', _dividerPainterExample),
+      MenuItem('Resizable', _resizableExample)
     ];
     _currentMenuItem = _menuItems.first;
   }
@@ -207,7 +208,7 @@ class _SimpleExamplesState extends State<SimpleExamples> {
   }
 
   Widget _dividerPainterExample() {
-    var dividerPainter = (Axis axis, Canvas canvas, Size size) {
+    var dividerPainter = (Axis axis, bool resizable, Canvas canvas, Size size) {
       var paint = Paint()
         ..style = PaintingStyle.stroke
         ..color = Colors.black
@@ -244,5 +245,12 @@ class _SimpleExamplesState extends State<SimpleExamples> {
         ],
         dividerThickness: 10,
         dividerPainter: dividerPainter);
+  }
+
+  Widget _resizableExample() {
+    Widget child1 = _buildContent(1);
+    Widget child2 = _buildContent(2);
+    Widget child3 = _buildContent(3);
+    return MultiSplitView(children: [child1, child2, child3], resizable: false);
   }
 }

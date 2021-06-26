@@ -23,6 +23,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
   * [Color](#divider-color)
   * [Thickness](#divider-thickness)
   * [Custom painter](#divider-custom-painter)
+  * [Resizable](#resizable)
 * [Minimal child weight](#minimal-child-weight)
 * [Listener](#listener)
 
@@ -87,7 +88,7 @@ The default color is `NULL`.
 ## Divider custom painter
 
 ```dart
-    var dividerPainter = (Axis axis, Canvas canvas, Size size) {
+    var dividerPainter = (Axis axis, bool resizable, Canvas canvas, Size size) {
       var paint = Paint()
         ..style = PaintingStyle.stroke
         ..color = Colors.black
@@ -123,6 +124,12 @@ The default color is `NULL`.
 ```
 
 ![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
+
+## Resizable
+
+```dart
+    MultiSplitView(children: [child1, child2, child3], resizable: false);
+```
 
 ## Minimal child weight
 

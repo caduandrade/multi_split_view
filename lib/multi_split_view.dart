@@ -15,29 +15,6 @@ class MultiSplitView extends StatefulWidget {
   static const double minimalWidgetWeightLowerLimit = 0.01;
   static const double minimalWidgetWeightUpperLimit = 0.9;
 
-  final Axis axis;
-  final List<Widget> children;
-  final MultiSplitViewController? controller;
-  final double dividerThickness;
-
-  /// Defines the divider color. The default value is [NULL].
-  final Color? dividerColor;
-
-  /// Defines a divider painter. The default value is [NULL].
-  final DividerPainter? dividerPainter;
-
-  /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
-  final double? minimalWeight;
-
-  /// Defines the minimal size in pixels for each child.
-  /// It will be used if [minimalWeight] has not been set.
-  /// The size will be converted into weight and will respect the limit
-  /// defined by the [MultiSplitView.defaultMinimalWeight] constant,
-  /// allowing all children to be visible.
-  final double? minimalSize;
-  // Function to listen any children size change.
-  final OnSizeChange? onSizeChange;
-
   /// Creates an [MultiSplitView].
   ///
   /// The default value for [axis] argument is [Axis.horizontal].
@@ -52,7 +29,8 @@ class MultiSplitView extends StatefulWidget {
       this.minimalWeight,
       this.minimalSize,
       this.onSizeChange,
-      this.dividerPainter}) {
+      this.dividerPainter,
+      this.resizable = true}) {
     if (dividerThickness <= 0) {
       throw Exception('The thickness of the divider must be positive.');
     }
@@ -66,6 +44,32 @@ class MultiSplitView extends StatefulWidget {
           '.');
     }
   }
+
+  final Axis axis;
+  final List<Widget> children;
+  final MultiSplitViewController? controller;
+  final double dividerThickness;
+
+  /// Defines the divider color. The default value is [NULL].
+  final Color? dividerColor;
+
+  /// Defines a divider painter. The default value is [NULL].
+  final DividerPainter? dividerPainter;
+
+  /// Indicates whether it is resizable. The default value is [TRUE].
+  final bool resizable;
+
+  /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
+  final double? minimalWeight;
+
+  /// Defines the minimal size in pixels for each child.
+  /// It will be used if [minimalWeight] has not been set.
+  /// The size will be converted into weight and will respect the limit
+  /// defined by the [MultiSplitView.defaultMinimalWeight] constant,
+  /// allowing all children to be visible.
+  final double? minimalSize;
+  // Function to listen any children size change.
+  final OnSizeChange? onSizeChange;
 
   @override
   State createState() => _MultiSplitViewState();
@@ -167,9 +171,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.left = childDistance.left + childSize;
         dividerDistance.right = childDistance.right - widget.dividerThickness;
 
-        children.add(_buildPositioned(
-          distance: dividerDistance,
-          child: MouseRegion(
+        Widget dividerWidget = _buildDividerWidget(Axis.vertical);
+        if (widget.resizable) {
+          dividerWidget = MouseRegion(
             cursor: SystemMouseCursors.resizeColumn,
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -182,9 +186,11 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                   double diffX = pos.dx - _initialDragPos;
                   _updateDifferentWeights(childIndex, diffX, minimalWeight);
                 },
-                child: _buildDividerWidget(Axis.vertical)),
-          ),
-        ));
+                child: dividerWidget),
+          );
+        }
+        children.add(
+            _buildPositioned(distance: dividerDistance, child: dividerWidget));
         childDistance.left = dividerDistance.left + widget.dividerThickness;
       }
     }
@@ -216,9 +222,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.top = childDistance.top + childSize;
         dividerDistance.bottom = childDistance.bottom - widget.dividerThickness;
 
-        children.add(_buildPositioned(
-          distance: dividerDistance,
-          child: MouseRegion(
+        Widget dividerWidget = _buildDividerWidget(Axis.horizontal);
+        if (widget.resizable) {
+          dividerWidget = MouseRegion(
             cursor: SystemMouseCursors.resizeRow,
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -231,9 +237,11 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                   double diffY = pos.dy - _initialDragPos;
                   _updateDifferentWeights(childIndex, diffY, minimalWeight);
                 },
-                child: _buildDividerWidget(Axis.horizontal)),
-          ),
-        ));
+                child: dividerWidget),
+          );
+        }
+        children.add(
+            _buildPositioned(distance: dividerDistance, child: dividerWidget));
         childDistance.top = dividerDistance.top + widget.dividerThickness;
       }
     }
@@ -246,7 +254,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       return ClipRect(
           child: CustomPaint(
               child: Container(color: widget.dividerColor),
-              painter: _DividerPainterWrapper(axis, widget.dividerPainter!)));
+              painter: _DividerPainterWrapper(
+                  axis, widget.resizable, widget.dividerPainter!)));
     }
     return Container(color: widget.dividerColor);
   }
@@ -417,15 +426,16 @@ typedef OnSizeChange = Function(int childIndex1, int childIndex2);
 
 /// Defines the custom painter for the divider using a [DividerPainter].
 class _DividerPainterWrapper extends CustomPainter {
-  _DividerPainterWrapper(this.axis, this.dividerPainter);
+  _DividerPainterWrapper(this.axis, this.resizable, this.dividerPainter);
 
   /// The divider axis
   final Axis axis;
+  final bool resizable;
   final DividerPainter dividerPainter;
 
   @override
   void paint(Canvas canvas, Size size) {
-    dividerPainter(axis, canvas, size);
+    dividerPainter(axis, resizable, canvas, size);
   }
 
   @override
@@ -435,4 +445,5 @@ class _DividerPainterWrapper extends CustomPainter {
 }
 
 /// Defines a painter for the divider.
-typedef DividerPainter = Function(Axis axis, Canvas canvas, Size size);
+typedef DividerPainter = Function(
+    Axis axis, bool resizable, Canvas canvas, Size size);

@@ -1,3 +1,7 @@
+## 1.4.0
+
+* Option to disable resizing
+
 ## 1.3.0
 
 * The default divider color has been changed to null (transparent)
