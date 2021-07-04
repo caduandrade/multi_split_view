@@ -158,7 +158,7 @@ The size will be converted into weight and will respect the limit defined by the
 
 ```dart
     MultiSplitView(
-        children: [child1, child2],
+        children: [child1, child2, child3, child4],
         onSizeChange: (childIndex1, childIndex2) => print(
-            'Index of children who changed size: $childIndex1 and $childIndex2'));
+            'Index of children whose size has changed: $childIndex1 and $childIndex2'));
 ```
