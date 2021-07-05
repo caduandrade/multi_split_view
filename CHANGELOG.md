@@ -1,3 +1,7 @@
+## 1.4.0+1
+
+* Online demo
+
 ## 1.4.0
 
 * Option to disable resizing

@@ -24,8 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
   multi_split_view: ^1.4.0
-  demoflu:
-    path: ../../demoflu/
+  demoflu: ^0.3.0
+    #path: ../../demoflu/
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
