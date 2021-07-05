@@ -1,4 +1,4 @@
-[![pub](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view) [![pub2](https://img.shields.io/badge/Flutter-%E2%9D%A4-red)](https://flutter.dev/)
+[![](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view) [![](https://img.shields.io/badge/demo-try%20it%20out-blue)](https://caduandrade.github.io/multi_split_view_demo/) [![](https://img.shields.io/badge/Flutter-%E2%9D%A4-red)](https://flutter.dev/)
 
 # Multi split view
 
@@ -18,14 +18,16 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 * [Horizontal](#horizontal)
 * [Vertical](#vertical)
 * [Horizontal and vertical](#horizontal-and-vertical)
-* [Setting the weight](#setting-the-weight)
+* Size
+  * [Setting the weight](#setting-the-weight)
+  * [Minimal child weight](#minimal-child-weight)
+  * [Minimal child size in pixels](#minimal-child-size-in-pixels)
+  * [Resizable](#resizable)
+  * [Listener](#listener)
 * Divider
   * [Color](#divider-color)
   * [Thickness](#divider-thickness)
   * [Custom painter](#divider-custom-painter)
-  * [Resizable](#resizable)
-* [Minimal child weight](#minimal-child-weight)
-* [Listener](#listener)
 
 ## Horizontal
 
@@ -64,6 +66,44 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 ```
 
 ![horizontalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal_weight.png)
+
+## Minimal child weight
+
+```dart
+    MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalWeight: .40),
+      MultiSplitView(children: [child3, child4])
+    ]);
+```
+
+![minimalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/minimal_weight.gif)
+
+## Minimal child size in pixels
+
+Used if `minimalWeight` has not been set.
+The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
+
+```dart
+    MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalSize: 100),
+      MultiSplitView(children: [child3, child4])
+    ]);
+```
+
+## Resizable
+
+```dart
+    MultiSplitView(children: [child1, child2, child3], resizable: false);
+```
+
+## Listener
+
+```dart
+    MultiSplitView(
+        children: [child1, child2, child3, child4],
+        onSizeChange: (childIndex1, childIndex2) => print(
+            'Index of children whose size has changed: $childIndex1 and $childIndex2'));
+```
 
 ## Divider color
 
@@ -124,41 +164,3 @@ The default color is `NULL`.
 ```
 
 ![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
-
-## Resizable
-
-```dart
-    MultiSplitView(children: [child1, child2, child3], resizable: false);
-```
-
-## Minimal child weight
-
-```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalWeight: .40),
-      MultiSplitView(children: [child3, child4])
-    ]);
-```
-
-![minimalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/minimal_weight.gif)
-
-## Minimal child size in pixels
-
-Used if `minimalWeight` has not been set.
-The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
-
-```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalSize: 100),
-      MultiSplitView(children: [child3, child4])
-    ]);
-```
-
-## Listener
-
-```dart
-    MultiSplitView(
-        children: [child1, child2, child3, child4],
-        onSizeChange: (childIndex1, childIndex2) => print(
-            'Index of children whose size has changed: $childIndex1 and $childIndex2'));
-```
