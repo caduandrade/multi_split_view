@@ -1,8 +1,7 @@
-import 'package:demoflu/demoflu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-abstract class ExampleWidget extends DemoStatelessWidget {
+abstract class ExampleWidget extends StatelessWidget {
   final List<Color> colors = [
     Colors.red,
     Colors.blue,

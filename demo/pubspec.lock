@@ -53,9 +53,9 @@ packages:
   demoflu:
     dependency: "direct main"
     description:
-      name: demoflu
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../../demoflu"
+      relative: true
+    source: path
     version: "0.3.0"
   fake_async:
     dependency: transitive

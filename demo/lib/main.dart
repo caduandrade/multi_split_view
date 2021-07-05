@@ -19,65 +19,65 @@ void main() {
       title: 'Multi split view (1.4.0)',
       widgetBackground: Colors.white,
       sections: [
-        DFSection(examples: [
-          DFExample(
+        Section(examples: [
+          Example(
               name: 'Horizontal',
-              builder: (context) => HorizontalExample(),
+              builder: (buttonClickNotifier) => HorizontalExample(),
               codeFile: 'lib/horizontal.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Vertical',
-              builder: (context) => VerticalExample(),
+              builder: (buttonClickNotifier) => VerticalExample(),
               codeFile: 'lib/vertical.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Horizontal and vertical',
-              builder: (context) => HorizontalVerticalExample(),
+              builder: (buttonClickNotifier) => HorizontalVerticalExample(),
               codeFile: 'lib/horizontal_vertical.dart',
               maxSize: maxSize)
         ]),
-        DFSection(name: 'Size', examples: [
-          DFExample(
+        Section(name: 'Size', examples: [
+          Example(
               name: 'Setting the weight',
-              builder: (context) => SettingWeightExample(),
+              builder: (buttonClickNotifier) => SettingWeightExample(),
               codeFile: 'lib/setting_weight.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Minimal weight',
-              builder: (context) => MinimalWeightExample(),
+              builder: (buttonClickNotifier) => MinimalWeightExample(),
               codeFile: 'lib/minimal_weight.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Minimal size',
-              builder: (context) => MinimalSizeExample(),
+              builder: (buttonClickNotifier) => MinimalSizeExample(),
               codeFile: 'lib/minimal_size.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Resizing disabled',
-              builder: (context) => ResizableExample(),
+              builder: (buttonClickNotifier) => ResizableExample(),
               codeFile: 'lib/resizable.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Listener',
-              builder: (context) => SizeListenerExample(),
+              builder: (buttonClickNotifier) => SizeListenerExample(),
               codeFile: 'lib/listener.dart',
               consoleEnabled: true,
               maxSize: maxSize)
         ]),
-        DFSection(name: 'Divider', examples: [
-          DFExample(
+        Section(name: 'Divider', examples: [
+          Example(
               name: 'Color',
-              builder: (context) => DividerColorExample(),
+              builder: (buttonClickNotifier) => DividerColorExample(),
               codeFile: 'lib/divider_color.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Thickness',
-              builder: (context) => DividerThicknessExample(),
+              builder: (buttonClickNotifier) => DividerThicknessExample(),
               codeFile: 'lib/divider_thickness.dart',
               maxSize: maxSize),
-          DFExample(
+          Example(
               name: 'Painter',
-              builder: (context) => DividerPainterExample(),
+              builder: (buttonClickNotifier) => DividerPainterExample(),
               codeFile: 'lib/divider_painter.dart',
               maxSize: maxSize)
         ])
