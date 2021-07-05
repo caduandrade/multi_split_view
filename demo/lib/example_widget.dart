@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-abstract class ExampleWidget extends StatelessWidget {
+class ContentBuilder {
   final List<Color> colors = [
     Colors.red,
     Colors.blue,
@@ -13,7 +13,7 @@ abstract class ExampleWidget extends StatelessWidget {
   Widget buildContent(int number) {
     return Container(
       child: Center(child: Text(number.toString())),
-      color: colors[number],
+      color: colors[number % colors.length],
     );
   }
 }

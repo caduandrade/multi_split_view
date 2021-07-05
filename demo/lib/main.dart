@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_split_view_demo/divider_color.dart';
 import 'package:multi_split_view_demo/divider_painter.dart';
 import 'package:multi_split_view_demo/divider_thickness.dart';
+import 'package:multi_split_view_demo/add_remove.dart';
 import 'package:multi_split_view_demo/horizontal.dart';
 import 'package:multi_split_view_demo/horizontal_vertical.dart';
 import 'package:multi_split_view_demo/listener.dart';
@@ -80,6 +81,15 @@ void main() {
               builder: (buttonClickNotifier) => DividerPainterExample(),
               codeFile: 'lib/divider_painter.dart',
               maxSize: maxSize)
+        ]),
+        Section(name: 'Dynamic', examples: [
+          Example(
+              name: 'Add/Remove',
+              builder: (buttonClickNotifier) =>
+                  AddRemoveExample(buttonClickNotifier),
+              codeFile: 'lib/add_remove.dart',
+              maxSize: maxSize,
+              buttons: ['Add', 'Remove'])
         ])
       ]));
 }

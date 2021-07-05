@@ -59,6 +59,7 @@ flutter:
     - lib/setting_weight.dart
     - lib/minimal_weight.dart
     - lib/minimal_size.dart
+    - lib/add_remove.dart
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
