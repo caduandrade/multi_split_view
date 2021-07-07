@@ -128,7 +128,7 @@ The default color is `NULL`.
 ## Divider custom painter
 
 ```dart
-    var dividerPainter = (Axis axis, bool resizable, Canvas canvas, Size size) {
+    var dividerPainter = (Axis axis, bool resizable, bool highlighted, Canvas canvas, Size size) {
       var paint = Paint()
         ..style = PaintingStyle.stroke
         ..color = Colors.black

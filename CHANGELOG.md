@@ -1,5 +1,6 @@
-##
+## 1.5.0
 
+* Painter for the highlighted divider (under the cursor)
 * Bugifx
   * Insufficient space for widgets
 
