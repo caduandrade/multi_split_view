@@ -146,7 +146,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (_highlightedDividerIndex != index && widget.dividerPainter != null) {
       setState(() {
         _highlightedDividerIndex = index;
-        print(_highlightedDividerIndex);
       });
     }
   }

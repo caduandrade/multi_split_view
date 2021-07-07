@@ -1,3 +1,8 @@
+## 1.5.0+1
+
+* Removing a print (how embarrassing)
+* Moving the Demo project to another repository
+
 ## 1.5.0
 
 * Painter for the highlighted divider (under the cursor)
