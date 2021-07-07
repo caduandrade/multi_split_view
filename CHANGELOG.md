@@ -1,3 +1,8 @@
+##
+
+* Bugifx
+  * Insufficient space for widgets
+
 ## 1.4.0+1
 
 * Online demo
