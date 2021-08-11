@@ -18,7 +18,8 @@ class MultiSplitView extends StatefulWidget {
   /// The [children] argument is required.
   /// The [dividerThickness] argument must also be positive.
   MultiSplitView(
-      {this.axis = MultiSplitView.defaultAxis,
+      {Key? key,
+      this.axis = MultiSplitView.defaultAxis,
       required this.children,
       this.controller,
       this.dividerThickness = MultiSplitView.defaultDividerThickness,
@@ -27,7 +28,8 @@ class MultiSplitView extends StatefulWidget {
       this.minimalSize,
       this.onSizeChange,
       this.dividerPainter,
-      this.resizable = true}) {
+      this.resizable = true})
+      : super(key: key) {
     if (dividerThickness <= 0) {
       throw Exception('The thickness of the divider must be positive.');
     }

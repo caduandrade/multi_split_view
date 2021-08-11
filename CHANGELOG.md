@@ -1,3 +1,7 @@
+## 1.6.0
+
+* Adding the `key` parameter to the constructor
+
 ## 1.5.0+1
 
 * Removing a print (how embarrassing)
