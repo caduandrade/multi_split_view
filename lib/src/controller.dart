@@ -32,7 +32,6 @@ class MultiSplitViewController {
     _weights[index] = value;
   }
 
-  // TODO remover bug "There is no space available for the widgets."
   /// Adjusts the weights according to the number of children.
   /// New children will receive a percentage of current children.
   /// Excluded children will distribute their weights to the existing ones.
