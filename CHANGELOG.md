@@ -1,3 +1,9 @@
+## 1.7.0
+
+* API changes
+  * *MultiSplitViewTheme* has been added following the same pattern used by Flutter's Theme
+  * Divide configurations has been moved to *MultiSplitViewThemeData*
+
 ## 1.6.0
 
 * Adding the `key` parameter to the constructor
@@ -10,7 +16,7 @@
 ## 1.5.0
 
 * Painter for the highlighted divider (under the cursor)
-* Bugifx
+* Bugfix
   * Insufficient space for widgets
 
 ## 1.4.0+1

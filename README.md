@@ -110,8 +110,11 @@ The size will be converted into weight and will respect the limit defined by the
 The default color is `NULL`.
 
 ```dart
-    MultiSplitView(
-        children: [child1, child2], dividerColor: Colors.black);
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(dividerColor: Colors.black));
 ```
 
 ![dividercolor](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_color.png)
@@ -119,8 +122,12 @@ The default color is `NULL`.
 ## Divider thickness
 
 ```dart
-    MultiSplitView(
-        children: [child1, child2, child3], dividerThickness: 30);
+    MultiSplitView multiSplitView =
+        MultiSplitView(children: [child1, child2, child3]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(dividerThickness: 30));
 ```
 
 ![dividerthickness](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_thickness.png)
@@ -150,17 +157,16 @@ The default color is `NULL`.
       }
     };
 
-    MultiSplitView(
-        axis: Axis.vertical,
-        children: [
-          MultiSplitView(
-              children: [child1, child2, child3],
-              dividerThickness: 10,
-              dividerPainter: dividerPainter),
-          child4
-        ],
-        dividerThickness: 10,
-        dividerPainter: dividerPainter);
+    MultiSplitView multiSplitView =
+        MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2, child3]),
+      child4
+    ]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerThickness: 10, dividerPainter: _paint));
 ```
 
 ![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
