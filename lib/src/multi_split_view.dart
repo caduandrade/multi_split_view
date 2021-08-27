@@ -78,6 +78,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     _controller = widget.controller != null
         ? widget.controller!
         : MultiSplitViewController();
+    _stateHashCodeValidation();
+  }
+
+  @override
+  void deactivate() {
+    _controller.stateHashCode = null;
+    super.deactivate();
   }
 
   @override
@@ -88,6 +95,18 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     } else if (oldWidget.controller != null) {
       _controller = oldWidget.controller!;
     }
+    _stateHashCodeValidation();
+  }
+
+  /// Updates and checks a controller's [stateHashCode] to identify if it is
+  /// not being shared by another instance of [MultiSplitView].
+  void _stateHashCodeValidation() {
+    if (_controller.stateHashCode != null &&
+        _controller.stateHashCode != hashCode) {
+      throw StateError(
+          'It is not allowed to share MultiSplitViewController between MultiSplitView instances.');
+    }
+    _controller.stateHashCode = hashCode;
   }
 
   @override

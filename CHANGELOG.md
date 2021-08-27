@@ -1,3 +1,8 @@
+## 1.7.1
+
+* Bugfix/Enhancement
+  * Prevent *MultiSplitViewController* sharing between *MultiSplitView* instances to avoid unstable state
+
 ## 1.7.0
 
 * API changes

@@ -1,7 +1,11 @@
 import 'dart:math' as math;
 import 'dart:collection';
+import 'package:meta/meta.dart';
 
-/// Controller for [MultiSplitView]
+/// Controller for [MultiSplitView].
+///
+/// It is not allowed to share this controller between [MultiSplitView]
+/// instances.
 class MultiSplitViewController {
   static const double _higherPrecision = 1.0000000000001;
 
@@ -35,7 +39,7 @@ class MultiSplitViewController {
   /// Adjusts the weights according to the number of children.
   /// New children will receive a percentage of current children.
   /// Excluded children will distribute their weights to the existing ones.
-  validateAndAdjust(int childrenCount) {
+  void validateAndAdjust(int childrenCount) {
     childrenCount = math.max(childrenCount, 0);
     if (_weights.length == childrenCount) {
       return;
@@ -94,4 +98,10 @@ class MultiSplitViewController {
       }
     }
   }
+
+  /// Stores the hashCode of the state to identify if a controller instance
+  /// is being shared by multiple [MultiSplitView]. The application must not
+  /// manipulate this attribute, it is for the internal use of the package.
+  @internal
+  int? stateHashCode;
 }
