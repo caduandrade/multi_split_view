@@ -2,7 +2,7 @@
 
 * API changes
   * *MultiSplitViewTheme* has been added following the same pattern used by Flutter's Theme
-  * Divide configurations has been moved to *MultiSplitViewThemeData*
+  * Divider configurations has been moved to *MultiSplitViewThemeData*
 
 ## 1.6.0
 
