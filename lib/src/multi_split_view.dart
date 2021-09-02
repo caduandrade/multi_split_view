@@ -69,6 +69,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   double _initialChild1Weight = 0;
   double _initialChild2Weight = 0;
   double _initialChild1Size = 0;
+  bool _dragging = false;
 
   int? _highlightedDividerIndex;
 
@@ -209,13 +210,21 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             cursor: SystemMouseCursors.resizeColumn,
             onEnter: (event) => _updatesHighlightedDividerIndex(
                 index: childIndex, themeData: themeData),
-            onExit: (event) =>
-                _updatesHighlightedDividerIndex(themeData: themeData),
+            onExit: (event) {
+              if (!_dragging) {
+                _updatesHighlightedDividerIndex(themeData: themeData);
+              }
+            },
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onHorizontalDragStart: (detail) {
+                  _dragging = true;
                   final pos = _position(context, detail.globalPosition);
                   _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
+                },
+                onHorizontalDragEnd: (detail) {
+                  _dragging = false;
+                  _updatesHighlightedDividerIndex(themeData: themeData);
                 },
                 onHorizontalDragUpdate: (detail) {
                   final pos = _position(context, detail.globalPosition);
@@ -275,13 +284,21 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             cursor: SystemMouseCursors.resizeRow,
             onEnter: (event) => _updatesHighlightedDividerIndex(
                 index: childIndex, themeData: themeData),
-            onExit: (event) =>
-                _updatesHighlightedDividerIndex(themeData: themeData),
+            onExit: (event) {
+              if (!_dragging) {
+                _updatesHighlightedDividerIndex(themeData: themeData);
+              }
+            },
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragStart: (detail) {
+                  _dragging = true;
                   final pos = _position(context, detail.globalPosition);
                   _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
+                },
+                onVerticalDragEnd: (detail) {
+                  _dragging = false;
+                  _updatesHighlightedDividerIndex(themeData: themeData);
                 },
                 onVerticalDragUpdate: (detail) {
                   final pos = _position(context, detail.globalPosition);
