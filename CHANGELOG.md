@@ -3,6 +3,7 @@
 * Bugfix
   * Divider flickering when dragging
   * Ignoring the initial weights when their sum is less than 1
+  * Error when initializing weights with a constant
 
 ## 1.7.1
 

@@ -18,7 +18,7 @@ class MultiSplitViewController {
     if (weights == null) {
       weights = [];
     }
-    return MultiSplitViewController._(weights);
+    return MultiSplitViewController._(List.from(weights));
   }
 
   List<double> _weights;
