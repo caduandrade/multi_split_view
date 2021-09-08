@@ -37,7 +37,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   int _horizontalVisibleWidgets = 3;
 
   MultiSplitViewController controller =
-      MultiSplitViewController(weights: [0.01]);
+      MultiSplitViewController(weights: [.05,.1,.6]);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onSizeChange(int childIndex1, int childIndex2) {
-    print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
+   // print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
   }
 
   _onRemoveButtonClick() {

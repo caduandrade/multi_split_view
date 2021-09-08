@@ -29,6 +29,7 @@ class MultiSplitViewController {
     return _weights[index];
   }
 
+  @internal
   void setWeight(int index, double value) {
     if (value < 0) {
       throw Exception('Weight needs to be positive: $value');
@@ -39,11 +40,10 @@ class MultiSplitViewController {
   /// Adjusts the weights according to the number of children.
   /// New children will receive a percentage of current children.
   /// Excluded children will distribute their weights to the existing ones.
+  @internal
   void validateAndAdjust(int childrenCount) {
+    print('validateAndAdjust: $childrenCount');
     childrenCount = math.max(childrenCount, 0);
-    if (_weights.length == childrenCount) {
-      return;
-    }
 
     double weightSum = 0;
     for (int i = 0; i < _weights.length; i++) {
@@ -58,14 +58,23 @@ class MultiSplitViewController {
       throw Exception('The sum of the weights cannot exceed 1: $weightSum');
     }
 
-    if (_weights.length < childrenCount) {
+    print(weightSum);
+
+    if (_weights.length == childrenCount) {
+      _fillWeightsEqually(childrenCount, weightSum);
+      return;
+    } else if (_weights.length < childrenCount) {
       // children has been added.
       int addedChildrenCount = childrenCount - _weights.length;
       double newWeight = 0;
-      for (int i = 0; i < _weights.length; i++) {
-        double r = _weights[i] / childrenCount;
-        _weights[i] -= r;
-        newWeight += r / addedChildrenCount;
+      if (weightSum < 1) {
+        newWeight = (1 - weightSum) / addedChildrenCount;
+      } else {
+        for (int i = 0; i < _weights.length; i++) {
+          double r = _weights[i] / childrenCount;
+          _weights[i] -= r;
+          newWeight += r / addedChildrenCount;
+        }
       }
       for (int i = 0; i < addedChildrenCount; i++) {
         _weights.add(newWeight);
@@ -89,12 +98,18 @@ class MultiSplitViewController {
       weightSum += weight;
     });
 
-    // filling the missing weights
-    double availableWeight = 1 - weightSum;
-    if (availableWeight > 0) {
-      double w = availableWeight / childrenCount;
-      for (int i = 0; i < _weights.length; i++) {
-        _weights[i] += w;
+    _fillWeightsEqually(childrenCount, weightSum);
+  }
+
+  /// Fills equally the missing weights
+  void _fillWeightsEqually(int childrenCount, double weightSum) {
+    if (weightSum < 1) {
+      double availableWeight = 1 - weightSum;
+      if (availableWeight > 0) {
+        double w = availableWeight / childrenCount;
+        for (int i = 0; i < _weights.length; i++) {
+          _weights[i] += w;
+        }
       }
     }
   }

@@ -16,18 +16,38 @@ void main() {
       expect(c.weights.length, 1);
       expect(c.getWeight(0), 1);
     });
-    test('1 -> 1', () {
+    test('1 -> 1 (a)', () {
+      MultiSplitViewController c = MultiSplitViewController(weights: [1]);
+      c.validateAndAdjust(1);
+      expect(c.weights.length, 1);
+      expect(c.getWeight(0), 1);
+    });
+    test('1 -> 1  (b)', () {
       MultiSplitViewController c = MultiSplitViewController(weights: [.4]);
       c.validateAndAdjust(1);
       expect(c.weights.length, 1);
+      expect(c.getWeight(0), 1);
+    });
+    test('2 -> 2 (a)', () {
+      MultiSplitViewController c = MultiSplitViewController(weights: [.4, .6]);
+      c.validateAndAdjust(2);
+      expect(c.weights.length, 2);
       expect(c.getWeight(0), .4);
+      expect(c.getWeight(1), .6);
+    });
+    test('2 -> 2 (b)', () {
+      MultiSplitViewController c = MultiSplitViewController(weights: [.1, .1]);
+      c.validateAndAdjust(2);
+      expect(c.weights.length, 2);
+      expect(c.getWeight(0), .5);
+      expect(c.getWeight(1), .5);
     });
     test('1 -> 2', () {
       MultiSplitViewController c = MultiSplitViewController(weights: [.4]);
       c.validateAndAdjust(2);
       expect(c.weights.length, 2);
-      expect(c.getWeight(0), .5);
-      expect(c.getWeight(1), .5);
+      expect(c.getWeight(0), .4);
+      expect(c.getWeight(1), .6);
     });
     test('3 -> 4', () {
       MultiSplitViewController c =

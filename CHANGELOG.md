@@ -1,3 +1,9 @@
+## 1.7.2
+
+* Bugfix
+  * Divider flickering when dragging
+  * Ignoring the initial weights when their sum is less than 1
+
 ## 1.7.1
 
 * Bugfix/Enhancement
