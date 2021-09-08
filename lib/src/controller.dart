@@ -42,7 +42,6 @@ class MultiSplitViewController {
   /// Excluded children will distribute their weights to the existing ones.
   @internal
   void validateAndAdjust(int childrenCount) {
-    print('validateAndAdjust: $childrenCount');
     childrenCount = math.max(childrenCount, 0);
 
     double weightSum = 0;
@@ -57,8 +56,6 @@ class MultiSplitViewController {
     if (weightSum > MultiSplitViewController._higherPrecision) {
       throw Exception('The sum of the weights cannot exceed 1: $weightSum');
     }
-
-    print(weightSum);
 
     if (_weights.length == childrenCount) {
       _fillWeightsEqually(childrenCount, weightSum);
