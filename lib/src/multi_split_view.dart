@@ -162,7 +162,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// Updates the highlighted divider index.
   void _updatesHighlightedDividerIndex(
       {int? index, required MultiSplitViewThemeData themeData}) {
-    if (_highlightedDividerIndex != index && themeData.dividerPainter != null) {
+    if (_dragging == false &&
+        _highlightedDividerIndex != index &&
+        themeData.dividerPainter != null) {
       setState(() {
         _highlightedDividerIndex = index;
       });
@@ -210,11 +212,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             cursor: SystemMouseCursors.resizeColumn,
             onEnter: (event) => _updatesHighlightedDividerIndex(
                 index: childIndex, themeData: themeData),
-            onExit: (event) {
-              if (!_dragging) {
-                _updatesHighlightedDividerIndex(themeData: themeData);
-              }
-            },
+            onExit: (event) =>
+                _updatesHighlightedDividerIndex(themeData: themeData),
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onHorizontalDragStart: (detail) {
@@ -284,11 +283,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             cursor: SystemMouseCursors.resizeRow,
             onEnter: (event) => _updatesHighlightedDividerIndex(
                 index: childIndex, themeData: themeData),
-            onExit: (event) {
-              if (!_dragging) {
-                _updatesHighlightedDividerIndex(themeData: themeData);
-              }
-            },
+            onExit: (event) =>
+                _updatesHighlightedDividerIndex(themeData: themeData),
             child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragStart: (detail) {
