@@ -1,4 +1,4 @@
-[![](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view) [![](https://img.shields.io/badge/demo-try%20it%20out-blue)](https://caduandrade.github.io/multi_split_view_demo/) [![](https://img.shields.io/badge/Flutter-%E2%9D%A4-red)](https://flutter.dev/)
+[![](https://img.shields.io/pub/v/multi_split_view.svg)](https://pub.dev/packages/multi_split_view) ![](https://github.com/caduandrade/multi_split_view/actions/workflows/test.yml/badge.svg) [![](https://img.shields.io/badge/demo-try%20it%20out-blue)](https://caduandrade.github.io/multi_split_view_demo/) [![](https://img.shields.io/badge/Flutter-%E2%9D%A4-red)](https://flutter.dev/)
 
 # Multi split view
 
@@ -166,7 +166,7 @@ The default color is `NULL`.
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
         data: MultiSplitViewThemeData(
-            dividerThickness: 10, dividerPainter: _paint));
+            dividerThickness: 10, dividerPainter: dividerPainter));
 ```
 
 ![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
