@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_split_view/src/divider_painter.dart';
 import 'package:multi_split_view/src/multi_split_view.dart';
 
 /// The [MultiSplitView] theme.
