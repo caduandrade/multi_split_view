@@ -212,32 +212,26 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             index: childIndex,
             themeData: themeData,
             highlighted: highlighted,
-            resizable: widget.resizable);
+            resizable: widget.resizable,
+            highlightedDividerIndexUpdater: _updatesHighlightedDividerIndex);
         if (widget.resizable) {
-          dividerWidget = MouseRegion(
-            cursor: SystemMouseCursors.resizeColumn,
-            onEnter: (event) => _updatesHighlightedDividerIndex(
-                index: childIndex, themeData: themeData),
-            onExit: (event) =>
-                _updatesHighlightedDividerIndex(themeData: themeData),
-            child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onHorizontalDragStart: (detail) {
-                  _dragging = true;
-                  final pos = _position(context, detail.globalPosition);
-                  _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
-                },
-                onHorizontalDragEnd: (detail) {
-                  _dragging = false;
-                  _updatesHighlightedDividerIndex(themeData: themeData);
-                },
-                onHorizontalDragUpdate: (detail) {
-                  final pos = _position(context, detail.globalPosition);
-                  double diffX = pos.dx - _initialDragPos;
-                  _updateDifferentWeights(childIndex, diffX, minimalWeight);
-                },
-                child: dividerWidget),
-          );
+          dividerWidget = GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onHorizontalDragStart: (detail) {
+                _dragging = true;
+                final pos = _position(context, detail.globalPosition);
+                _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
+              },
+              onHorizontalDragEnd: (detail) {
+                _dragging = false;
+                _updatesHighlightedDividerIndex(themeData: themeData);
+              },
+              onHorizontalDragUpdate: (detail) {
+                final pos = _position(context, detail.globalPosition);
+                double diffX = pos.dx - _initialDragPos;
+                _updateDifferentWeights(childIndex, diffX, minimalWeight);
+              },
+              child: dividerWidget);
         }
         children.add(
             _buildPositioned(distance: dividerDistance, child: dividerWidget));
@@ -286,32 +280,26 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             index: childIndex,
             themeData: themeData,
             highlighted: highlighted,
-            resizable: widget.resizable);
+            resizable: widget.resizable,
+            highlightedDividerIndexUpdater: _updatesHighlightedDividerIndex);
         if (widget.resizable) {
-          dividerWidget = MouseRegion(
-            cursor: SystemMouseCursors.resizeRow,
-            onEnter: (event) => _updatesHighlightedDividerIndex(
-                index: childIndex, themeData: themeData),
-            onExit: (event) =>
-                _updatesHighlightedDividerIndex(themeData: themeData),
-            child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onVerticalDragStart: (detail) {
-                  _dragging = true;
-                  final pos = _position(context, detail.globalPosition);
-                  _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
-                },
-                onVerticalDragEnd: (detail) {
-                  _dragging = false;
-                  _updatesHighlightedDividerIndex(themeData: themeData);
-                },
-                onVerticalDragUpdate: (detail) {
-                  final pos = _position(context, detail.globalPosition);
-                  double diffY = pos.dy - _initialDragPos;
-                  _updateDifferentWeights(childIndex, diffY, minimalWeight);
-                },
-                child: dividerWidget),
-          );
+          dividerWidget = GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onVerticalDragStart: (detail) {
+                _dragging = true;
+                final pos = _position(context, detail.globalPosition);
+                _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
+              },
+              onVerticalDragEnd: (detail) {
+                _dragging = false;
+                _updatesHighlightedDividerIndex(themeData: themeData);
+              },
+              onVerticalDragUpdate: (detail) {
+                final pos = _position(context, detail.globalPosition);
+                double diffY = pos.dy - _initialDragPos;
+                _updateDifferentWeights(childIndex, diffY, minimalWeight);
+              },
+              child: dividerWidget);
         }
         children.add(
             _buildPositioned(distance: dividerDistance, child: dividerWidget));

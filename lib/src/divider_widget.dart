@@ -11,18 +11,21 @@ class DividerWidget extends StatelessWidget {
       required this.index,
       required this.themeData,
       required this.resizable,
-      required this.highlighted});
+      required this.highlighted,
+      required this.highlightedDividerIndexUpdater});
 
   final Axis axis;
   final int index;
   final bool resizable;
   final bool highlighted;
   final MultiSplitViewThemeData themeData;
+  final HighlightedDividerIndexUpdater highlightedDividerIndexUpdater;
 
   @override
   Widget build(BuildContext context) {
+    Widget dividerWidget;
     if (themeData.dividerPainter != null) {
-      return ClipRect(
+      dividerWidget = ClipRect(
           child: CustomPaint(
               child: Container(color: themeData.dividerColor),
               painter: _DividerPainterWrapper(
@@ -30,8 +33,21 @@ class DividerWidget extends StatelessWidget {
                   resizable: resizable,
                   highlighted: highlighted,
                   dividerPainter: themeData.dividerPainter!)));
+    } else {
+      dividerWidget = Container(color: themeData.dividerColor);
     }
-    return Container(color: themeData.dividerColor);
+
+    if (resizable) {
+      dividerWidget = MouseRegion(
+          cursor: SystemMouseCursors.resizeColumn,
+          onEnter: (event) => highlightedDividerIndexUpdater(
+              index: index, themeData: themeData),
+          onExit: (event) =>
+              highlightedDividerIndexUpdater(themeData: themeData),
+          child: dividerWidget);
+    }
+
+    return dividerWidget;
   }
 }
 
@@ -59,3 +75,7 @@ class _DividerPainterWrapper extends CustomPainter {
     return true;
   }
 }
+
+/// Updates the highlighted divider index.
+typedef HighlightedDividerIndexUpdater = void Function(
+    {int? index, required MultiSplitViewThemeData themeData});
