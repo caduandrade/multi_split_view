@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_painter.dart';
+import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
 
@@ -185,6 +186,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     for (int childIndex = 0;
         childIndex < widget.children.length;
         childIndex++) {
+      bool highlighted = _highlightedDividerIndex == childIndex;
       double childWeight = _controller.getWeight(childIndex);
       totalRemainingWeight -= childWeight;
 
@@ -205,8 +207,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.right =
             childDistance.right - themeData.dividerThickness;
 
-        Widget dividerWidget = _buildDividerWidget(
-            axis: Axis.vertical, childIndex: childIndex, themeData: themeData);
+        Widget dividerWidget = DividerWidget(
+            axis: Axis.vertical,
+            index: childIndex,
+            themeData: themeData,
+            highlighted: highlighted,
+            resizable: widget.resizable);
         if (widget.resizable) {
           dividerWidget = MouseRegion(
             cursor: SystemMouseCursors.resizeColumn,
@@ -254,6 +260,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     for (int childIndex = 0;
         childIndex < widget.children.length;
         childIndex++) {
+      bool highlighted = _highlightedDividerIndex == childIndex;
       double childWeight = _controller.getWeight(childIndex);
       totalRemainingWeight -= childWeight;
 
@@ -274,10 +281,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.bottom =
             childDistance.bottom - themeData.dividerThickness;
 
-        Widget dividerWidget = _buildDividerWidget(
+        Widget dividerWidget = DividerWidget(
             axis: Axis.horizontal,
-            childIndex: childIndex,
-            themeData: themeData);
+            index: childIndex,
+            themeData: themeData,
+            highlighted: highlighted,
+            resizable: widget.resizable);
         if (widget.resizable) {
           dividerWidget = MouseRegion(
             cursor: SystemMouseCursors.resizeRow,
@@ -309,25 +318,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         childDistance.top = dividerDistance.top + themeData.dividerThickness;
       }
     }
-  }
-
-  /// Builds a widget for the divider depending on whether [dividerPainter]
-  /// has been set.
-  Widget _buildDividerWidget(
-      {required Axis axis,
-      required int childIndex,
-      required MultiSplitViewThemeData themeData}) {
-    if (themeData.dividerPainter != null) {
-      return ClipRect(
-          child: CustomPaint(
-              child: Container(color: themeData.dividerColor),
-              painter: _DividerPainterWrapper(
-                  axis,
-                  widget.resizable,
-                  _highlightedDividerIndex == childIndex,
-                  themeData.dividerPainter!)));
-    }
-    return Container(color: themeData.dividerColor);
   }
 
   void _updateInitialValues(
@@ -411,25 +401,3 @@ class _DistanceFrom {
 }
 
 typedef OnSizeChange = Function(int childIndex1, int childIndex2);
-
-/// Defines the custom painter for the divider using a [DividerPainter].
-class _DividerPainterWrapper extends CustomPainter {
-  _DividerPainterWrapper(
-      this.axis, this.resizable, this.highlighted, this.dividerPainter);
-
-  /// The divider axis
-  final Axis axis;
-  final bool resizable;
-  final bool highlighted;
-  final DividerPainter dividerPainter;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    dividerPainter.paint(axis, resizable, highlighted, canvas, size);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
