@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/divider_painter.dart';
 import 'package:multi_split_view/src/theme_data.dart';

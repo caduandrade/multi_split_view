@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/controller.dart';
-import 'package:multi_split_view/src/divider_painter.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
