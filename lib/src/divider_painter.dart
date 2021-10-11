@@ -52,7 +52,9 @@ class DividerPainter {
   }
 
   ColorTween? buildBackgroundColorTween() {
-    if (animationEnabled) {
+    if (animationEnabled &&
+        backgroundColor != null &&
+        highlightedBackgroundColor != null) {
       return ColorTween(
           begin: backgroundColor, end: highlightedBackgroundColor);
     }
@@ -117,38 +119,54 @@ class DashDivider extends DividerPainter {
         animatedDoubleValue: animatedDoubleValue,
         animatedBackgroundColor: animatedBackgroundColor,
         animatedForegroundColor: animatedForegroundColor);
-    Color _color = color;
-    if (highlighted && highlightedColor != null) {
+
+    Color? _color;
+    if (animationEnabled && highlightedColor != null) {
+      _color = animatedForegroundColor;
+    } else if (highlighted && highlightedColor != null) {
       _color = highlightedColor!;
-    }
-    StrokeCap _strokeCap = strokeCap;
-    if (highlighted && highlightedStrokeCap != null) {
-      _strokeCap = highlightedStrokeCap!;
-    }
-    double _thickness = thickness;
-    if (highlighted && highlightedThickness != null) {
-      _thickness = highlightedThickness!;
-    }
-    var paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = _color
-      ..strokeWidth = _thickness
-      ..strokeCap = _strokeCap
-      ..isAntiAlias = true;
-    if (dividerAxis == Axis.vertical) {
-      double startY = 0;
-      while (startY < dividerSize.height) {
-        canvas.drawLine(Offset(dividerSize.width / 2, startY),
-            Offset(dividerSize.width / 2, startY + size), paint);
-        startY += size + gap;
-      }
     } else {
-      double startX = 0;
-      while (startX < dividerSize.width) {
-        canvas.drawLine(Offset(startX, dividerSize.height / 2),
-            Offset(startX + size, dividerSize.height / 2), paint);
-        startX += size + gap;
+      _color = color;
+    }
+
+    if (_color != null) {
+      StrokeCap _strokeCap = strokeCap;
+      if (highlighted && highlightedStrokeCap != null) {
+        _strokeCap = highlightedStrokeCap!;
+      }
+      double _thickness = thickness;
+      if (highlighted && highlightedThickness != null) {
+        _thickness = highlightedThickness!;
+      }
+      var paint = Paint()
+        ..style = PaintingStyle.stroke
+        ..color = _color
+        ..strokeWidth = _thickness
+        ..strokeCap = _strokeCap
+        ..isAntiAlias = true;
+      if (dividerAxis == Axis.vertical) {
+        double startY = 0;
+        while (startY < dividerSize.height) {
+          canvas.drawLine(Offset(dividerSize.width / 2, startY),
+              Offset(dividerSize.width / 2, startY + size), paint);
+          startY += size + gap;
+        }
+      } else {
+        double startX = 0;
+        while (startX < dividerSize.width) {
+          canvas.drawLine(Offset(startX, dividerSize.height / 2),
+              Offset(startX + size, dividerSize.height / 2), paint);
+          startX += size + gap;
+        }
       }
     }
+  }
+
+  @override
+  ColorTween? buildForegroundColorTween() {
+    if (animationEnabled && highlightedColor != null) {
+      return ColorTween(begin: color, end: highlightedColor);
+    }
+    return null;
   }
 }
