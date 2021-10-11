@@ -69,9 +69,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   double _initialChild1Weight = 0;
   double _initialChild2Weight = 0;
   double _initialChild1Size = 0;
-  bool _dragging = false;
-
-  int? _highlightedDividerIndex;
+  int? _draggingDividerIndex;
+  int? _hoverDividerIndex;
 
   @override
   void initState() {
@@ -159,14 +158,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     return MultiSplitView.defaultMinimalWeight;
   }
 
-  /// Updates the highlighted divider index.
-  void _updatesHighlightedDividerIndex(
+  /// Updates the hover divider index.
+  void _updatesHoverDividerIndex(
       {int? index, required MultiSplitViewThemeData themeData}) {
-    if (_dragging == false &&
-        _highlightedDividerIndex != index &&
-        themeData.dividerPainter != null) {
+    if (_hoverDividerIndex != index && themeData.dividerPainter != null) {
       setState(() {
-        _highlightedDividerIndex = index;
+        _hoverDividerIndex = index;
       });
     }
   }
@@ -185,7 +182,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     for (int childIndex = 0;
         childIndex < widget.children.length;
         childIndex++) {
-      bool highlighted = _highlightedDividerIndex == childIndex;
+      bool highlighted = (_draggingDividerIndex == childIndex ||
+          (_draggingDividerIndex == null && _hoverDividerIndex == childIndex));
       double childWeight = _controller.getWeight(childIndex);
       totalRemainingWeight -= childWeight;
 
@@ -212,18 +210,22 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             themeData: themeData,
             highlighted: highlighted,
             resizable: widget.resizable,
-            highlightedDividerIndexUpdater: _updatesHighlightedDividerIndex);
+            dragging: _draggingDividerIndex == childIndex,
+            hoverDividerIndexUpdater: _updatesHoverDividerIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
               onHorizontalDragStart: (detail) {
-                _dragging = true;
+                setState(() {
+                  _draggingDividerIndex = childIndex;
+                });
                 final pos = _position(context, detail.globalPosition);
                 _updateInitialValues(childIndex, pos.dx, totalChildrenSize);
               },
               onHorizontalDragEnd: (detail) {
-                _dragging = false;
-                _updatesHighlightedDividerIndex(themeData: themeData);
+                setState(() {
+                  _draggingDividerIndex = null;
+                });
               },
               onHorizontalDragUpdate: (detail) {
                 final pos = _position(context, detail.globalPosition);
@@ -253,7 +255,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     for (int childIndex = 0;
         childIndex < widget.children.length;
         childIndex++) {
-      bool highlighted = _highlightedDividerIndex == childIndex;
+      bool highlighted = (_draggingDividerIndex == childIndex ||
+          (_draggingDividerIndex == null && _hoverDividerIndex == childIndex));
       double childWeight = _controller.getWeight(childIndex);
       totalRemainingWeight -= childWeight;
 
@@ -280,18 +283,22 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             themeData: themeData,
             highlighted: highlighted,
             resizable: widget.resizable,
-            highlightedDividerIndexUpdater: _updatesHighlightedDividerIndex);
+            dragging: _draggingDividerIndex == childIndex,
+            hoverDividerIndexUpdater: _updatesHoverDividerIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
               onVerticalDragStart: (detail) {
-                _dragging = true;
+                setState(() {
+                  _draggingDividerIndex = childIndex;
+                });
                 final pos = _position(context, detail.globalPosition);
                 _updateInitialValues(childIndex, pos.dy, totalChildrenSize);
               },
               onVerticalDragEnd: (detail) {
-                _dragging = false;
-                _updatesHighlightedDividerIndex(themeData: themeData);
+                setState(() {
+                  _draggingDividerIndex = null;
+                });
               },
               onVerticalDragUpdate: (detail) {
                 final pos = _position(context, detail.globalPosition);

@@ -12,17 +12,35 @@ class DividerPainter {
   final Color? highlightedBackgroundColor;
 
   /// Paints the divider.
-  void paint(Axis dividerAxis, bool resizable, bool highlighted, Canvas canvas,
-      Size dividerSize) {
-    Color? color = highlighted ? highlightedBackgroundColor : backgroundColor;
-    if (color != null) {
+  void paint(
+      {required Axis dividerAxis,
+      required bool resizable,
+      required bool highlighted,
+      required Canvas canvas,
+      required Size dividerSize,
+      required double? doubleValue,
+      required Color? backgroundColor,
+      required Color? foregroundColor}) {
+    if (backgroundColor != null) {
       var paint = Paint()
         ..style = PaintingStyle.fill
-        ..color = color
+        ..color = backgroundColor
         ..isAntiAlias = true;
       canvas.drawRect(
           Rect.fromLTWH(0, 0, dividerSize.width, dividerSize.height), paint);
     }
+  }
+
+  Tween<double>? buildDoubleTween() {
+    return Tween<double>(begin: 0, end: 1);
+  }
+
+  ColorTween? buildBackgroundColorTween() {
+    return ColorTween(begin: backgroundColor, end: highlightedBackgroundColor);
+  }
+
+  ColorTween? buildForegroundColorTween() {
+    return null;
   }
 }
 
@@ -59,9 +77,24 @@ class DashDivider extends DividerPainter {
   final double? highlightedThickness;
 
   @override
-  void paint(Axis dividerAxis, bool resizable, bool highlighted, Canvas canvas,
-      Size dividerSize) {
-    super.paint(dividerAxis, resizable, highlighted, canvas, dividerSize);
+  void paint(
+      {required Axis dividerAxis,
+      required bool resizable,
+      required bool highlighted,
+      required Canvas canvas,
+      required Size dividerSize,
+      required double? doubleValue,
+      required Color? backgroundColor,
+      required Color? foregroundColor}) {
+    super.paint(
+        dividerAxis: dividerAxis,
+        resizable: resizable,
+        highlighted: highlighted,
+        canvas: canvas,
+        dividerSize: dividerSize,
+        doubleValue: doubleValue,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor);
     Color _color = color;
     if (highlighted && highlightedColor != null) {
       _color = highlightedColor!;
