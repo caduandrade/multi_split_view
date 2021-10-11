@@ -12,8 +12,7 @@ class DividerWidget extends StatefulWidget {
       required this.themeData,
       required this.resizable,
       required this.dragging,
-      required this.highlighted,
-      required this.hoverDividerIndexUpdater});
+      required this.highlighted});
 
   final Axis axis;
   final int index;
@@ -21,7 +20,6 @@ class DividerWidget extends StatefulWidget {
   final bool dragging;
   final bool highlighted;
   final MultiSplitViewThemeData themeData;
-  final HoverDividerIndexUpdater hoverDividerIndexUpdater;
 
   @override
   State<StatefulWidget> createState() => _DividerWidgetState();
@@ -98,16 +96,6 @@ class _DividerWidgetState extends State<DividerWidget>
       dividerWidget = Container(color: widget.themeData.dividerColor);
     }
 
-    if (widget.resizable) {
-      dividerWidget = MouseRegion(
-          cursor: SystemMouseCursors.resizeColumn,
-          onEnter: (event) => widget.hoverDividerIndexUpdater(
-              index: widget.index, themeData: widget.themeData),
-          onExit: (event) =>
-              widget.hoverDividerIndexUpdater(themeData: widget.themeData),
-          child: dividerWidget);
-    }
-
     return dividerWidget;
   }
 
@@ -156,7 +144,3 @@ class _DividerPainterWrapper extends CustomPainter {
     return true;
   }
 }
-
-/// Updates the hover divider index.
-typedef HoverDividerIndexUpdater = void Function(
-    {int? index, required MultiSplitViewThemeData themeData});

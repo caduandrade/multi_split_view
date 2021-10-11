@@ -210,8 +210,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             themeData: themeData,
             highlighted: highlighted,
             resizable: widget.resizable,
-            dragging: _draggingDividerIndex == childIndex,
-            hoverDividerIndexUpdater: _updatesHoverDividerIndex);
+            dragging: _draggingDividerIndex == childIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -233,6 +232,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 _updateDifferentWeights(childIndex, diffX, minimalWeight);
               },
               child: dividerWidget);
+          dividerWidget = _mouseRegion(
+              index: childIndex,
+              dividerWidget: dividerWidget,
+              themeData: themeData);
         }
         children.add(
             _buildPositioned(distance: dividerDistance, child: dividerWidget));
@@ -283,8 +286,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             themeData: themeData,
             highlighted: highlighted,
             resizable: widget.resizable,
-            dragging: _draggingDividerIndex == childIndex,
-            hoverDividerIndexUpdater: _updatesHoverDividerIndex);
+            dragging: _draggingDividerIndex == childIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -306,12 +308,29 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 _updateDifferentWeights(childIndex, diffY, minimalWeight);
               },
               child: dividerWidget);
+          dividerWidget = _mouseRegion(
+              index: childIndex,
+              dividerWidget: dividerWidget,
+              themeData: themeData);
         }
         children.add(
             _buildPositioned(distance: dividerDistance, child: dividerWidget));
         childDistance.top = dividerDistance.top + themeData.dividerThickness;
       }
     }
+  }
+
+  /// Wraps the divider widget with a [MouseRegion].
+  Widget _mouseRegion(
+      {required int index,
+      required Widget dividerWidget,
+      required MultiSplitViewThemeData themeData}) {
+    return MouseRegion(
+        cursor: SystemMouseCursors.resizeColumn,
+        onEnter: (event) =>
+            _updatesHoverDividerIndex(index: index, themeData: themeData),
+        onExit: (event) => _updatesHoverDividerIndex(themeData: themeData),
+        child: dividerWidget);
   }
 
   void _updateInitialValues(
