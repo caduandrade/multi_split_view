@@ -4,7 +4,7 @@ import 'package:multi_split_view/src/multi_split_view.dart';
 /// The [MultiSplitView] theme.
 /// Defines the configuration of the overall visual [MultiSplitViewTheme] for a widget subtree within the app.
 class MultiSplitViewThemeData {
-  static const double defaultDividerThickness = 5.0;
+  static const double defaultDividerThickness = 10.0;
 
   /// Builds a theme data.
   /// The [dividerThickness] argument must also be positive.
