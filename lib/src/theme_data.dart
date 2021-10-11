@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:multi_split_view/src/divider_painter.dart';
 import 'package:multi_split_view/src/multi_split_view.dart';
 
@@ -10,18 +9,13 @@ class MultiSplitViewThemeData {
   /// Builds a theme data.
   /// The [dividerThickness] argument must also be positive.
   MultiSplitViewThemeData(
-      {this.dividerThickness = defaultDividerThickness,
-      this.dividerColor,
-      this.dividerPainter}) {
+      {this.dividerThickness = defaultDividerThickness, this.dividerPainter}) {
     if (dividerThickness <= 0) {
       throw Exception('The thickness of the divider must be positive.');
     }
   }
 
   final double dividerThickness;
-
-  /// Defines the divider color. The default value is [NULL].
-  final Color? dividerColor;
 
   /// Defines a divider painter. The default value is [NULL].
   final DividerPainter? dividerPainter;

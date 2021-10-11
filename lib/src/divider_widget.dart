@@ -83,7 +83,7 @@ class _DividerWidgetState extends State<DividerWidget>
     if (widget.themeData.dividerPainter != null) {
       dividerWidget = ClipRect(
           child: CustomPaint(
-              child: Container(color: widget.themeData.dividerColor),
+              child: Container(),
               painter: _DividerPainterWrapper(
                   axis: widget.axis,
                   resizable: widget.resizable,
@@ -93,7 +93,7 @@ class _DividerWidgetState extends State<DividerWidget>
                   backgroundColor: backgroundColorAnimation?.value,
                   foregroundColor: foregroundColorAnimation?.value)));
     } else {
-      dividerWidget = Container(color: widget.themeData.dividerColor);
+      dividerWidget = Container();
     }
 
     return dividerWidget;
