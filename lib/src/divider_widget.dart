@@ -29,9 +29,7 @@ class DividerWidget extends StatefulWidget {
 class _DividerWidgetState extends State<DividerWidget>
     with SingleTickerProviderStateMixin {
   AnimationController? controller;
-  Animation<double?>? doubleAnimation;
-  Animation<Color?>? backgroundColorAnimation;
-  Animation<Color?>? foregroundColorAnimation;
+  Map<int, Animation> animations = Map<int, Animation>();
 
   @override
   void initState() {
@@ -42,20 +40,10 @@ class _DividerWidgetState extends State<DividerWidget>
           duration: const Duration(milliseconds: 250), vsync: this);
       DividerPainter dividerPainter = widget.themeData.dividerPainter!;
 
-      Tween<double>? doubleTween = dividerPainter.buildDoubleTween();
-      if (doubleTween != null) {
-        doubleAnimation = doubleTween.animate(controller!);
-      }
-      ColorTween? backgroundColorTween =
-          dividerPainter.buildBackgroundColorTween();
-      if (backgroundColorTween != null) {
-        backgroundColorAnimation = backgroundColorTween.animate(controller!);
-      }
-      ColorTween? foregroundColorTween =
-          dividerPainter.buildForegroundColorTween();
-      if (foregroundColorTween != null) {
-        foregroundColorAnimation = foregroundColorTween.animate(controller!);
-      }
+      Map<int, Tween> tweenMap = dividerPainter.buildTween();
+      tweenMap.forEach((key, tween) {
+        animations[key] = tween.animate(controller!);
+      });
 
       controller?.addListener(() {
         setState(() {
@@ -81,6 +69,11 @@ class _DividerWidgetState extends State<DividerWidget>
   Widget build(BuildContext context) {
     Widget dividerWidget;
     if (widget.themeData.dividerPainter != null) {
+      Map<int, dynamic> animatedValues = Map<int, dynamic>();
+      animations.forEach((key, animation) {
+        animatedValues[key] = animation.value;
+      });
+
       dividerWidget = ClipRect(
           child: CustomPaint(
               child: Container(),
@@ -89,9 +82,7 @@ class _DividerWidgetState extends State<DividerWidget>
                   resizable: widget.resizable,
                   highlighted: widget.highlighted,
                   dividerPainter: widget.themeData.dividerPainter!,
-                  animatedDoubleValue: doubleAnimation?.value,
-                  animatedBackgroundColor: backgroundColorAnimation?.value,
-                  animatedForegroundColor: foregroundColorAnimation?.value)));
+                  animatedValues: animatedValues)));
     } else {
       dividerWidget = Container();
     }
@@ -113,18 +104,14 @@ class _DividerPainterWrapper extends CustomPainter {
       required this.resizable,
       required this.highlighted,
       required this.dividerPainter,
-      required this.animatedDoubleValue,
-      required this.animatedBackgroundColor,
-      required this.animatedForegroundColor});
+      required this.animatedValues});
 
   /// The divider axis
   final Axis axis;
   final bool resizable;
   final bool highlighted;
   final DividerPainter dividerPainter;
-  final double? animatedDoubleValue;
-  final Color? animatedBackgroundColor;
-  final Color? animatedForegroundColor;
+  final Map<int, dynamic> animatedValues;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -134,9 +121,7 @@ class _DividerPainterWrapper extends CustomPainter {
         highlighted: highlighted,
         canvas: canvas,
         dividerSize: size,
-        animatedDoubleValue: animatedDoubleValue,
-        animatedBackgroundColor: animatedBackgroundColor,
-        animatedForegroundColor: animatedForegroundColor);
+        animatedValues: animatedValues);
   }
 
   @override

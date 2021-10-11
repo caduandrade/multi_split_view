@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 
 /// The default painter for the divider.
 class DividerPainter {
+  static const int backgroundKey = 0;
+
   DividerPainter(
       {this.backgroundColor,
       this.highlightedBackgroundColor,
@@ -17,6 +19,18 @@ class DividerPainter {
   final Color? backgroundColor;
   final Color? highlightedBackgroundColor;
 
+  /// Builds a tween map for animations.
+  Map<int, Tween> buildTween() {
+    Map<int, Tween> map = Map<int, Tween>();
+    if (animationEnabled &&
+        backgroundColor != null &&
+        highlightedBackgroundColor != null) {
+      map[DividerPainter.backgroundKey] =
+          ColorTween(begin: backgroundColor, end: highlightedBackgroundColor);
+    }
+    return map;
+  }
+
   /// Paints the divider.
   void paint(
       {required Axis dividerAxis,
@@ -24,12 +38,11 @@ class DividerPainter {
       required bool highlighted,
       required Canvas canvas,
       required Size dividerSize,
-      required double? animatedDoubleValue,
-      required Color? animatedBackgroundColor,
-      required Color? animatedForegroundColor}) {
+      required Map<int, dynamic> animatedValues}) {
     Color? color;
-    if (animationEnabled) {
-      color = animatedBackgroundColor;
+    if (animationEnabled &&
+        animatedValues.containsKey(DividerPainter.backgroundKey)) {
+      color = animatedValues[DividerPainter.backgroundKey];
     } else {
       color = highlighted ? highlightedBackgroundColor : backgroundColor;
     }
@@ -43,31 +56,13 @@ class DividerPainter {
           Rect.fromLTWH(0, 0, dividerSize.width, dividerSize.height), paint);
     }
   }
-
-  Tween<double>? buildDoubleTween() {
-    if (animationEnabled) {
-      return Tween<double>(begin: 0, end: 1);
-    }
-    return null;
-  }
-
-  ColorTween? buildBackgroundColorTween() {
-    if (animationEnabled &&
-        backgroundColor != null &&
-        highlightedBackgroundColor != null) {
-      return ColorTween(
-          begin: backgroundColor, end: highlightedBackgroundColor);
-    }
-    return null;
-  }
-
-  ColorTween? buildForegroundColorTween() {
-    return null;
-  }
 }
 
 /// Divider with dashes.
 class DashDivider extends DividerPainter {
+  static const int colorKey = 1;
+  static const int thicknessKey = 2;
+
   DashDivider(
       {double size = 10,
       double gap = 5,
@@ -77,7 +72,6 @@ class DashDivider extends DividerPainter {
       this.color = Colors.black,
       this.highlightedColor,
       this.strokeCap = StrokeCap.square,
-      this.highlightedStrokeCap,
       double thickness = 1,
       double? highlightedThickness})
       : this.size = math.max(0, size),
@@ -96,7 +90,6 @@ class DashDivider extends DividerPainter {
   final Color color;
   final Color? highlightedColor;
   final StrokeCap strokeCap;
-  final StrokeCap? highlightedStrokeCap;
   final double thickness;
   final double? highlightedThickness;
 
@@ -107,22 +100,17 @@ class DashDivider extends DividerPainter {
       required bool highlighted,
       required Canvas canvas,
       required Size dividerSize,
-      required double? animatedDoubleValue,
-      required Color? animatedBackgroundColor,
-      required Color? animatedForegroundColor}) {
+      required Map<int, dynamic> animatedValues}) {
     super.paint(
         dividerAxis: dividerAxis,
         resizable: resizable,
         highlighted: highlighted,
         canvas: canvas,
         dividerSize: dividerSize,
-        animatedDoubleValue: animatedDoubleValue,
-        animatedBackgroundColor: animatedBackgroundColor,
-        animatedForegroundColor: animatedForegroundColor);
-
+        animatedValues: animatedValues);
     Color? _color;
-    if (animationEnabled && highlightedColor != null) {
-      _color = animatedForegroundColor;
+    if (animationEnabled && animatedValues.containsKey(DashDivider.colorKey)) {
+      _color = animatedValues[DashDivider.colorKey];
     } else if (highlighted && highlightedColor != null) {
       _color = highlightedColor!;
     } else {
@@ -130,19 +118,18 @@ class DashDivider extends DividerPainter {
     }
 
     if (_color != null) {
-      StrokeCap _strokeCap = strokeCap;
-      if (highlighted && highlightedStrokeCap != null) {
-        _strokeCap = highlightedStrokeCap!;
-      }
       double _thickness = thickness;
-      if (highlighted && highlightedThickness != null) {
+      if (animationEnabled &&
+          animatedValues.containsKey(DashDivider.thicknessKey)) {
+        _thickness = animatedValues[DashDivider.thicknessKey];
+      } else if (highlighted && highlightedThickness != null) {
         _thickness = highlightedThickness!;
       }
       var paint = Paint()
         ..style = PaintingStyle.stroke
         ..color = _color
         ..strokeWidth = _thickness
-        ..strokeCap = _strokeCap
+        ..strokeCap = strokeCap
         ..isAntiAlias = true;
       if (dividerAxis == Axis.vertical) {
         double startY = 0;
@@ -163,10 +150,18 @@ class DashDivider extends DividerPainter {
   }
 
   @override
-  ColorTween? buildForegroundColorTween() {
-    if (animationEnabled && highlightedColor != null) {
-      return ColorTween(begin: color, end: highlightedColor);
+  Map<int, Tween> buildTween() {
+    Map<int, Tween> map = super.buildTween();
+    if (animationEnabled) {
+      if (highlightedColor != null) {
+        map[DashDivider.colorKey] =
+            ColorTween(begin: color, end: highlightedColor);
+      }
+      if (highlightedThickness != null) {
+        map[DashDivider.thicknessKey] =
+            Tween<double>(begin: thickness, end: highlightedThickness);
+      }
     }
-    return null;
+    return map;
   }
 }
