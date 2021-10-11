@@ -89,9 +89,9 @@ class _DividerWidgetState extends State<DividerWidget>
                   resizable: widget.resizable,
                   highlighted: widget.highlighted,
                   dividerPainter: widget.themeData.dividerPainter!,
-                  doubleValue: doubleAnimation?.value,
-                  backgroundColor: backgroundColorAnimation?.value,
-                  foregroundColor: foregroundColorAnimation?.value)));
+                  animatedDoubleValue: doubleAnimation?.value,
+                  animatedBackgroundColor: backgroundColorAnimation?.value,
+                  animatedForegroundColor: foregroundColorAnimation?.value)));
     } else {
       dividerWidget = Container();
     }
@@ -113,18 +113,18 @@ class _DividerPainterWrapper extends CustomPainter {
       required this.resizable,
       required this.highlighted,
       required this.dividerPainter,
-      required this.doubleValue,
-      required this.backgroundColor,
-      required this.foregroundColor});
+      required this.animatedDoubleValue,
+      required this.animatedBackgroundColor,
+      required this.animatedForegroundColor});
 
   /// The divider axis
   final Axis axis;
   final bool resizable;
   final bool highlighted;
   final DividerPainter dividerPainter;
-  final double? doubleValue;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
+  final double? animatedDoubleValue;
+  final Color? animatedBackgroundColor;
+  final Color? animatedForegroundColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -134,9 +134,9 @@ class _DividerPainterWrapper extends CustomPainter {
         highlighted: highlighted,
         canvas: canvas,
         dividerSize: size,
-        doubleValue: doubleValue,
-        backgroundColor: backgroundColor,
-        foregroundColor: foregroundColor);
+        animatedDoubleValue: animatedDoubleValue,
+        animatedBackgroundColor: animatedBackgroundColor,
+        animatedForegroundColor: animatedForegroundColor);
   }
 
   @override

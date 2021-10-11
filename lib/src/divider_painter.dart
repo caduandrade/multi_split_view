@@ -6,8 +6,14 @@ import 'package:flutter/widgets.dart';
 
 /// The default painter for the divider.
 class DividerPainter {
-  DividerPainter({this.backgroundColor, this.highlightedBackgroundColor});
+  DividerPainter(
+      {this.backgroundColor,
+      this.highlightedBackgroundColor,
+      bool? animationEnabled})
+      : this.animationEnabled =
+            animationEnabled != null ? animationEnabled : true;
 
+  final bool animationEnabled;
   final Color? backgroundColor;
   final Color? highlightedBackgroundColor;
 
@@ -18,13 +24,20 @@ class DividerPainter {
       required bool highlighted,
       required Canvas canvas,
       required Size dividerSize,
-      required double? doubleValue,
-      required Color? backgroundColor,
-      required Color? foregroundColor}) {
-    if (backgroundColor != null) {
+      required double? animatedDoubleValue,
+      required Color? animatedBackgroundColor,
+      required Color? animatedForegroundColor}) {
+    Color? color;
+    if (animationEnabled) {
+      color = animatedBackgroundColor;
+    } else {
+      color = highlighted ? highlightedBackgroundColor : backgroundColor;
+    }
+
+    if (color != null) {
       var paint = Paint()
         ..style = PaintingStyle.fill
-        ..color = backgroundColor
+        ..color = color
         ..isAntiAlias = true;
       canvas.drawRect(
           Rect.fromLTWH(0, 0, dividerSize.width, dividerSize.height), paint);
@@ -32,11 +45,18 @@ class DividerPainter {
   }
 
   Tween<double>? buildDoubleTween() {
-    return Tween<double>(begin: 0, end: 1);
+    if (animationEnabled) {
+      return Tween<double>(begin: 0, end: 1);
+    }
+    return null;
   }
 
   ColorTween? buildBackgroundColorTween() {
-    return ColorTween(begin: backgroundColor, end: highlightedBackgroundColor);
+    if (animationEnabled) {
+      return ColorTween(
+          begin: backgroundColor, end: highlightedBackgroundColor);
+    }
+    return null;
   }
 
   ColorTween? buildForegroundColorTween() {
@@ -51,6 +71,7 @@ class DashDivider extends DividerPainter {
       double gap = 5,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
+      bool? animationEnabled,
       this.color = Colors.black,
       this.highlightedColor,
       this.strokeCap = StrokeCap.square,
@@ -64,6 +85,7 @@ class DashDivider extends DividerPainter {
             ? math.max(0, highlightedThickness)
             : highlightedThickness,
         super(
+            animationEnabled: animationEnabled,
             backgroundColor: backgroundColor,
             highlightedBackgroundColor: highlightedBackgroundColor);
 
@@ -83,18 +105,18 @@ class DashDivider extends DividerPainter {
       required bool highlighted,
       required Canvas canvas,
       required Size dividerSize,
-      required double? doubleValue,
-      required Color? backgroundColor,
-      required Color? foregroundColor}) {
+      required double? animatedDoubleValue,
+      required Color? animatedBackgroundColor,
+      required Color? animatedForegroundColor}) {
     super.paint(
         dividerAxis: dividerAxis,
         resizable: resizable,
         highlighted: highlighted,
         canvas: canvas,
         dividerSize: dividerSize,
-        doubleValue: doubleValue,
-        backgroundColor: backgroundColor,
-        foregroundColor: foregroundColor);
+        animatedDoubleValue: animatedDoubleValue,
+        animatedBackgroundColor: animatedBackgroundColor,
+        animatedForegroundColor: animatedForegroundColor);
     Color _color = color;
     if (highlighted && highlightedColor != null) {
       _color = highlightedColor!;
