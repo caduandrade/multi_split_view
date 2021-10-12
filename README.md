@@ -29,6 +29,10 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
   * [Divider painters](#divider-painters)
     * [Background color](#divider---background-color)
     * [Custom painter](#divider---custom-painter)
+    * [Divider - highlighted background color](#divider---highlighted-background-color)
+    * [Dashed divider](#dashed-divider)
+    * [Grooved divider 1](#grooved-divider-1)
+    * [Grooved divider 2](#grooved-divider-2)
 
 ## Horizontal
 
@@ -125,7 +129,7 @@ Allows customizing the divider through the `DividerPainter` class.
 
 The `DividerPainters` factory class offers default painters.
 
-## Divider - background color
+### Divider - background color
 
 The `DividerPainters.background` allows setting the background color. The default color is `NULL`.
 
@@ -140,6 +144,63 @@ The `DividerPainters.background` allows setting the background color. The defaul
 
 ![](https://caduandrade.github.io/multi_split_view/divider_color_v1.png)
 
-## Divider - Custom painter
+### Divider - highlighted background color
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.dashed(
+                color: Colors.deepOrange, highlightedColor: Colors.black)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/highlighted_color_v1.gif)
+
+### Dashed divider
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.dashed(
+                color: Colors.deepOrange, highlightedColor: Colors.black)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/dashed_divider_v1.gif)
+
+### Grooved divider 1
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.grooved1(
+                color: Colors.indigo[100]!,
+                highlightedColor: Colors.indigo[900]!)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/grooved_divider_1_v1.gif)
+
+### Grooved divider 2
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.grooved2(
+                color: Colors.grey[400]!, highlightedColor: Colors.red)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/grooved_divider_2_v1.gif)
+
+### Divider - Custom painter
 
 It is possible to extend the `DividerPainter` class to create a painter from scratch.
