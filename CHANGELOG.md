@@ -1,7 +1,7 @@
 ## 1.8.0
 
 * Default divider thickness value has been changed to 10
-* Multiple divider styles
+* Customizable divider painters
 
 ## 1.7.2
 
