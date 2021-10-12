@@ -4,7 +4,7 @@
 
 A widget to provides horizontal or vertical multiple split view for Flutter.
 
-![animated](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/animated.gif)
+![](https://caduandrade.github.io/multi_split_view/get_started_v1.gif)
 
 * Horizontal or vertical
 * Configurable weight or size for each child
@@ -25,9 +25,10 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
   * [Resizable](#resizable)
   * [Listener](#listener)
 * Divider
-  * [Color](#divider-color)
   * [Thickness](#divider-thickness)
-  * [Custom painter](#divider-custom-painter)
+  * [Divider painters](#divider-painters)
+    * [Background color](#divider---background-color)
+    * [Custom painter](#divider---custom-painter)
 
 ## Horizontal
 
@@ -35,7 +36,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     MultiSplitView(children: [child1, child2, child3]);
 ```
 
-![horizontal](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal.png)
+![](https://caduandrade.github.io/multi_split_view/horizontal_v1.png)
 
 ## Vertical
 
@@ -43,7 +44,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     MultiSplitView(axis: Axis.vertical, children: [child1, child2]);
 ```
 
-![vertical](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/vertical.png)
+![](https://caduandrade.github.io/multi_split_view/vertical_v1.png)
 
 ## Horizontal and vertical
 
@@ -54,7 +55,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     ]);
 ```
 
-![horizontalvertical](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal_vertical.png)
+![](https://caduandrade.github.io/multi_split_view/horizontal_vertical_v1.png)
 
 ## Setting the weight
 
@@ -65,7 +66,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
         controller: MultiSplitViewController(weights: [0.1]));
 ```
 
-![horizontalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/horizontal_weight.png)
+![](https://caduandrade.github.io/multi_split_view/horizontal_weight_v1.png)
 
 ## Minimal child weight
 
@@ -76,7 +77,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     ]);
 ```
 
-![minimalweight](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/minimal_weight.gif)
+![](https://caduandrade.github.io/multi_split_view/minimal_weight_v1.gif)
 
 ## Minimal child size in pixels
 
@@ -105,20 +106,6 @@ The size will be converted into weight and will respect the limit defined by the
             'Index of children whose size has changed: $childIndex1 and $childIndex2'));
 ```
 
-## Divider color
-
-The default color is `NULL`.
-
-```dart
-    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
-
-    MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
-        data: MultiSplitViewThemeData(dividerColor: Colors.black));
-```
-
-![dividercolor](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_color.png)
-
 ## Divider thickness
 
 ```dart
@@ -130,43 +117,29 @@ The default color is `NULL`.
         data: MultiSplitViewThemeData(dividerThickness: 30));
 ```
 
-![dividerthickness](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_thickness.png)
+![](https://caduandrade.github.io/multi_split_view/divider_thickness_v1.png)
 
-## Divider custom painter
+## Divider painters
+
+Allows customizing the divider through the `DividerPainter` class.
+
+The `DividerPainters` factory class offers default painters.
+
+## Divider - background color
+
+The `DividerPainters.background` allows setting the background color. The default color is `NULL`.
 
 ```dart
-    var dividerPainter = (Axis axis, bool resizable, bool highlighted, Canvas canvas, Size size) {
-      var paint = Paint()
-        ..style = PaintingStyle.stroke
-        ..color = Colors.black
-        ..isAntiAlias = true;
-      if (axis == Axis.vertical) {
-        double dashHeight = 9, dashSpace = 5, startY = 0;
-        while (startY < size.height) {
-          canvas.drawLine(Offset(size.width / 2, startY),
-              Offset(size.width / 2, startY + dashHeight), paint);
-          startY += dashHeight + dashSpace;
-        }
-      } else {
-        double dashWidth = 9, dashSpace = 5, startX = 0;
-        while (startX < size.width) {
-          canvas.drawLine(Offset(startX, size.height / 2),
-              Offset(startX + dashWidth, size.height / 2), paint);
-          startX += dashWidth + dashSpace;
-        }
-      }
-    };
-
-    MultiSplitView multiSplitView =
-        MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2, child3]),
-      child4
-    ]);
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
         data: MultiSplitViewThemeData(
-            dividerThickness: 10, dividerPainter: dividerPainter));
+            dividerPainter: DividerPainters.background(color: Colors.black)));
 ```
 
-![](https://raw.githubusercontent.com/caduandrade/images/main/multi_split_view/divider_painter_v1.png)
+![](https://caduandrade.github.io/multi_split_view/divider_color_v1.png)
+
+## Divider - Custom painter
+
+It is possible to extend the `DividerPainter` class to create a painter from scratch.
