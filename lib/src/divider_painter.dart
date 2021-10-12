@@ -5,15 +5,15 @@ import 'package:flutter/widgets.dart';
 
 /// The divider painter factory.
 class DividerPainters {
-  /// Builds a simple divider painter.
-  static DividerPainter simple(
+  /// Builds a divider painter to set the background color.
+  static DividerPainter background(
       {bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      Color? backgroundColor,
-      Color? highlightedBackgroundColor}) {
+      Color? color,
+      Color? highlightedColor}) {
     return DividerPainter(
         animationEnabled: animationEnabled,
-        backgroundColor: backgroundColor,
-        highlightedBackgroundColor: highlightedBackgroundColor);
+        backgroundColor: color,
+        highlightedBackgroundColor: highlightedColor);
   }
 
   /// Builds a dashed divider painter.
@@ -98,7 +98,7 @@ class DividerPainters {
   }
 }
 
-/// The default painter for the divider.
+/// Allows customizing the divider.
 class DividerPainter {
   static const int backgroundKey = 0;
 
@@ -133,11 +133,11 @@ class DividerPainter {
       required Canvas canvas,
       required Size dividerSize,
       required Map<int, dynamic> animatedValues}) {
-    Color? color;
+    Color? color = backgroundColor;
     if (animationEnabled && animatedValues.containsKey(backgroundKey)) {
       color = animatedValues[backgroundKey];
-    } else {
-      color = highlighted ? highlightedBackgroundColor : backgroundColor;
+    } else if (highlighted && highlightedBackgroundColor != null) {
+      color = highlightedBackgroundColor;
     }
 
     if (color != null) {

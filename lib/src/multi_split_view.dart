@@ -234,6 +234,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               child: dividerWidget);
           dividerWidget = _mouseRegion(
               index: childIndex,
+              axis: Axis.vertical,
               dividerWidget: dividerWidget,
               themeData: themeData);
         }
@@ -310,6 +311,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               child: dividerWidget);
           dividerWidget = _mouseRegion(
               index: childIndex,
+              axis: Axis.horizontal,
               dividerWidget: dividerWidget,
               themeData: themeData);
         }
@@ -323,10 +325,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// Wraps the divider widget with a [MouseRegion].
   Widget _mouseRegion(
       {required int index,
+      required Axis axis,
       required Widget dividerWidget,
       required MultiSplitViewThemeData themeData}) {
+    MouseCursor cursor = axis == Axis.horizontal
+        ? SystemMouseCursors.resizeRow
+        : SystemMouseCursors.resizeColumn;
     return MouseRegion(
-        cursor: SystemMouseCursors.resizeColumn,
+        cursor: cursor,
         onEnter: (event) =>
             _updatesHoverDividerIndex(index: index, themeData: themeData),
         onExit: (event) => _updatesHoverDividerIndex(themeData: themeData),
