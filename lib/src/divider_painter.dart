@@ -18,15 +18,15 @@ class DividerPainters {
 
   /// Builds a dashed divider painter.
   static DividerPainter dashed(
-      {double size = _DashedDividerPainter.defaultSize,
-      double gap = _DashedDividerPainter.defaultGap,
+      {double size = 10,
+      double gap = 5,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      Color color = _DashedDividerPainter.defaultColor,
+      Color color = Colors.black,
       Color? highlightedColor,
-      StrokeCap strokeCap = _DashedDividerPainter.defaultStrokeCap,
-      double thickness = _DashedDividerPainter.defaultThickness,
+      StrokeCap strokeCap = StrokeCap.square,
+      double thickness = 1,
       double? highlightedThickness,
       double? highlightedGap,
       double? highlightedSize}) {
@@ -47,18 +47,16 @@ class DividerPainters {
 
   /// Builds a grooved divider painter.
   static DividerPainter grooved1(
-      {double size = _GroovedDividerPainter1.defaultSize,
+      {double size = 25,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      Color color = _GroovedDividerPainter1.defaultColor,
-      Color? highlightedColor = _GroovedDividerPainter1.defaultHighlightedColor,
-      StrokeCap strokeCap = _GroovedDividerPainter1.defaultStrokeCap,
-      double thickness = _GroovedDividerPainter1.defaultThickness,
-      double? highlightedThickness =
-          _GroovedDividerPainter1.defaultHighlightedThickness,
-      double? highlightedSize =
-          _GroovedDividerPainter1.defaultHighlightedSize}) {
+      Color color = Colors.black38,
+      Color? highlightedColor = Colors.black,
+      StrokeCap strokeCap = StrokeCap.round,
+      double thickness = 2,
+      double? highlightedThickness = 4,
+      double? highlightedSize = 40}) {
     return _GroovedDividerPainter1(
         size: size,
         backgroundColor: backgroundColor,
@@ -74,18 +72,17 @@ class DividerPainters {
 
   /// Builds a grooved divider painter.
   static DividerPainter grooved2(
-      {double size = _GroovedDividerPainter2.defaultSize,
+      {double size = 4,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      Color color = _GroovedDividerPainter2.defaultColor,
-      double gap = _GroovedDividerPainter2.defaultGap,
-      int count = _GroovedDividerPainter2.defaultCount,
-      Color? highlightedColor = _GroovedDividerPainter2.defaultHighlightedColor,
-      StrokeCap strokeCap = _GroovedDividerPainter2.defaultStrokeCap,
-      double thickness = _GroovedDividerPainter2.defaultThickness,
-      int? highlightedCount =
-          _GroovedDividerPainter2.defaultHighlightedCount}) {
+      Color color = Colors.black38,
+      double gap = 5,
+      int count = 4,
+      Color? highlightedColor = Colors.black,
+      StrokeCap strokeCap = StrokeCap.round,
+      double thickness = 2,
+      int? highlightedCount = 7}) {
     return _GroovedDividerPainter2(
         size: size,
         backgroundColor: backgroundColor,
@@ -159,22 +156,16 @@ class _DashedDividerPainter extends DividerPainter {
   static const int colorKey = 1;
   static const int thicknessKey = 2;
 
-  static const double defaultSize = 10;
-  static const double defaultGap = 5;
-  static const double defaultThickness = 1;
-  static const StrokeCap defaultStrokeCap = StrokeCap.square;
-  static const Color defaultColor = Colors.black;
-
   _DashedDividerPainter(
-      {this.size = defaultSize,
-      this.gap = defaultGap,
+      {required this.size,
+      required this.gap,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      this.color = defaultColor,
+      required this.color,
       this.highlightedColor,
-      this.strokeCap = defaultStrokeCap,
-      this.thickness = defaultThickness,
+      required this.strokeCap,
+      required this.thickness,
       this.highlightedThickness,
       this.highlightedGap,
       this.highlightedSize})
@@ -292,25 +283,17 @@ class _GroovedDividerPainter1 extends DividerPainter {
   static const int thicknessKey = 2;
   static const int sizeKey = 3;
 
-  static const double defaultSize = 25;
-  static const double defaultHighlightedSize = 40;
-  static const double defaultThickness = 2;
-  static const double defaultHighlightedThickness = 4;
-  static const StrokeCap defaultStrokeCap = StrokeCap.round;
-  static const Color defaultColor = Colors.black38;
-  static const Color defaultHighlightedColor = Colors.black;
-
   _GroovedDividerPainter1(
-      {this.size = defaultSize,
+      {required this.size,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      this.color = defaultColor,
-      this.highlightedColor = defaultHighlightedColor,
-      this.strokeCap = defaultStrokeCap,
-      this.thickness = defaultThickness,
-      this.highlightedThickness = defaultHighlightedThickness,
-      this.highlightedSize = defaultHighlightedSize})
+      required this.color,
+      this.highlightedColor,
+      required this.strokeCap,
+      required this.thickness,
+      this.highlightedThickness,
+      this.highlightedSize})
       : super(
             animationEnabled: animationEnabled,
             backgroundColor: backgroundColor,
@@ -418,27 +401,18 @@ class _GroovedDividerPainter2 extends DividerPainter {
   static const int colorKey = 1;
   static const int countKey = 2;
 
-  static const double defaultSize = 4;
-  static const double defaultThickness = 2;
-  static const double defaultGap = 5;
-  static const int defaultCount = 4;
-  static const StrokeCap defaultStrokeCap = StrokeCap.round;
-  static const Color defaultColor = Colors.black38;
-  static const Color defaultHighlightedColor = Colors.black;
-  static const int defaultHighlightedCount = 7;
-
   _GroovedDividerPainter2(
-      {this.size = defaultSize,
+      {required this.size,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
-      this.color = defaultColor,
-      this.gap = defaultGap,
-      this.count = defaultCount,
-      this.highlightedColor = defaultHighlightedColor,
-      this.strokeCap = defaultStrokeCap,
-      this.thickness = defaultThickness,
-      this.highlightedCount = defaultHighlightedCount})
+      required this.color,
+      required this.gap,
+      required this.count,
+      this.highlightedColor,
+      required this.strokeCap,
+      required this.thickness,
+      this.highlightedCount})
       : super(
             animationEnabled: animationEnabled,
             backgroundColor: backgroundColor,

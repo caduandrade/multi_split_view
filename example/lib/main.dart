@@ -66,15 +66,20 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         controller: controller,
         onSizeChange: _onSizeChange);
 
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.grooved1()));
+
     return Scaffold(
         appBar: AppBar(title: Text('Multi Split View Example')),
-        body: Column(children: [buttons, Expanded(child: multiSplitView)])
+        body: Column(children: [buttons, Expanded(child: theme)])
         // body: horizontal,
         );
   }
 
   _onSizeChange(int childIndex1, int childIndex2) {
-    print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
+    // print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
   }
 
   _onRemoveButtonClick() {
