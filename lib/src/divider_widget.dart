@@ -37,7 +37,8 @@ class _DividerWidgetState extends State<DividerWidget>
 
     if (widget.themeData.dividerPainter != null) {
       controller = AnimationController(
-          duration: const Duration(milliseconds: 250), vsync: this);
+          duration: widget.themeData.dividerPainter!.animationDuration,
+          vsync: this);
       DividerPainter dividerPainter = widget.themeData.dividerPainter!;
 
       Map<int, Tween> tweenMap = dividerPainter.buildTween();

@@ -8,10 +8,12 @@ class DividerPainters {
   /// Builds a divider painter to set the background color.
   static DividerPainter background(
       {bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       Color? color,
       Color? highlightedColor}) {
     return DividerPainter(
         animationEnabled: animationEnabled,
+        animationDuration: animationDuration,
         backgroundColor: color,
         highlightedBackgroundColor: highlightedColor);
   }
@@ -23,6 +25,7 @@ class DividerPainters {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       Color color = Colors.black,
       Color? highlightedColor,
       StrokeCap strokeCap = StrokeCap.square,
@@ -36,6 +39,7 @@ class DividerPainters {
         backgroundColor: backgroundColor,
         highlightedBackgroundColor: highlightedBackgroundColor,
         animationEnabled: animationEnabled,
+        animationDuration: animationDuration,
         color: color,
         highlightedColor: highlightedColor,
         strokeCap: strokeCap,
@@ -51,6 +55,7 @@ class DividerPainters {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       Color color = Colors.black38,
       Color? highlightedColor = Colors.black,
       StrokeCap strokeCap = StrokeCap.round,
@@ -62,6 +67,7 @@ class DividerPainters {
         backgroundColor: backgroundColor,
         highlightedBackgroundColor: highlightedBackgroundColor,
         animationEnabled: animationEnabled,
+        animationDuration: animationDuration,
         color: color,
         highlightedColor: highlightedColor,
         strokeCap: strokeCap,
@@ -76,6 +82,7 @@ class DividerPainters {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       Color color = Colors.black38,
       double gap = 5,
       int count = 4,
@@ -88,6 +95,7 @@ class DividerPainters {
         backgroundColor: backgroundColor,
         highlightedBackgroundColor: highlightedBackgroundColor,
         animationEnabled: animationEnabled,
+        animationDuration: animationDuration,
         color: color,
         gap: gap,
         count: count,
@@ -103,15 +111,18 @@ class DividerPainter {
   static const int backgroundKey = 0;
 
   static const bool defaultAnimationEnabled = true;
+  static const Duration defaultAnimationDuration = Duration(milliseconds: 250);
 
   DividerPainter(
       {this.backgroundColor,
       this.highlightedBackgroundColor,
-      this.animationEnabled = DividerPainter.defaultAnimationEnabled});
+      this.animationEnabled = DividerPainter.defaultAnimationEnabled,
+      this.animationDuration = DividerPainter.defaultAnimationDuration});
 
   final bool animationEnabled;
   final Color? backgroundColor;
   final Color? highlightedBackgroundColor;
+  final Duration animationDuration;
 
   /// Builds a tween map for animations.
   Map<int, Tween> buildTween() {
@@ -162,6 +173,7 @@ class _DashedDividerPainter extends DividerPainter {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       required this.color,
       this.highlightedColor,
       required this.strokeCap,
@@ -171,6 +183,7 @@ class _DashedDividerPainter extends DividerPainter {
       this.highlightedSize})
       : super(
             animationEnabled: animationEnabled,
+            animationDuration: animationDuration,
             backgroundColor: backgroundColor,
             highlightedBackgroundColor: highlightedBackgroundColor) {
     if (size <= 0) {
@@ -288,6 +301,7 @@ class _GroovedDividerPainter1 extends DividerPainter {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       required this.color,
       this.highlightedColor,
       required this.strokeCap,
@@ -296,6 +310,7 @@ class _GroovedDividerPainter1 extends DividerPainter {
       this.highlightedSize})
       : super(
             animationEnabled: animationEnabled,
+            animationDuration: animationDuration,
             backgroundColor: backgroundColor,
             highlightedBackgroundColor: highlightedBackgroundColor) {
     if (size <= 0) {
@@ -406,6 +421,7 @@ class _GroovedDividerPainter2 extends DividerPainter {
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
+      Duration animationDuration = DividerPainter.defaultAnimationDuration,
       required this.color,
       required this.gap,
       required this.count,
@@ -415,6 +431,7 @@ class _GroovedDividerPainter2 extends DividerPainter {
       this.highlightedCount})
       : super(
             animationEnabled: animationEnabled,
+            animationDuration: animationDuration,
             backgroundColor: backgroundColor,
             highlightedBackgroundColor: highlightedBackgroundColor) {
     if (size <= 0) {
