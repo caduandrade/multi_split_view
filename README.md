@@ -204,3 +204,42 @@ The `DividerPainters.background` allows setting the background color. The defaul
 ### Divider - Custom painter
 
 It is possible to extend the `DividerPainter` class to create a painter from scratch.
+
+```dart
+class MyDividerPainter extends DividerPainter {
+  @override
+  Map<int, Tween> buildTween() {
+    Map<int, Tween> map = super.buildTween();
+    // create your tween here, example:
+    map[100] = Tween<double>(begin: 1, end: 5);
+    return map;
+  }
+
+  @override
+  void paint(
+      {required Axis dividerAxis,
+      required bool resizable,
+      required bool highlighted,
+      required Canvas canvas,
+      required Size dividerSize,
+      required Map<int, dynamic> animatedValues}) {
+    super.paint(
+        dividerAxis: dividerAxis,
+        resizable: resizable,
+        highlighted: highlighted,
+        canvas: canvas,
+        dividerSize: dividerSize,
+        animatedValues: animatedValues);
+    double myAnimatedValue = animatedValues[100];
+    // ...
+  }
+}
+```
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(dividerPainter: MyDividerPainter()));
+```
