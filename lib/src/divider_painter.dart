@@ -75,6 +75,7 @@ class DividerPainters {
   }
 
   /// Builds a grooved divider painter.
+  /// The [count] parameters defines the number of grooved for each side of the axis.
   static DividerPainter grooved2(
       {double size = 4,
       Color? backgroundColor,
@@ -83,11 +84,11 @@ class DividerPainters {
       Duration animationDuration = DividerPainter.defaultAnimationDuration,
       Color color = Colors.black38,
       double gap = 5,
-      int count = 4,
+      int count = 7,
       Color? highlightedColor = Colors.black,
       StrokeCap strokeCap = StrokeCap.round,
       double thickness = 2,
-      int? highlightedCount = 7}) {
+      int? highlightedCount = 13}) {
     return _GroovedDividerPainter2(
         size: size,
         backgroundColor: backgroundColor,
@@ -432,15 +433,23 @@ class _GroovedDividerPainter2 extends DividerPainter {
     if (gap <= 0) {
       throw Exception('The gap parameter must be positive: $gap');
     }
+    if (count.isEven) {
+      throw Exception('The count parameter must be odd');
+    }
     if (count < 1) {
       throw Exception('The count parameter must be bigger than 1: $count');
     }
     if (thickness <= 0) {
       throw Exception('The thickness parameter must be positive: $thickness');
     }
-    if (highlightedCount != null && highlightedCount! < 1) {
-      throw Exception(
-          'The highlightedCount parameter must be bigger than 1: $highlightedCount');
+    if (highlightedCount != null) {
+      if (highlightedCount!.isEven) {
+        throw Exception('The highlightedCount parameter must be odd');
+      }
+      if (highlightedCount! < 1) {
+        throw Exception(
+            'The highlightedCount parameter must be bigger than 1: $highlightedCount');
+      }
     }
   }
 
@@ -481,6 +490,9 @@ class _GroovedDividerPainter2 extends DividerPainter {
       int _count = count;
       if (animationEnabled && animatedValues.containsKey(countKey)) {
         _count = animatedValues[countKey];
+        if (_count.isEven) {
+          _count--;
+        }
       } else if (highlighted && highlightedCount != null) {
         _count = highlightedCount!;
       }
@@ -491,25 +503,21 @@ class _GroovedDividerPainter2 extends DividerPainter {
         ..strokeWidth = thickness
         ..strokeCap = strokeCap
         ..isAntiAlias = true;
+
+      double groovesSize = (_count - 1) * gap;
       if (dividerAxis == Axis.vertical) {
-        double startY = dividerSize.height / 2;
+        double startY = (dividerSize.height - groovesSize) / 2;
         double x = (dividerSize.width - size) / 2;
-        canvas.drawLine(Offset(x, startY), Offset(x + size, startY), paint);
-        for (int i = 1; i < _count; i++) {
+        for (int i = 0; i < _count; i++) {
           canvas.drawLine(Offset(x, startY + (gap * i)),
               Offset(x + size, startY + (gap * i)), paint);
-          canvas.drawLine(Offset(x, startY - (gap * i)),
-              Offset(x + size, startY - (gap * i)), paint);
         }
       } else {
-        double startX = dividerSize.width / 2;
+        double startX = (dividerSize.width - groovesSize) / 2;
         double y = (dividerSize.height - size) / 2;
-        canvas.drawLine(Offset(startX, y), Offset(startX, y + size), paint);
-        for (int i = 1; i < _count; i++) {
+        for (int i = 0; i < _count; i++) {
           canvas.drawLine(Offset(startX + (gap * i), y),
               Offset(startX + (gap * i), y + size), paint);
-          canvas.drawLine(Offset(startX - (gap * i), y),
-              Offset(startX - (gap * i), y + size), paint);
         }
       }
     }
