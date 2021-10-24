@@ -1,3 +1,8 @@
+## 1.9.0
+
+* Facilitate the use of `MultiSplitView` in `StatelessWidget` in order to maintain the state of weights
+  * The `weights` parameter of `MultiSplitViewController` has been changed to `initialWeights`
+  
 ## 1.8.0
 
 * Default divider thickness value has been changed to 10
@@ -13,13 +18,13 @@
 ## 1.7.1
 
 * Bugfix/Enhancement
-  * Prevent *MultiSplitViewController* sharing between *MultiSplitView* instances to avoid unstable state
+  * Prevent `MultiSplitViewController` sharing between `MultiSplitView` instances to avoid unstable state
 
 ## 1.7.0
 
 * API changes
-  * *MultiSplitViewTheme* has been added following the same pattern used by Flutter's Theme
-  * Divider configurations has been moved to *MultiSplitViewThemeData*
+  * `MultiSplitViewTheme` has been added following the same pattern used by Flutter's Theme
+  * Divider configurations has been moved to `MultiSplitViewThemeData`
 
 ## 1.6.0
 
@@ -56,7 +61,7 @@
 
 ## 1.2.0
 
-* Allow to set minimum child size in pixels
+* Allow setting minimum child size in pixels
 
 ## 1.1.0+2
 
@@ -76,8 +81,8 @@
 
 ## 0.0.3
 
-* *WeightController* renamed to *MultiSplitViewController*
-* Adding content to the *README*
+* `WeightController` renamed to `MultiSplitViewController`
+* Adding content to the README
 
 ## 0.0.2
 
@@ -85,4 +90,4 @@
 
 ## 0.0.1
 
-* Initial version
+* Initial release

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -90,10 +91,11 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   @override
   void didUpdateWidget(MultiSplitView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != null) {
-      _controller = widget.controller!;
-    } else if (oldWidget.controller != null) {
-      _controller = oldWidget.controller!;
+    if (widget.controller != null &&
+        listEquals(_controller.initialWeights,
+                widget.controller!.initialWeights) ==
+            false) {
+      _controller.setInitialWeights(widget.controller!.initialWeights);
     }
     _stateHashCodeValidation();
   }

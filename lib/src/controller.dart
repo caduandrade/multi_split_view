@@ -9,24 +9,35 @@ import 'package:meta/meta.dart';
 class MultiSplitViewController {
   static const double _higherPrecision = 1.0000000000001;
 
-  MultiSplitViewController._(this._weights);
+  MultiSplitViewController._(this._weights, this._initialWeights);
 
   /// Creates an [MultiSplitViewController].
   ///
   /// The sum of the [weights] cannot exceed 1.
-  factory MultiSplitViewController({List<double>? weights}) {
-    if (weights == null) {
-      weights = [];
+  factory MultiSplitViewController({List<double>? initialWeights}) {
+    if (initialWeights == null) {
+      initialWeights = [];
     }
-    return MultiSplitViewController._(List.from(weights));
+    return MultiSplitViewController._(
+        List.from(initialWeights), List.from(initialWeights));
   }
 
   List<double> _weights;
-
   UnmodifiableListView<double> get weights => UnmodifiableListView(_weights);
 
+  List<double> _initialWeights;
+  UnmodifiableListView<double> get initialWeights =>
+      UnmodifiableListView(_initialWeights);
+
+  /// Gets the weight of a given widget.
   double getWeight(int index) {
     return _weights[index];
+  }
+
+  @internal
+  void setInitialWeights(List<double> weights) {
+    _weights = List.from(weights);
+    _initialWeights = List.from(weights);
   }
 
   @internal
