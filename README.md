@@ -31,6 +31,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     * [Custom painter](#divider---custom-painter)
     * [Divider - highlighted background color](#divider---highlighted-background-color)
     * [Dashed divider](#dashed-divider)
+      * [Customizations](#dashed-divider---customizations)
     * [Grooved divider 1](#grooved-divider-1)
     * [Grooved divider 2](#grooved-divider-2)
 
@@ -152,8 +153,8 @@ The `DividerPainters.background` allows setting the background color. The defaul
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
         data: MultiSplitViewThemeData(
-            dividerPainter: DividerPainters.dashed(
-                color: Colors.deepOrange, highlightedColor: Colors.black)));
+            dividerPainter: DividerPainters.background(
+                color: Colors.grey[200], highlightedColor: Colors.grey[800])));
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/highlighted_color_v1.gif)
@@ -171,6 +172,20 @@ The `DividerPainters.background` allows setting the background color. The defaul
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/dashed_divider_v1.gif)
+
+#### Dashed divider - Customizations
+
+```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.dashed(
+                gap: 30, size: 20, thickness: 3, highlightedThickness: 6)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/custom_dashed_divider_v1.png)
 
 ### Grooved divider 1
 
