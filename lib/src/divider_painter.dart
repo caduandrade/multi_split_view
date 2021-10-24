@@ -31,8 +31,7 @@ class DividerPainters {
       StrokeCap strokeCap = StrokeCap.square,
       double thickness = 1,
       double? highlightedThickness,
-      double? highlightedGap,
-      double? highlightedSize}) {
+      double? highlightedGap}) {
     return _DashedDividerPainter(
         size: size,
         gap: gap,
