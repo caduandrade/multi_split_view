@@ -33,7 +33,9 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     * [Dashed divider](#dashed-divider)
       * [Customizations](#dashed-divider---customizations)
     * [Grooved divider 1](#grooved-divider-1)
+      * [Customizations](#grooved-divider-1---customizations)
     * [Grooved divider 2](#grooved-divider-2)
+      * [Customizations](#grooved-divider-2---customizations)
 
 ## Horizontal
 
