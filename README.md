@@ -176,8 +176,6 @@ The `DividerPainters.background` allows setting the background color. The defaul
 #### Dashed divider - Customizations
 
 ```dart
-    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
-
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
         data: MultiSplitViewThemeData(
@@ -202,6 +200,21 @@ The `DividerPainters.background` allows setting the background color. The defaul
 
 ![](https://caduandrade.github.io/multi_split_view/grooved_divider_1_v1.gif)
 
+#### Grooved divider 1 - Customizations
+
+```dart
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.grooved1(
+                size: 5,
+                highlightedSize: 30,
+                thickness: 3,
+                highlightedThickness: 6)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_1_v1.png)
+
 ### Grooved divider 2
 
 ```dart
@@ -215,6 +228,22 @@ The `DividerPainters.background` allows setting the background color. The defaul
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/grooved_divider_2_v1.gif)
+
+#### Grooved divider 2 - Customizations
+
+```dart
+    MultiSplitViewTheme theme = MultiSplitViewTheme(
+        child: multiSplitView,
+        data: MultiSplitViewThemeData(
+            dividerPainter: DividerPainters.grooved2(
+                gap: 15,
+                thickness: 4,
+                count: 3,
+                highlightedCount: 9,
+                strokeCap: StrokeCap.square)));
+```
+
+![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_2_v1.png)
 
 ### Divider - Custom painter
 
