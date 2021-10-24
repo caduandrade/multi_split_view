@@ -2,6 +2,7 @@
 
 * Facilitate the use of `MultiSplitView` in `StatelessWidget` in order to maintain the state of weights
   * The `weights` parameter of `MultiSplitViewController` has been changed to `initialWeights`
+* Removal of unused `highlightedSize` parameter from `DividerPainters.dashed`
   
 ## 1.8.0
 

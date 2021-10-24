@@ -45,8 +45,7 @@ class DividerPainters {
         strokeCap: strokeCap,
         thickness: thickness,
         highlightedThickness: highlightedThickness,
-        highlightedGap: highlightedGap,
-        highlightedSize: highlightedSize);
+        highlightedGap: highlightedGap);
   }
 
   /// Builds a grooved divider painter.
@@ -179,8 +178,7 @@ class _DashedDividerPainter extends DividerPainter {
       required this.strokeCap,
       required this.thickness,
       this.highlightedThickness,
-      this.highlightedGap,
-      this.highlightedSize})
+      this.highlightedGap})
       : super(
             animationEnabled: animationEnabled,
             animationDuration: animationDuration,
@@ -203,14 +201,9 @@ class _DashedDividerPainter extends DividerPainter {
       throw Exception(
           'The highlightedGap parameter must be positive: $highlightedGap');
     }
-    if (highlightedSize != null && highlightedSize! <= 0) {
-      throw Exception(
-          'The highlightedSize parameter must be positive: $highlightedSize');
-    }
   }
 
   final double size;
-  final double? highlightedSize;
   final double gap;
   final double? highlightedGap;
   final Color color;
