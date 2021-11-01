@@ -159,6 +159,23 @@ class DividerPainter {
           Rect.fromLTWH(0, 0, dividerSize.width, dividerSize.height), paint);
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DividerPainter &&
+          runtimeType == other.runtimeType &&
+          animationEnabled == other.animationEnabled &&
+          backgroundColor == other.backgroundColor &&
+          highlightedBackgroundColor == other.highlightedBackgroundColor &&
+          animationDuration == other.animationDuration;
+
+  @override
+  int get hashCode =>
+      animationEnabled.hashCode ^
+      backgroundColor.hashCode ^
+      highlightedBackgroundColor.hashCode ^
+      animationDuration.hashCode;
 }
 
 /// Divider with dashes.
@@ -281,6 +298,33 @@ class _DashedDividerPainter extends DividerPainter {
     }
     return map;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is _DashedDividerPainter &&
+          runtimeType == other.runtimeType &&
+          size == other.size &&
+          gap == other.gap &&
+          highlightedGap == other.highlightedGap &&
+          color == other.color &&
+          highlightedColor == other.highlightedColor &&
+          strokeCap == other.strokeCap &&
+          thickness == other.thickness &&
+          highlightedThickness == other.highlightedThickness;
+
+  @override
+  int get hashCode =>
+      super.hashCode ^
+      size.hashCode ^
+      gap.hashCode ^
+      highlightedGap.hashCode ^
+      color.hashCode ^
+      highlightedColor.hashCode ^
+      strokeCap.hashCode ^
+      thickness.hashCode ^
+      highlightedThickness.hashCode;
 }
 
 /// Divider with grooves (style 1).
@@ -402,6 +446,31 @@ class _GroovedDividerPainter1 extends DividerPainter {
     }
     return map;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is _GroovedDividerPainter1 &&
+          runtimeType == other.runtimeType &&
+          size == other.size &&
+          highlightedSize == other.highlightedSize &&
+          color == other.color &&
+          highlightedColor == other.highlightedColor &&
+          strokeCap == other.strokeCap &&
+          thickness == other.thickness &&
+          highlightedThickness == other.highlightedThickness;
+
+  @override
+  int get hashCode =>
+      super.hashCode ^
+      size.hashCode ^
+      highlightedSize.hashCode ^
+      color.hashCode ^
+      highlightedColor.hashCode ^
+      strokeCap.hashCode ^
+      thickness.hashCode ^
+      highlightedThickness.hashCode;
 }
 
 /// Divider with grooves (style 2).
@@ -536,4 +605,31 @@ class _GroovedDividerPainter2 extends DividerPainter {
     }
     return map;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is _GroovedDividerPainter2 &&
+          runtimeType == other.runtimeType &&
+          size == other.size &&
+          gap == other.gap &&
+          count == other.count &&
+          highlightedCount == other.highlightedCount &&
+          color == other.color &&
+          highlightedColor == other.highlightedColor &&
+          strokeCap == other.strokeCap &&
+          thickness == other.thickness;
+
+  @override
+  int get hashCode =>
+      super.hashCode ^
+      size.hashCode ^
+      gap.hashCode ^
+      count.hashCode ^
+      highlightedCount.hashCode ^
+      color.hashCode ^
+      highlightedColor.hashCode ^
+      strokeCap.hashCode ^
+      thickness.hashCode;
 }

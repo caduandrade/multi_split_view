@@ -27,36 +27,20 @@ class DividerWidget extends StatefulWidget {
 
 /// The [DividerWidget] state.
 class _DividerWidgetState extends State<DividerWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? controller;
   Map<int, Animation> animations = Map<int, Animation>();
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.themeData.dividerPainter != null) {
-      controller = AnimationController(
-          duration: widget.themeData.dividerPainter!.animationDuration,
-          vsync: this);
-      DividerPainter dividerPainter = widget.themeData.dividerPainter!;
-
-      Map<int, Tween> tweenMap = dividerPainter.buildTween();
-      tweenMap.forEach((key, tween) {
-        animations[key] = tween.animate(controller!);
-      });
-
-      controller?.addListener(() {
-        setState(() {
-          // rebuilds
-        });
-      });
-    }
+    _initializeAnimations(null);
   }
 
   @override
   void didUpdateWidget(covariant DividerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _initializeAnimations(oldWidget);
     if (oldWidget.dragging && widget.dragging == false) {
       controller?.reverse();
     } else if (oldWidget.highlighted == false && widget.highlighted) {
@@ -64,6 +48,36 @@ class _DividerWidgetState extends State<DividerWidget>
     } else if (oldWidget.highlighted && widget.highlighted == false) {
       controller?.reverse();
     }
+  }
+
+  void _initializeAnimations(DividerWidget? oldWidget) {
+    if (widget.themeData.dividerPainter !=
+        oldWidget?.themeData.dividerPainter) {
+      controller?.removeListener(_rebuild);
+      controller?.dispose();
+      animations.clear();
+      controller = null;
+      if (widget.themeData.dividerPainter != null &&
+          widget.themeData.dividerPainter!.animationEnabled) {
+        controller = AnimationController(
+            duration: widget.themeData.dividerPainter!.animationDuration,
+            vsync: this);
+        DividerPainter dividerPainter = widget.themeData.dividerPainter!;
+
+        Map<int, Tween> tweenMap = dividerPainter.buildTween();
+        tweenMap.forEach((key, tween) {
+          animations[key] = tween.animate(controller!);
+        });
+
+        controller?.addListener(_rebuild);
+      }
+    }
+  }
+
+  void _rebuild() {
+    setState(() {
+      // rebuild
+    });
   }
 
   @override
