@@ -1,3 +1,8 @@
+## 1.9.1
+
+* Bugfix
+  * Rebuild the theme by changing the `animationEnabled` parameter has no effect
+  
 ## 1.9.0
 
 * Facilitate the use of `MultiSplitView` in `StatelessWidget` in order to maintain the state of weights
