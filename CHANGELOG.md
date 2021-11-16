@@ -1,3 +1,8 @@
+## 1.10.0
+
+* The `initialWeights` parameter has been moved to `MultiSplitView`.
+* Added `weights` parameter in the `MultiSplitViewController`.
+
 ## 1.9.1
 
 * Bugfix

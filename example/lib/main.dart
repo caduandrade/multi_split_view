@@ -35,6 +35,7 @@ class MultiSplitViewExample extends StatefulWidget {
 class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final int _max = 40;
   int _horizontalVisibleWidgets = 3;
+  MultiSplitViewController? _c;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +43,9 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         child: Row(children: [
           Text('Horizontal widgets: $_horizontalVisibleWidgets / $_max'),
           SizedBox(width: 16),
-          ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
+          ElevatedButton(child: Text('rebuild'), onPressed: _onAddButtonClick),
           SizedBox(width: 16),
-          ElevatedButton(child: Text('Remove'), onPressed: _onRemoveButtonClick)
+          ElevatedButton(child: Text('new controller e rebuild'), onPressed: _onRemoveButtonClick)
         ], crossAxisAlignment: CrossAxisAlignment.center),
         color: Colors.white,
         padding: EdgeInsets.all(8));
@@ -52,15 +53,17 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     List<Widget> children = List.empty(growable: true);
     for (int i = 0; i < _horizontalVisibleWidgets; i++) {
       Widget view = Container(
-        child: Center(child: Text("View " + (i + 1).toString())),
+        child: Center(child: TextFormField(controller: TextEditingController(text: "View " + (i + 1).toString()))),
         color: widget._colors[i % widget._colors.length],
       );
       children.add(view);
     }
 
-    MultiSplitView multiSplitView = MultiSplitView(
+
+
+    MultiSplitView multiSplitView = MultiSplitView(initialWeights: [.05],
         children: children,
-        controller: MultiSplitViewController(initialWeights: [.05, .1, .6]),
+        controller: _c,
         onSizeChange: _onSizeChange);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
@@ -81,13 +84,14 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onRemoveButtonClick() {
     setState(() {
-      _horizontalVisibleWidgets = max(0, _horizontalVisibleWidgets - 1);
+      _c=MultiSplitViewController();
+      //_horizontalVisibleWidgets = max(0, _horizontalVisibleWidgets - 1);
     });
   }
 
   _onAddButtonClick() {
     setState(() {
-      _horizontalVisibleWidgets = min(_max, _horizontalVisibleWidgets + 1);
+      //_horizontalVisibleWidgets = min(_max, _horizontalVisibleWidgets + 1);
     });
   }
 }

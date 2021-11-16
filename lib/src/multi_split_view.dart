@@ -19,6 +19,9 @@ class MultiSplitView extends StatefulWidget {
   ///
   /// The default value for [axis] argument is [Axis.horizontal].
   /// The [children] argument is required.
+  /// The sum of the [initialWeights] cannot exceed 1.
+  /// The [initialWeights] parameter will be ignored if the [controller]
+  /// has been provided.
   MultiSplitView(
       {Key? key,
       this.axis = MultiSplitView.defaultAxis,
@@ -27,8 +30,11 @@ class MultiSplitView extends StatefulWidget {
       this.minimalWeight,
       this.minimalSize,
       this.onSizeChange,
-      this.resizable = true})
-      : super(key: key) {
+      this.resizable = true,
+      List<double>? initialWeights})
+      : this.initialWeights =
+            initialWeights != null ? List.from(initialWeights) : null,
+        super(key: key) {
     if (minimalWeight != null &&
         (minimalWeight! < MultiSplitView.minimalWidgetWeightLowerLimit ||
             minimalWeight! > MultiSplitView.minimalWidgetWeightUpperLimit)) {
@@ -43,6 +49,7 @@ class MultiSplitView extends StatefulWidget {
   final Axis axis;
   final List<Widget> children;
   final MultiSplitViewController? controller;
+  final List<double>? initialWeights;
 
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
@@ -78,7 +85,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     super.initState();
     _controller = widget.controller != null
         ? widget.controller!
-        : MultiSplitViewController();
+        : MultiSplitViewController(weights: widget.initialWeights);
     _stateHashCodeValidation();
   }
 
@@ -91,13 +98,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   @override
   void didUpdateWidget(MultiSplitView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != null &&
-        listEquals(_controller.initialWeights,
-                widget.controller!.initialWeights) ==
-            false) {
-      _controller.setInitialWeights(widget.controller!.initialWeights);
+    if (oldWidget.controller != null) {
+      oldWidget.controller!.stateHashCode = null;
     }
-    _stateHashCodeValidation();
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+      _controller.stateHashCode = hashCode;
+    }
   }
 
   /// Updates and checks a controller's [stateHashCode] to identify if it is

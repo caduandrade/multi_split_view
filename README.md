@@ -66,11 +66,25 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ## Setting the weight
 
+#### Using with a Stateless
+
 ```dart
     // setting 10% of weight for the first child
     MultiSplitView multiSplitView = MultiSplitView(
-        children: [child1, child2, child3],
-        controller: MultiSplitViewController(initialWeights: [0.1]));
+        children: [child1, child2, child3], initialWeights: [0.1]);
+```
+
+#### Using with a Stateful
+
+```dart
+  MultiSplitViewController _controller =
+      MultiSplitViewController(weights: [0.1]);
+```
+
+```dart
+    // setting 10% of weight for the first child
+    MultiSplitView multiSplitView = MultiSplitView(
+        children: [child1, child2, child3], controller: _controller);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/horizontal_weight_v1.png)
