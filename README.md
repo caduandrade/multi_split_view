@@ -66,7 +66,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ## Setting the weight
 
-#### Using with a Stateless
+#### Using in a StatelessWidget
 
 ```dart
     // setting 10% of weight for the first child
@@ -74,7 +74,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
         children: [child1, child2, child3], initialWeights: [0.1]);
 ```
 
-#### Using with a Stateful
+#### Using in a StatefulWidget
 
 ```dart
   MultiSplitViewController _controller =
