@@ -429,11 +429,18 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   Positioned _buildPositioned(
       {required _DistanceFrom distance, required Widget child}) {
     return Positioned(
-        top: distance.top,
-        left: distance.left,
-        right: distance.right,
-        bottom: distance.bottom,
+        top: _convert(distance.top),
+        left: _convert(distance.left),
+        right: _convert(distance.right),
+        bottom: _convert(distance.bottom),
         child: child);
+  }
+
+  /// This is a workaround for https://github.com/flutter/flutter/issues/14288
+  /// The problem minimizes by avoiding the use of coordinates with
+  /// decimal values.
+  double _convert(double value) {
+    return value.roundToDouble();
   }
 }
 
