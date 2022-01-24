@@ -1,7 +1,5 @@
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
@@ -28,6 +26,7 @@ class MultiSplitView extends StatefulWidget {
       required this.children,
       this.controller,
       this.minimalWeight,
+      this.dividerBuilder,
       this.minimalSize,
       this.onSizeChange,
       this.resizable = true,
@@ -50,6 +49,10 @@ class MultiSplitView extends StatefulWidget {
   final List<Widget> children;
   final MultiSplitViewController? controller;
   final List<double>? initialWeights;
+
+  /// Defines a builder of dividers. Overrides the default divider
+  /// created by the theme.
+  final DividerBuilder? dividerBuilder;
 
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
@@ -213,13 +216,21 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.right =
             childDistance.right - themeData.dividerThickness;
 
-        Widget dividerWidget = DividerWidget(
-            axis: Axis.vertical,
-            index: childIndex,
-            themeData: themeData,
-            highlighted: highlighted,
-            resizable: widget.resizable,
-            dragging: _draggingDividerIndex == childIndex);
+        Widget dividerWidget = widget.dividerBuilder != null
+            ? widget.dividerBuilder!(
+                Axis.vertical,
+                childIndex,
+                widget.resizable,
+                _draggingDividerIndex == childIndex,
+                highlighted,
+                themeData)
+            : DividerWidget(
+                axis: Axis.vertical,
+                index: childIndex,
+                themeData: themeData,
+                highlighted: highlighted,
+                resizable: widget.resizable,
+                dragging: _draggingDividerIndex == childIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -290,13 +301,21 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         dividerDistance.bottom =
             childDistance.bottom - themeData.dividerThickness;
 
-        Widget dividerWidget = DividerWidget(
-            axis: Axis.horizontal,
-            index: childIndex,
-            themeData: themeData,
-            highlighted: highlighted,
-            resizable: widget.resizable,
-            dragging: _draggingDividerIndex == childIndex);
+        Widget dividerWidget = widget.dividerBuilder != null
+            ? widget.dividerBuilder!(
+                Axis.horizontal,
+                childIndex,
+                widget.resizable,
+                _draggingDividerIndex == childIndex,
+                highlighted,
+                themeData)
+            : DividerWidget(
+                axis: Axis.horizontal,
+                index: childIndex,
+                themeData: themeData,
+                highlighted: highlighted,
+                resizable: widget.resizable,
+                dragging: _draggingDividerIndex == childIndex);
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -428,4 +447,7 @@ class _DistanceFrom {
   _DistanceFrom({this.top = 0, this.left = 0, this.right = 0, this.bottom = 0});
 }
 
-typedef OnSizeChange = Function(int childIndex1, int childIndex2);
+typedef OnSizeChange = void Function(int childIndex1, int childIndex2);
+
+typedef DividerBuilder = Widget Function(Axis axis, int index, bool resizable,
+    bool dragging, bool highlighted, MultiSplitViewThemeData themeData);
