@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 /// The divider painter factory.
 class DividerPainters {
@@ -77,7 +74,7 @@ class DividerPainters {
   /// Builds a grooved divider painter.
   /// The [count] parameters defines the number of grooved for each side of the axis.
   static DividerPainter grooved2(
-      {double size = 4,
+      {double size = 3,
       Color? backgroundColor,
       Color? highlightedBackgroundColor,
       bool animationEnabled = DividerPainter.defaultAnimationEnabled,
