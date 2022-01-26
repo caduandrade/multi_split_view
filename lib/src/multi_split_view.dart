@@ -30,6 +30,7 @@ class MultiSplitView extends StatefulWidget {
       this.minimalSize,
       this.onSizeChange,
       this.resizable = true,
+      this.antiAliasingWorkaround = true,
       List<double>? initialWeights})
       : this.initialWeights =
             initialWeights != null ? List.from(initialWeights) : null,
@@ -68,6 +69,9 @@ class MultiSplitView extends StatefulWidget {
   final double? minimalSize;
   // Function to listen any children size change.
   final OnSizeChange? onSizeChange;
+
+  /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
+  final bool antiAliasingWorkaround;
 
   @override
   State createState() => _MultiSplitViewState();
@@ -445,10 +449,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// The problem minimizes by avoiding the use of coordinates with
   /// decimal values.
   double _convert(double value, bool last) {
-    if (last) {
-      return value.roundToDouble();
+    if (widget.antiAliasingWorkaround) {
+      if (last) {
+        return value.roundToDouble();
+      }
+      return value.floorToDouble();
     }
-    return value.floorToDouble();
+    return value;
   }
 }
 
