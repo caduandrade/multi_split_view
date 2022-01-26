@@ -292,7 +292,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           themeData: themeData);
 
       children.add(_buildPositioned(
-          distance: childDistance, child: widget.children[childIndex]));
+          distance: childDistance,
+          child: widget.children[childIndex],
+          last: childIndex == widget.children.length - 1));
 
       if (childIndex < widget.children.length - 1) {
         double childSize = totalChildrenSize * childWeight;
@@ -428,20 +430,25 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   /// Builds a [Positioned] using the [_DistanceFrom] parameters.
   Positioned _buildPositioned(
-      {required _DistanceFrom distance, required Widget child}) {
+      {required _DistanceFrom distance,
+      required Widget child,
+      bool last = false}) {
     return Positioned(
-        top: _convert(distance.top),
-        left: _convert(distance.left),
-        right: _convert(distance.right),
-        bottom: _convert(distance.bottom),
+        top: _convert(distance.top, last),
+        left: _convert(distance.left, last),
+        right: _convert(distance.right, last),
+        bottom: _convert(distance.bottom, last),
         child: child);
   }
 
   /// This is a workaround for https://github.com/flutter/flutter/issues/14288
   /// The problem minimizes by avoiding the use of coordinates with
   /// decimal values.
-  double _convert(double value) {
-    return value.roundToDouble();
+  double _convert(double value, bool last) {
+    if (last) {
+      return value.roundToDouble();
+    }
+    return value.floorToDouble();
   }
 }
 
