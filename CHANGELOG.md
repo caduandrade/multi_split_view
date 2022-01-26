@@ -1,6 +1,6 @@
 ## 1.11.0
 
-* Divider custom widget
+* Widget as a custom divider
 * Workaround for Flutter's anti-aliasing issue as https://github.com/flutter/flutter/issues/14288
 
 ## 1.10.0+1
