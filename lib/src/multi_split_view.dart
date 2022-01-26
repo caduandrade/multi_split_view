@@ -173,7 +173,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// Updates the hover divider index.
   void _updatesHoverDividerIndex(
       {int? index, required MultiSplitViewThemeData themeData}) {
-    if (_hoverDividerIndex != index && themeData.dividerPainter != null) {
+    if (_hoverDividerIndex != index &&
+        (themeData.dividerPainter != null || widget.dividerBuilder != null)) {
       setState(() {
         _hoverDividerIndex = index;
       });
