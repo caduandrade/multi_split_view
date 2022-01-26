@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
@@ -25,7 +25,8 @@ class MultiSplitViewExample extends StatefulWidget {
     Colors.green,
     Colors.purple,
     Colors.brown,
-    Colors.pinkAccent
+    Colors.pinkAccent,
+    Colors.orange
   ];
 
   @override
@@ -35,7 +36,6 @@ class MultiSplitViewExample extends StatefulWidget {
 class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final int _max = 40;
   int _horizontalVisibleWidgets = 3;
-  MultiSplitViewController? _c;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +43,9 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         child: Row(children: [
           Text('Horizontal widgets: $_horizontalVisibleWidgets / $_max'),
           SizedBox(width: 16),
-          ElevatedButton(child: Text('rebuild'), onPressed: _onAddButtonClick),
+          ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
           SizedBox(width: 16),
-          ElevatedButton(child: Text('new controller e rebuild'), onPressed: _onRemoveButtonClick)
+          ElevatedButton(child: Text('Remove'), onPressed: _onRemoveButtonClick)
         ], crossAxisAlignment: CrossAxisAlignment.center),
         color: Colors.white,
         padding: EdgeInsets.all(8));
@@ -53,18 +53,13 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     List<Widget> children = List.empty(growable: true);
     for (int i = 0; i < _horizontalVisibleWidgets; i++) {
       Widget view = Container(
-        child: Center(child: TextFormField(controller: TextEditingController(text: "View " + (i + 1).toString()))),
         color: widget._colors[i % widget._colors.length],
       );
       children.add(view);
     }
 
-
-
-    MultiSplitView multiSplitView = MultiSplitView(initialWeights: [.05],
-        children: children,
-        controller: _c,
-        onSizeChange: _onSizeChange);
+    MultiSplitView multiSplitView =
+        MultiSplitView(children: children, onSizeChange: _onSizeChange);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
@@ -79,19 +74,18 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onSizeChange(int childIndex1, int childIndex2) {
-    // print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
+    print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
   }
 
   _onRemoveButtonClick() {
     setState(() {
-      _c=MultiSplitViewController();
-      //_horizontalVisibleWidgets = max(0, _horizontalVisibleWidgets - 1);
+      _horizontalVisibleWidgets = max(0, _horizontalVisibleWidgets - 1);
     });
   }
 
   _onAddButtonClick() {
     setState(() {
-      //_horizontalVisibleWidgets = min(_max, _horizontalVisibleWidgets + 1);
+      _horizontalVisibleWidgets = min(_max, _horizontalVisibleWidgets + 1);
     });
   }
 }
