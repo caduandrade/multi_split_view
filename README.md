@@ -26,7 +26,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
   * [Listener](#listener)
 * Divider
   * [Thickness](#divider-thickness)
-  * [Custom Widget](#divider-custom-widget)
+  * [Custom widget](#widget-as-a-custom-divider)
   * [Divider painters](#divider-painters)
     * [Background color](#divider---background-color)
     * [Custom painter](#divider---custom-painter)
@@ -141,7 +141,7 @@ The size will be converted into weight and will respect the limit defined by the
 
 ![](https://caduandrade.github.io/multi_split_view/divider_thickness_v1.png)
 
-## Divider Custom Widget
+## Widget as a custom divider
 
 ```dart
     MultiSplitView multiSplitView = MultiSplitView(
