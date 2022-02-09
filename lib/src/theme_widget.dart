@@ -24,7 +24,7 @@ class MultiSplitViewTheme extends StatelessWidget {
   static final MultiSplitViewThemeData _defaultTheme =
       MultiSplitViewThemeData();
 
-  /// The data from the closest [TabbedViewTheme] instance that encloses the given
+  /// The data from the closest [MultiSplitViewTheme] instance that encloses the given
   /// context.
   static MultiSplitViewThemeData of(BuildContext context) {
     final _InheritedTheme? inheritedTheme =
