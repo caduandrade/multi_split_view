@@ -1,3 +1,7 @@
+## 1.11.0+1
+
+* Updating the README
+
 ## 1.11.0
 
 * Widget as a custom divider

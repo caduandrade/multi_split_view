@@ -64,7 +64,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
         data: MultiSplitViewThemeData(
-            dividerPainter: DividerPainters.grooved1()));
+            dividerPainter: DividerPainters.grooved2()));
 
     return Scaffold(
         appBar: AppBar(title: Text('Multi Split View Example')),

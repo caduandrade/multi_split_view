@@ -335,16 +335,10 @@ class MyDividerPainter extends DividerPainter {
 
 [bc1qhqy84y45gya58gtfkvrvass38k4mcyqnav803h](https://www.blockchain.com/pt/btc/address/bc1qhqy84y45gya58gtfkvrvass38k4mcyqnav803h)
 
-![](https://dev.caduandrade.net/bitcoin.png)
-
 ### Ethereum (ERC-20) or Binance Smart Chain (BEP-20)
 
 [0x9eB815FD4c88A53322304143A9Aa8733D3369985](https://etherscan.io/address/0x9eb815fd4c88a53322304143a9aa8733d3369985)
 
-![](https://dev.caduandrade.net/ethandbsc.png)
-
 ### Helium
 
 [13A2fDqoApT9VnoxFjHWcy8kPQgVFiVnzps32MRAdpTzvs3rq68](https://explorer.helium.com/accounts/13A2fDqoApT9VnoxFjHWcy8kPQgVFiVnzps32MRAdpTzvs3rq68)
-
-![](https://dev.caduandrade.net/helium.png)
