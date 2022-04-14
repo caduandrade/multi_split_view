@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:multi_split_view/src/controller.dart';
+import 'package:multi_split_view/multi_split_view.dart';
 
 const double delta = 0.00005;
 

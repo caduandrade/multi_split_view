@@ -1,3 +1,9 @@
+## 1.12.0
+
+* `MultiSplitViewController`
+  * Removing the internal `setWeight` method.
+  * Adding Setter to the `weights`.
+
 ## 1.11.0+1
 
 * Updating the README

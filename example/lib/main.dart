@@ -50,7 +50,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         color: Colors.white,
         padding: EdgeInsets.all(8));
 
-    List<Widget> children = List.empty(growable: true);
+    List<Widget> children = [];
     for (int i = 0; i < _horizontalVisibleWidgets; i++) {
       Widget view = Container(
         color: widget._colors[i % widget._colors.length],

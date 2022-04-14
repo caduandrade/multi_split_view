@@ -19,7 +19,8 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 * [Vertical](#vertical)
 * [Horizontal and vertical](#horizontal-and-vertical)
 * Size
-  * [Setting the weight](#setting-the-weight)
+  * [Setting the initial weights](#setting-the-initial-weights)
+  * [Changing the weights programmatically](#changing-the-weights-programmatically)
   * [Minimal child weight](#minimal-child-weight)
   * [Minimal child size in pixels](#minimal-child-size-in-pixels)
   * [Resizable](#resizable)
@@ -66,7 +67,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![](https://caduandrade.github.io/multi_split_view/horizontal_vertical_v1.png)
 
-## Setting the weight
+## Setting the initial weights
 
 #### Using in a StatelessWidget
 
@@ -90,6 +91,12 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/horizontal_weight_v1.png)
+
+## Changing the weights programmatically
+
+```dart
+    controller.weights = [0.3, 0.7];
+```
 
 ## Minimal child weight
 
@@ -338,6 +345,10 @@ class MyDividerPainter extends DividerPainter {
 ### Ethereum (ERC-20) or Binance Smart Chain (BEP-20)
 
 [0x9eB815FD4c88A53322304143A9Aa8733D3369985](https://etherscan.io/address/0x9eb815fd4c88a53322304143a9aa8733d3369985)
+
+### Solana
+
+[7vp45LoQXtLYFXXKx8wQGnzYmhcnKo1TmfqUgMX45Ad8](https://explorer.solana.com/address/7vp45LoQXtLYFXXKx8wQGnzYmhcnKo1TmfqUgMX45Ad8)
 
 ### Helium
 

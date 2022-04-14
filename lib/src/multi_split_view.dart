@@ -1,10 +1,127 @@
+import 'dart:collection';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
+
+/// Controller for [MultiSplitView].
+///
+/// It is not allowed to share this controller between [MultiSplitView]
+/// instances.
+class MultiSplitViewController extends ChangeNotifier {
+  static const double _higherPrecision = 1.0000000000001;
+
+  MultiSplitViewController._(this._weights);
+
+  /// Creates an [MultiSplitViewController].
+  ///
+  /// The sum of the [weights] cannot exceed 1.
+  factory MultiSplitViewController({List<double>? weights}) {
+    return MultiSplitViewController._(
+        weights != null ? List.from(weights) : []);
+  }
+
+  List<double> _weights;
+  UnmodifiableListView<double> get weights => UnmodifiableListView(_weights);
+
+  set weights(List<double> weights) {
+    _weights = List.from(weights);
+    notifyListeners();
+  }
+
+  /// Gets the weight of a given widget.
+  double getWeight(int index) {
+    return _weights[index];
+  }
+
+  void _setWeight(int index, double value) {
+    if (value < 0) {
+      throw Exception('Weight needs to be positive: $value');
+    }
+    _weights[index] = value;
+  }
+
+  /// Adjusts the weights according to the number of children.
+  /// New children will receive a percentage of current children.
+  /// Excluded children will distribute their weights to the existing ones.
+  @visibleForTesting
+  void validateAndAdjust(int childrenCount) {
+    childrenCount = math.max(childrenCount, 0);
+
+    double weightSum = 0;
+    for (int i = 0; i < _weights.length; i++) {
+      double weight = _weights[i];
+      if (weight <= 0) {
+        throw Exception('Weight needs to be positive: $weight');
+      }
+      weightSum += weight;
+    }
+
+    if (weightSum > MultiSplitViewController._higherPrecision) {
+      throw Exception('The sum of the weights cannot exceed 1: $weightSum');
+    }
+
+    if (_weights.length == childrenCount) {
+      _fillWeightsEqually(childrenCount, weightSum);
+      return;
+    } else if (_weights.length < childrenCount) {
+      // children has been added.
+      int addedChildrenCount = childrenCount - _weights.length;
+      double newWeight = 0;
+      if (weightSum < 1) {
+        newWeight = (1 - weightSum) / addedChildrenCount;
+      } else {
+        for (int i = 0; i < _weights.length; i++) {
+          double r = _weights[i] / childrenCount;
+          _weights[i] -= r;
+          newWeight += r / addedChildrenCount;
+        }
+      }
+      for (int i = 0; i < addedChildrenCount; i++) {
+        _weights.add(newWeight);
+      }
+    } else {
+      // children has been removed.
+      double removedWeight = 0;
+      while (_weights.length > childrenCount) {
+        removedWeight += _weights.removeLast();
+      }
+      if (_weights.isNotEmpty) {
+        double w = removedWeight / _weights.length;
+        for (int i = 0; i < _weights.length; i++) {
+          _weights[i] += w;
+        }
+      }
+    }
+
+    weightSum = 0;
+    _weights.forEach((weight) {
+      weightSum += weight;
+    });
+
+    _fillWeightsEqually(childrenCount, weightSum);
+  }
+
+  /// Fills equally the missing weights
+  void _fillWeightsEqually(int childrenCount, double weightSum) {
+    if (weightSum < 1) {
+      double availableWeight = 1 - weightSum;
+      if (availableWeight > 0) {
+        double w = availableWeight / childrenCount;
+        for (int i = 0; i < _weights.length; i++) {
+          _weights[i] += w;
+        }
+      }
+    }
+  }
+
+  /// Stores the hashCode of the state to identify if a controller instance
+  /// is being shared by multiple [MultiSplitView]. The application must not
+  /// manipulate this attribute, it is for the internal use of the package.
+  int? _stateHashCode;
+}
 
 /// A widget to provides horizontal or vertical multiple split view.
 class MultiSplitView extends StatefulWidget {
@@ -94,35 +211,52 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         ? widget.controller!
         : MultiSplitViewController(weights: widget.initialWeights);
     _stateHashCodeValidation();
+    _controller._stateHashCode = hashCode;
+    _controller.addListener(_rebuild);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_rebuild);
+    super.dispose();
+  }
+
+  void _rebuild() {
+    setState(() {});
   }
 
   @override
   void deactivate() {
-    _controller.stateHashCode = null;
+    _controller._stateHashCode = null;
     super.deactivate();
   }
 
   @override
   void didUpdateWidget(MultiSplitView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != null) {
-      oldWidget.controller!.stateHashCode = null;
-    }
-    if (widget.controller != null) {
-      _controller = widget.controller!;
-      _controller.stateHashCode = hashCode;
+
+    if (widget.controller != _controller) {
+      List<double> weights = _controller.weights;
+      _controller._stateHashCode = null;
+      _controller.removeListener(_rebuild);
+
+      _controller = widget.controller != null
+          ? widget.controller!
+          : MultiSplitViewController(weights: weights);
+      _stateHashCodeValidation();
+      _controller._stateHashCode = hashCode;
+      _controller.addListener(_rebuild);
     }
   }
 
-  /// Updates and checks a controller's [stateHashCode] to identify if it is
+  /// Checks a controller's [_stateHashCode] to identify if it is
   /// not being shared by another instance of [MultiSplitView].
   void _stateHashCodeValidation() {
-    if (_controller.stateHashCode != null &&
-        _controller.stateHashCode != hashCode) {
+    if (_controller._stateHashCode != null &&
+        _controller._stateHashCode != hashCode) {
       throw StateError(
           'It is not allowed to share MultiSplitViewController between MultiSplitView instances.');
     }
-    _controller.stateHashCode = hashCode;
   }
 
   @override
@@ -407,8 +541,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
     if (_controller.getWeight(childIndex) != newChild1Weight) {
       setState(() {
-        _controller.setWeight(childIndex, newChild1Weight);
-        _controller.setWeight(childIndex + 1, newChild2Weight);
+        _controller._setWeight(childIndex, newChild1Weight);
+        _controller._setWeight(childIndex + 1, newChild2Weight);
       });
       if (widget.onSizeChange != null) {
         widget.onSizeChange!(childIndex, childIndex + 1);
