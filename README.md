@@ -130,8 +130,9 @@ The size will be converted into weight and will respect the limit defined by the
 The value `zero` is ignored and indicates that no size has been set.
 
 ```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], globalMinimalSize: 100),
+    MultiSplitView multiSplitView =
+        MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalSizes: [150, 0]),
       MultiSplitView(children: [child3, child4])
     ]);
 ```
