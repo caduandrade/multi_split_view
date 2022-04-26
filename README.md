@@ -103,11 +103,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 ## Minimal child weight
 
 ```dart
-    MultiSplitView multiSplitView =
-        MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalWeights: [.25, .25]),
-      MultiSplitView(children: [child3, child4])
-    ]);
+    MultiSplitView(children: [child1, child2], minimalWeights: [.25, .25]);
 ```
 
 ## Global minimal children weight
@@ -130,11 +126,7 @@ The size will be converted into weight and will respect the limit defined by the
 The value `zero` is ignored and indicates that no size has been set.
 
 ```dart
-    MultiSplitView multiSplitView =
-        MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalSizes: [150, 0]),
-      MultiSplitView(children: [child3, child4])
-    ]);
+    MultiSplitView(children: [child1, child2], minimalSizes: [150, 0]);
 ```
 
 ## Global minimal children size in pixels
@@ -143,10 +135,7 @@ Used if `minimalSizes` has not been set.
 The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
 
 ```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], globalMinimalSize: 100),
-      MultiSplitView(children: [child3, child4])
-    ]);
+    MultiSplitView(children: [child1, child2], globalMinimalSize: 100);
 ```
 
 ## Resizable
