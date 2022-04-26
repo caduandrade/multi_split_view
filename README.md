@@ -127,6 +127,7 @@ Used if `minimalWeights` has not been set.
 
 Used if `globalMinimalWeight` has not been set.
 The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
+The value `zero` is ignored and indicates that no size has been set.
 
 ```dart
     MultiSplitView(axis: Axis.vertical, children: [
