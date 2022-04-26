@@ -22,7 +22,9 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
   * [Setting the initial weights](#setting-the-initial-weights)
   * [Changing the weights programmatically](#changing-the-weights-programmatically)
   * [Minimal child weight](#minimal-child-weight)
+  * [Global minimal children weight](#global-minimal-children-weight)
   * [Minimal child size in pixels](#minimal-child-size-in-pixels)
+  * [Global minimal children size in pixels](#global-minimal-children-size-in-pixels)
   * [Resizable](#resizable)
   * [Listener](#listener)
 * Divider
@@ -101,22 +103,46 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 ## Minimal child weight
 
 ```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalWeight: .40),
+    MultiSplitView multiSplitView =
+        MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], minimalWeights: [.25, .25]),
       MultiSplitView(children: [child3, child4])
     ]);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/minimal_weight_v1.gif)
+## Global minimal children weight
+
+Used if `minimalWeights` has not been set.
+
+```dart
+    MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], globalMinimalWeight: .40),
+      MultiSplitView(children: [child3, child4])
+    ]);
+```
+
+![](https://caduandrade.github.io/multi_split_view/global_minimal_weight_v1.gif)
 
 ## Minimal child size in pixels
 
-Used if `minimalWeight` has not been set.
+Used if `globalMinimalWeight` has not been set.
 The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
 
 ```dart
     MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], minimalSize: 100),
+      MultiSplitView(children: [child1, child2], globalMinimalSize: 100),
+      MultiSplitView(children: [child3, child4])
+    ]);
+```
+
+## Global minimal children size in pixels
+
+Used if `minimalSizes` has not been set.
+The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
+
+```dart
+    MultiSplitView(axis: Axis.vertical, children: [
+      MultiSplitView(children: [child1, child2], globalMinimalSize: 100),
       MultiSplitView(children: [child3, child4])
     ]);
 ```

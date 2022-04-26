@@ -1,3 +1,11 @@
+## 1.13.0
+
+* `MultiSplitView`
+  * `minimalWeight` renamed to `globalMinimalWeight`
+  * `minimalSize` renamed to `globalMinimalSize`
+  * `minimalWeights` has been added to set individual child minimal weights.
+  * `minimalSize` has been added to set individual child minimal sizes.
+
 ## 1.12.0
 
 * `MultiSplitViewController`
