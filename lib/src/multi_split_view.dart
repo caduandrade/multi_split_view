@@ -142,24 +142,37 @@ class MultiSplitView extends StatefulWidget {
       this.axis = MultiSplitView.defaultAxis,
       required this.children,
       this.controller,
-      this.minimalWeight,
+      this.globalMinimalWeight,
+      List<double>? minimalWeights,
       this.dividerBuilder,
-      this.minimalSize,
+      this.globalMinimalSize,
+      List<double>? minimalSizes,
       this.onSizeChange,
       this.resizable = true,
       this.antiAliasingWorkaround = true,
       List<double>? initialWeights})
       : this.initialWeights =
             initialWeights != null ? List.from(initialWeights) : null,
+        this.minimalWeights =
+            minimalWeights != null ? List.from(minimalWeights) : null,
+        this.minimalSizes =
+            minimalSizes != null ? List.from(minimalSizes) : null,
         super(key: key) {
-    if (minimalWeight != null &&
-        (minimalWeight! < MultiSplitView.minimalWidgetWeightLowerLimit ||
-            minimalWeight! > MultiSplitView.minimalWidgetWeightUpperLimit)) {
-      throw Exception('The minimum weight must be between ' +
-          MultiSplitView.minimalWidgetWeightLowerLimit.toString() +
-          ' and ' +
-          MultiSplitView.minimalWidgetWeightUpperLimit.toString() +
-          '.');
+    if (globalMinimalWeight != null &&
+        (globalMinimalWeight! < MultiSplitView.minimalWidgetWeightLowerLimit ||
+            globalMinimalWeight! >
+                MultiSplitView.minimalWidgetWeightUpperLimit)) {
+      throw Exception(
+          'The global minimum weight must be between ${MultiSplitView.minimalWidgetWeightLowerLimit} and ${MultiSplitView.minimalWidgetWeightUpperLimit}.');
+    }
+    if (minimalWeights != null) {
+      minimalWeights.forEach((value) {
+        if (value < MultiSplitView.minimalWidgetWeightLowerLimit ||
+            value > MultiSplitView.minimalWidgetWeightUpperLimit) {
+          throw Exception(
+              'The minimum weight must be between ${MultiSplitView.minimalWidgetWeightLowerLimit} and ${MultiSplitView.minimalWidgetWeightUpperLimit}.');
+        }
+      });
     }
   }
 
@@ -175,16 +188,30 @@ class MultiSplitView extends StatefulWidget {
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
 
-  /// Defines the minimal weight for each child. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
-  final double? minimalWeight;
+  /// Defines the global minimal weight for all children. The default value is defined by [MultiSplitView.defaultMinimalWeight] constant.
+  /// It will be used if [minimalWeights] has not been set.
+  final double? globalMinimalWeight;
 
-  /// Defines the minimal size in pixels for each child.
-  /// It will be used if [minimalWeight] has not been set.
+  /// Defines the minimal weight for each child.
+  final List<double>? minimalWeights;
+
+  /// Defines the global minimal size in pixels for all children.
+  /// It will be used if [minimalSizes] has not been set.
   /// The size will be converted into weight and will respect the limit
   /// defined by the [MultiSplitView.defaultMinimalWeight] constant,
   /// allowing all children to be visible.
-  final double? minimalSize;
-  // Function to listen any children size change.
+  /// The value [zero] is ignored and indicates that no size has been set.
+  final double? globalMinimalSize;
+
+  /// Defines the minimal size in pixels for each child.
+  /// It will be used if [globalMinimalWeight] has not been set.
+  /// The size will be converted into weight and will respect the limit
+  /// defined by the [MultiSplitView.defaultMinimalWeight] constant,
+  /// allowing all children to be visible.
+  /// The value [zero] is ignored and indicates that no size has been set.
+  final List<double>? minimalSizes;
+
+  /// Function to listen any children size change.
   final OnSizeChange? onSizeChange;
 
   /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
@@ -261,29 +288,31 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   @override
   Widget build(BuildContext context) {
-    MultiSplitViewThemeData themeData = MultiSplitViewTheme.of(context);
-    double totalDividerSize =
-        (widget.children.length - 1) * themeData.dividerThickness;
     if (widget.children.length > 0) {
+      MultiSplitViewThemeData themeData = MultiSplitViewTheme.of(context);
+      double totalDividerSize =
+          (widget.children.length - 1) * themeData.dividerThickness;
+
       return LayoutBuilder(builder: (context, constraints) {
-        double minimalWeight = _minimalWeight(constraints, totalDividerSize);
         _controller.validateAndAdjust(widget.children.length);
         List<Widget> children = [];
         if (widget.axis == Axis.horizontal) {
+          double availableArea = constraints.maxWidth - totalDividerSize;
           _populateHorizontalChildren(
               context: context,
               constraints: constraints,
               totalDividerSize: totalDividerSize,
               children: children,
-              minimalWeight: minimalWeight,
+              availableArea: availableArea,
               themeData: themeData);
         } else {
+          double availableArea = constraints.maxHeight - totalDividerSize;
           _populateVerticalChildren(
               context: context,
               constraints: constraints,
               totalDividerSize: totalDividerSize,
               children: children,
-              minimalWeight: minimalWeight,
+              availableArea: availableArea,
               themeData: themeData);
         }
 
@@ -294,18 +323,39 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   }
 
   /// Calculates the minimum weight. Used when the pixel size has been set.
-  double _minimalWeight(BoxConstraints constraints, double totalDividerSize) {
-    if (widget.minimalWeight != null) {
-      return widget.minimalWeight!;
-    } else if (widget.minimalSize != null) {
-      double remainingWidth = constraints.maxWidth - totalDividerSize;
-      double minimalWeight = widget.minimalSize! / remainingWidth;
-      minimalWeight =
-          math.max(minimalWeight, MultiSplitView.defaultMinimalWeight);
-      minimalWeight = math.min(minimalWeight, 1 / widget.children.length);
-      return minimalWeight;
+  double _minimalWeight(
+      {required int childIndex, required double availableArea}) {
+    if (widget.minimalWeights != null &&
+        childIndex < widget.minimalWeights!.length) {
+      return widget.minimalWeights![childIndex];
+    } else if (widget.globalMinimalWeight != null) {
+      return widget.globalMinimalWeight!;
+    }
+
+    if (widget.minimalSizes != null &&
+        childIndex < widget.minimalSizes!.length) {
+      double size = math.max(0, widget.minimalSizes![childIndex]);
+      if (size > 0) {
+        return _sizeToWeight(size: size, availableArea: availableArea);
+      }
+    }
+
+    if (widget.globalMinimalSize != null) {
+      double size = math.max(0, widget.globalMinimalSize!);
+      if (size > 0) {
+        return _sizeToWeight(size: size, availableArea: availableArea);
+      }
     }
     return MultiSplitView.defaultMinimalWeight;
+  }
+
+  /// Calculates a weight given a size in pixels.
+  double _sizeToWeight({required double size, required double availableArea}) {
+    double minimalWeight = size / availableArea;
+    minimalWeight =
+        math.max(minimalWeight, MultiSplitView.defaultMinimalWeight);
+    minimalWeight = math.min(minimalWeight, 1 / widget.children.length);
+    return minimalWeight;
   }
 
   /// Updates the hover divider index.
@@ -325,7 +375,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       required BoxConstraints constraints,
       required double totalDividerSize,
       required List<Widget> children,
-      required double minimalWeight,
+      required double availableArea,
       required MultiSplitViewThemeData themeData}) {
     double totalChildrenSize = constraints.maxWidth - totalDividerSize;
     double totalRemainingWeight = 1;
@@ -388,7 +438,11 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               onHorizontalDragUpdate: (detail) {
                 final pos = _position(context, detail.globalPosition);
                 double diffX = pos.dx - _initialDragPos;
-                _updateDifferentWeights(childIndex, diffX, minimalWeight);
+
+                _updateDifferentWeights(
+                    childIndex: childIndex,
+                    diffPos: diffX,
+                    availableArea: availableArea);
               },
               child: dividerWidget);
           dividerWidget = _mouseRegion(
@@ -410,7 +464,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       required BoxConstraints constraints,
       required double totalDividerSize,
       required List<Widget> children,
-      required double minimalWeight,
+      required double availableArea,
       required MultiSplitViewThemeData themeData}) {
     double totalChildrenSize = constraints.maxHeight - totalDividerSize;
     double totalRemainingWeight = 1;
@@ -475,7 +529,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               onVerticalDragUpdate: (detail) {
                 final pos = _position(context, detail.globalPosition);
                 double diffY = pos.dy - _initialDragPos;
-                _updateDifferentWeights(childIndex, diffY, minimalWeight);
+                _updateDifferentWeights(
+                    childIndex: childIndex,
+                    diffPos: diffY,
+                    availableArea: availableArea);
               },
               child: dividerWidget);
           dividerWidget = _mouseRegion(
@@ -518,28 +575,35 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   /// Calculates the new weights and sets if they are different from the current one.
   void _updateDifferentWeights(
-      int childIndex, double diffPos, double minimalWeight) {
+      {required int childIndex,
+      required double diffPos,
+      required double availableArea}) {
+    double minimalWeight1 =
+        _minimalWeight(childIndex: childIndex, availableArea: availableArea);
+    double minimalWeight2 = _minimalWeight(
+        childIndex: childIndex + 1, availableArea: availableArea);
+
     double newChild1Weight =
         ((_initialChild1Size + diffPos) * _initialChild1Weight) /
             _initialChild1Size;
 
-    double maxChild1Weight =
-        _initialChild1Weight + _initialChild2Weight - minimalWeight;
+    //double maxChild1Weight = _initialChild1Weight + _initialChild2Weight - minimalWeight1;
 
-    newChild1Weight = math.max(minimalWeight, newChild1Weight);
-    newChild1Weight = math.min(maxChild1Weight, newChild1Weight);
+    newChild1Weight = math.max(minimalWeight1, newChild1Weight);
+    //newChild1Weight = math.min(maxChild1Weight, newChild1Weight);
 
-    if (newChild1Weight < minimalWeight) {
+    if (newChild1Weight < minimalWeight1) {
       return;
     }
     double newChild2Weight =
         _initialChild1Weight + _initialChild2Weight - newChild1Weight;
 
-    if (newChild2Weight < minimalWeight) {
+    if (newChild2Weight < minimalWeight2) {
       return;
     }
 
-    if (_controller.getWeight(childIndex) != newChild1Weight) {
+    if (_controller.getWeight(childIndex) != newChild1Weight &&
+        _controller.getWeight(childIndex + 1) != newChild2Weight) {
       setState(() {
         _controller._setWeight(childIndex, newChild1Weight);
         _controller._setWeight(childIndex + 1, newChild2Weight);
