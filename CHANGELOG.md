@@ -1,10 +1,22 @@
+## 2.0.0
+
+* `MultiSplitViewController`
+  * `sizes`, `weights`, `minimalSizes` and `minimalWeights` has been replaced by `areas`.
+  * `globalMinimalWeight` has been removed.
+  * `globalMinimalSize` has been removed.
+* `Area`
+  * Defines each child area in the `MultiSplitView`.
+  * Allow configure `size`, `weight`, `minimalWeights` and `minimalSize`.
+  * Allow simultaneous use of `size` and `weight` (in different areas).
+  * Allow empty `weight` or `size` (zero).
+
 ## 1.13.0
 
 * `MultiSplitView`
   * `minimalWeight` renamed to `globalMinimalWeight`
   * `minimalSize` renamed to `globalMinimalSize`
   * `minimalWeights` has been added to set individual child minimal weights.
-  * `minimalSize` has been added to set individual child minimal sizes.
+  * `minimalSizes` has been added to set individual child minimal sizes.
 
 ## 1.12.0
 

@@ -20,11 +20,9 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 * [Horizontal and vertical](#horizontal-and-vertical)
 * Size
   * [Setting the initial weights](#setting-the-initial-weights)
-  * [Changing the weights programmatically](#changing-the-weights-programmatically)
+  * [Changing the weights or sizes programmatically](#changing-the-weights-or-sizes-programmatically)
   * [Minimal child weight](#minimal-child-weight)
-  * [Global minimal children weight](#global-minimal-children-weight)
   * [Minimal child size in pixels](#minimal-child-size-in-pixels)
-  * [Global minimal children size in pixels](#global-minimal-children-size-in-pixels)
   * [Resizable](#resizable)
   * [Listener](#listener)
 * Divider
@@ -76,15 +74,24 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 ```dart
     // setting 10% of weight for the first child
     MultiSplitView multiSplitView = MultiSplitView(
-        children: [child1, child2, child3], initialWeights: [0.1]);
+        children: [child1, child2, child3], initialAreas: [Area(weight: 0.1)]);
 ```
 
 #### Using in a StatefulWidget
 
 ```dart
   MultiSplitViewController _controller =
-      MultiSplitViewController(weights: [0.1]);
+      MultiSplitViewController(areas: [Area(weight: 0.1)]);
 ```
+
+or
+
+```dart
+  MultiSplitViewController _controller2 =
+      MultiSplitViewController(areas: Area.weights([0.1]));
+```
+
+and
 
 ```dart
     // setting 10% of weight for the first child
@@ -94,48 +101,24 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
 
 ![](https://caduandrade.github.io/multi_split_view/horizontal_weight_v1.png)
 
-## Changing the weights programmatically
+## Changing the weights or sizes programmatically
 
 ```dart
-    controller.weights = [0.3, 0.7];
+    _controller.areas = [Area(size: 150)];
 ```
 
 ## Minimal child weight
 
 ```dart
-    MultiSplitView(children: [child1, child2], minimalWeights: [.25, .25]);
+  MultiSplitViewController _controller =
+      MultiSplitViewController(areas: [Area(weight: .25), Area(weight: .25)]);
 ```
-
-## Global minimal children weight
-
-Used if `minimalWeights` has not been set.
-
-```dart
-    MultiSplitView(axis: Axis.vertical, children: [
-      MultiSplitView(children: [child1, child2], globalMinimalWeight: .40),
-      MultiSplitView(children: [child3, child4])
-    ]);
-```
-
-![](https://caduandrade.github.io/multi_split_view/global_minimal_weight_v1.gif)
 
 ## Minimal child size in pixels
 
-Used if `globalMinimalWeight` has not been set.
-The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
-The value `zero` is ignored and indicates that no size has been set.
-
 ```dart
-    MultiSplitView(children: [child1, child2], minimalSizes: [150, 0]);
-```
-
-## Global minimal children size in pixels
-
-Used if `minimalSizes` has not been set.
-The size will be converted into weight and will respect the limit defined by the `MultiSplitView.defaultMinimalWeight` constant, allowing all children to be visible.
-
-```dart
-    MultiSplitView(children: [child1, child2], globalMinimalSize: 100);
+  MultiSplitViewController _controller =
+      MultiSplitViewController(areas: [Area(size: 150)]);
 ```
 
 ## Resizable
