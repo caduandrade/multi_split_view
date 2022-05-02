@@ -9,6 +9,8 @@
   * Allow configure `size`, `weight`, `minimalWeights` and `minimalSize`.
   * Allow simultaneous use of `size` and `weight` (in different areas).
   * Allow empty `weight` or `size` (zero).
+* Bugfix
+  * Children without clip.
 
 ## 1.13.0
 
