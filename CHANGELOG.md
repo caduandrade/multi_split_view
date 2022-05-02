@@ -6,7 +6,7 @@
   * `globalMinimalSize` has been removed.
 * `Area`
   * Defines each child area in the `MultiSplitView`.
-  * Allow configure `size`, `weight`, `minimalWeights` and `minimalSize`.
+  * Allow configure `size`, `weight`, `minimalWeight` and `minimalSize`.
   * Allow simultaneous use of `size` and `weight` (in different areas).
   * Allow empty `weight` or `size` (zero).
 * Bugfix
