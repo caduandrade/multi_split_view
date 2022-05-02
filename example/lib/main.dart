@@ -37,7 +37,8 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final int _max = 40;
   int _horizontalVisibleWidgets = 3;
 
-  MultiSplitViewController c=  MultiSplitViewController(areas: [Area(size: 100)]);
+  MultiSplitViewController _controller =
+      MultiSplitViewController(areas: [Area(size: 100)]);
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +61,10 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
       children.add(view);
     }
 
-    MultiSplitView multiSplitView =
-        MultiSplitView(children: children, onSizeChange: _onSizeChange, controller: c);
+    MultiSplitView multiSplitView = MultiSplitView(
+        children: children,
+        onSizeChange: _onSizeChange,
+        controller: _controller);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
         child: multiSplitView,
