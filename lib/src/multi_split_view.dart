@@ -656,7 +656,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         left: _convert(distance.left, last),
         right: _convert(distance.right, last),
         bottom: _convert(distance.bottom, last),
-        child: child);
+        child: ClipRect(child: child));
     return positioned;
   }
 

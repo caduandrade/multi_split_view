@@ -89,15 +89,14 @@ class _DividerWidgetState extends State<DividerWidget>
         animatedValues[key] = animation.value;
       });
 
-      dividerWidget = ClipRect(
-          child: CustomPaint(
-              child: Container(),
-              painter: _DividerPainterWrapper(
-                  axis: widget.axis,
-                  resizable: widget.resizable,
-                  highlighted: widget.highlighted,
-                  dividerPainter: widget.themeData.dividerPainter!,
-                  animatedValues: animatedValues)));
+      dividerWidget = CustomPaint(
+          child: Container(),
+          painter: _DividerPainterWrapper(
+              axis: widget.axis,
+              resizable: widget.resizable,
+              highlighted: widget.highlighted,
+              dividerPainter: widget.themeData.dividerPainter!,
+              animatedValues: animatedValues));
     } else {
       dividerWidget = Container();
     }

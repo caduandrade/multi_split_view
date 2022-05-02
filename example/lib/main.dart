@@ -56,6 +56,9 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     List<Widget> children = [];
     for (int i = 0; i < _horizontalVisibleWidgets; i++) {
       Widget view = Container(
+        child: Center(
+          child: Text('$i'),
+        ),
         color: widget._colors[i % widget._colors.length],
       );
       children.add(view);
