@@ -1,3 +1,8 @@
+## 2.0.1
+
+* Bugfix
+  * State is not being preserved when children are added/removed.
+
 ## 2.0.0
 
 * `MultiSplitViewController`
