@@ -677,12 +677,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
 /// Defines distance from edges.
 class _DistanceFrom {
-  double top;
-  double left;
-  double right;
-  double bottom;
+  double top = 0;
+  double left = 0;
+  double right = 0;
+  double bottom = 0;
 
-  _DistanceFrom({this.top = 0, this.left = 0, this.right = 0, this.bottom = 0});
+  _DistanceFrom();
 }
 
 class _InitialDrag {
