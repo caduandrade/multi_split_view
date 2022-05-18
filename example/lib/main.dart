@@ -19,32 +19,30 @@ class MultiSplitViewExampleApp extends StatelessWidget {
 }
 
 class MultiSplitViewExample extends StatefulWidget {
-  final List<Color> _colors = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.purple,
-    Colors.brown,
-    Colors.pinkAccent,
-    Colors.orange
-  ];
-
   @override
   _MultiSplitViewExampleState createState() => _MultiSplitViewExampleState();
 }
 
 class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
-  final int _max = 40;
-  int _horizontalVisibleWidgets = 3;
+  static const int _max = 40;
+  static const int _initial = 3;
+
+  late final List<RandomColorBox> _boxes;
 
   MultiSplitViewController _controller =
       MultiSplitViewController(areas: [Area(size: 100)]);
 
   @override
+  void initState() {
+    super.initState();
+    _boxes = List.generate(_initial, (_) => _createBox());
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget buttons = Container(
         child: Row(children: [
-          Text('Horizontal widgets: $_horizontalVisibleWidgets / $_max'),
+          Text('Horizontal widgets: ${_boxes.length} / $_max'),
           SizedBox(width: 16),
           ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
           SizedBox(width: 16),
@@ -53,16 +51,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         color: Colors.white,
         padding: EdgeInsets.all(8));
 
-    List<Widget> children = [];
-    for (int i = 0; i < _horizontalVisibleWidgets; i++) {
-      Widget view = Container(
-        child: Center(
-          child: Text('$i'),
-        ),
-        color: widget._colors[i % widget._colors.length],
-      );
-      children.add(view);
-    }
+    final List<Widget> children = _boxes;
 
     MultiSplitView multiSplitView = MultiSplitView(
         children: children,
@@ -86,14 +75,55 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onRemoveButtonClick() {
-    setState(() {
-      _horizontalVisibleWidgets = max(0, _horizontalVisibleWidgets - 1);
-    });
+    if (_boxes.isNotEmpty) {
+      _removeBox(_boxes.first);
+    }
   }
 
   _onAddButtonClick() {
-    setState(() {
-      _horizontalVisibleWidgets = min(_max, _horizontalVisibleWidgets + 1);
-    });
+    setState(() => _boxes.insert(0, _createBox()));
+  }
+
+  RandomColorBox _createBox() {
+    return RandomColorBox(
+      key: UniqueKey(),
+      onRemove: _removeBox,
+    );
+  }
+
+  void _removeBox(RandomColorBox box) {
+    setState(() => _boxes.remove(box));
+  }
+}
+
+class RandomColorBox extends StatefulWidget {
+  const RandomColorBox({
+    required this.onRemove,
+    Key? key,
+  }) : super(key: key);
+
+  final void Function(RandomColorBox box) onRemove;
+
+  @override
+  State<RandomColorBox> createState() => _RandomColorBoxState();
+}
+
+class _RandomColorBoxState extends State<RandomColorBox> {
+  late Color _color;
+
+  @override
+  void initState() {
+    super.initState();
+    _color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => widget.onRemove(widget),
+      child: ColoredBox(
+        color: _color,
+      ),
+    );
   }
 }

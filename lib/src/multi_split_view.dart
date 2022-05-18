@@ -652,6 +652,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       required Widget child,
       bool last = false}) {
     Positioned positioned = Positioned(
+        key: child.key,
         top: _convert(distance.top, last),
         left: _convert(distance.left, last),
         right: _convert(distance.right, last),
