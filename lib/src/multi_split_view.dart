@@ -25,6 +25,7 @@ class MultiSplitViewController extends ChangeNotifier {
   MultiSplitViewController._(this._areas);
 
   List<Area> _areas;
+
   UnmodifiableListView<Area> get areas => UnmodifiableListView(_areas);
 
   set areas(List<Area> areas) {
@@ -59,24 +60,24 @@ class MultiSplitViewController extends ChangeNotifier {
     final double totalDividerSize = (childrenCount - 1) * dividerThickness;
     final double availableSize = fullSize - totalDividerSize;
 
-    int nullCount = 0;
+    int nullWeightCount = 0;
     for (int i = 0; i < _areas.length; i++) {
       Area area = _areas[i];
       if (area.size != null) {
         _areas[i] = area.copyWithNewWeight(weight: area.size! / availableSize);
       }
       if (area.weight == null) {
-        nullCount++;
+        nullWeightCount++;
       }
     }
 
     double weightSum = _weightSum();
 
-    // fill null values
-    if (nullCount > 0) {
+    // fill null weights
+    if (nullWeightCount > 0) {
       double r = 0;
       if (weightSum < MultiSplitViewController._higherPrecision) {
-        r = (1 - weightSum) / nullCount;
+        r = (1 - weightSum) / nullWeightCount;
       }
       for (int i = 0; i < _areas.length; i++) {
         Area area = _areas[i];
@@ -100,6 +101,7 @@ class MultiSplitViewController extends ChangeNotifier {
 
     if (_areas.length == childrenCount) {
       _fillWeightsEqually(childrenCount, weightSum);
+      _applyMinimalSizes(availableSize: availableSize);
       return;
     } else if (_areas.length < childrenCount) {
       // children has been added.
@@ -133,6 +135,7 @@ class MultiSplitViewController extends ChangeNotifier {
       }
     }
     _fillWeightsEqually(childrenCount, _weightSum());
+    _applyMinimalSizes(availableSize: availableSize);
   }
 
   /// Fills equally the missing weights
@@ -144,6 +147,59 @@ class MultiSplitViewController extends ChangeNotifier {
         for (int i = 0; i < _areas.length; i++) {
           Area area = _areas[i];
           _areas[i] = area.copyWithNewWeight(weight: area.weight! + w);
+        }
+      }
+    }
+  }
+
+  void _applyMinimalSizes({required double availableSize}) {
+    double totalNonMinimalWeight = 0;
+    double totalMinimalWeight = 0;
+    int minimalCount = 0;
+    for (int i = 0; i < _areas.length; i++) {
+      Area area = _areas[i];
+      if (area.minimalSize != null) {
+        double minimalWeight = area.minimalSize! / availableSize;
+        totalMinimalWeight += minimalWeight;
+        minimalCount++;
+      } else if (area.minimalWeight != null) {
+        totalMinimalWeight += area.minimalWeight!;
+        minimalCount++;
+      } else {
+        totalNonMinimalWeight += area.weight!;
+      }
+    }
+    if (totalMinimalWeight > 0) {
+      double reducerMinimalWeight = 0;
+      if (totalMinimalWeight > 1) {
+        reducerMinimalWeight = ((totalMinimalWeight - 1) / minimalCount);
+        totalMinimalWeight = 1;
+      }
+      double totalReducerNonMinimalWeight = 0;
+      if (totalMinimalWeight + totalNonMinimalWeight > 1) {
+        totalReducerNonMinimalWeight =
+            (totalMinimalWeight + totalNonMinimalWeight - 1);
+      }
+      for (int i = 0; i < _areas.length; i++) {
+        Area area = _areas[i];
+        if (area.minimalSize != null) {
+          double minimalWeight = math.max(
+              0, (area.minimalSize! / availableSize) - reducerMinimalWeight);
+          if (area.weight! < minimalWeight) {
+            _areas[i] = area.copyWithNewWeight(weight: minimalWeight);
+          }
+        } else if (area.minimalWeight != null) {
+          double minimalWeight =
+              math.max(0, area.minimalWeight! - reducerMinimalWeight);
+          if (area.weight! < minimalWeight) {
+            _areas[i] = area.copyWithNewWeight(weight: minimalWeight);
+          }
+        } else if (totalReducerNonMinimalWeight > 0) {
+          double reducer = totalReducerNonMinimalWeight *
+              area.weight! /
+              totalNonMinimalWeight;
+          double newWeight = math.max(0, area.weight! - reducer);
+          _areas[i] = area.copyWithNewWeight(weight: newWeight);
         }
       }
     }

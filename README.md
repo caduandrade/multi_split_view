@@ -111,14 +111,14 @@ and
 
 ```dart
   MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(weight: .25), Area(weight: .25)]);
+      MultiSplitViewController(areas: [Area(minimalWeight: .25), Area(minimalWeight: .25)]);
 ```
 
 ## Minimal child size in pixels
 
 ```dart
   MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(size: 150)]);
+      MultiSplitViewController(areas: [Area(minimalSize: 150)]);
 ```
 
 ## Resizable

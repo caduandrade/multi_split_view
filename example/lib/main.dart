@@ -40,16 +40,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    Widget buttons = Container(
-        child: Row(children: [
-          Text('Horizontal widgets: ${_boxes.length} / $_max'),
-          SizedBox(width: 16),
-          ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
-          SizedBox(width: 16),
-          ElevatedButton(child: Text('Remove'), onPressed: _onRemoveButtonClick)
-        ], crossAxisAlignment: CrossAxisAlignment.center),
-        color: Colors.white,
-        padding: EdgeInsets.all(8));
+
 
     final List<Widget> children = _boxes;
 
@@ -64,8 +55,8 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
             dividerPainter: DividerPainters.grooved2()));
 
     return Scaffold(
-        appBar: AppBar(title: Text('Multi Split View Example')),
-        body: Column(children: [buttons, Expanded(child: theme)])
+       // appBar: AppBar(title: Text('Multi Split View Example')),
+        body:  theme
         // body: horizontal,
         );
   }

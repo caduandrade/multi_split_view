@@ -1,3 +1,9 @@
+## 2.0.2
+
+* Bugfix
+  * Window resizing allowing area with a size smaller than the `minimalSize`.
+  * Fixing the README example.
+
 ## 2.0.1
 
 * Bugfix
