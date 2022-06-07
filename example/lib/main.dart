@@ -74,7 +74,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onWeightChange() {
     print('weight change');
-    setState(()=>a=2);
+    setState(() => a = 2);
   }
 
   _onRemoveButtonClick() {
