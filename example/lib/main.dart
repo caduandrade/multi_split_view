@@ -29,8 +29,10 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   late final List<RandomColorBox> _boxes;
 
+  int a = 1;
+
   MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(size: 100)]);
+      MultiSplitViewController(areas: [Area(minimalSize: 500)]);
 
   @override
   void initState() {
@@ -55,7 +57,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
     MultiSplitView multiSplitView = MultiSplitView(
         children: children,
-        onSizeChange: _onSizeChange,
+        onWeightChange: _onWeightChange,
         controller: _controller);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
@@ -70,8 +72,9 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         );
   }
 
-  _onSizeChange(int childIndex1, int childIndex2) {
-    print('change - childIndex1: $childIndex1 - childIndex2: $childIndex2');
+  _onWeightChange() {
+    print('weight change');
+    setState(()=>a=2);
   }
 
   _onRemoveButtonClick() {

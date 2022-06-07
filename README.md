@@ -132,8 +132,8 @@ and
 ```dart
     MultiSplitView(
         children: [child1, child2, child3, child4],
-        onSizeChange: (childIndex1, childIndex2) => print(
-            'Index of children whose size has changed: $childIndex1 and $childIndex2'));
+        onWeightChange: () =>
+            DemoFlu.printOnConsole(context, 'Weight has changed'));
 ```
 
 ## Divider thickness

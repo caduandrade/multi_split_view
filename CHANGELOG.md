@@ -1,8 +1,11 @@
-## 2.0.2
+## 2.1.0
 
+* `OnSizeChange` renamed to `OnWeightChange`.
+  * Removing `childIndex1` and `childIndex2` parameters. 
 * Bugfix
   * Window resizing allowing area with a size smaller than the `minimalSize`.
-  * Fixing the README example.
+  * `OnWeightChange` is not getting notified on window resizing.
+* Fixing the README example.
 
 ## 2.0.1
 

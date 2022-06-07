@@ -101,7 +101,7 @@ class MultiSplitViewController extends ChangeNotifier {
 
     if (_areas.length == childrenCount) {
       _fillWeightsEqually(childrenCount, weightSum);
-      _applyMinimalSizes(availableSize: availableSize);
+      _applyMinimal(availableSize: availableSize);
       return;
     } else if (_areas.length < childrenCount) {
       // children has been added.
@@ -135,7 +135,7 @@ class MultiSplitViewController extends ChangeNotifier {
       }
     }
     _fillWeightsEqually(childrenCount, _weightSum());
-    _applyMinimalSizes(availableSize: availableSize);
+    _applyMinimal(availableSize: availableSize);
   }
 
   /// Fills equally the missing weights
@@ -152,7 +152,8 @@ class MultiSplitViewController extends ChangeNotifier {
     }
   }
 
-  void _applyMinimalSizes({required double availableSize}) {
+  /// Fix the weights to the minimal size/weight.
+  void _applyMinimal({required double availableSize}) {
     double totalNonMinimalWeight = 0;
     double totalMinimalWeight = 0;
     int minimalCount = 0;
@@ -209,6 +210,43 @@ class MultiSplitViewController extends ChangeNotifier {
   /// is being shared by multiple [MultiSplitView]. The application must not
   /// manipulate this attribute, it is for the internal use of the package.
   int? _stateHashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MultiSplitViewController &&
+          runtimeType == other.runtimeType &&
+          _areas == other._areas;
+
+  @override
+  int get hashCode => _areas.hashCode;
+
+  int get weightsHashCode => Object.hashAll(_WeightIterable(areas));
+}
+
+class _WeightIterable extends Iterable<double?> {
+  _WeightIterable(this.areas);
+
+  final List<Area> areas;
+
+  @override
+  Iterator<double?> get iterator => _WeightIterator(areas);
+}
+
+class _WeightIterator extends Iterator<double?> {
+  _WeightIterator(this.areas);
+
+  final List<Area> areas;
+  int _index = -1;
+
+  @override
+  double? get current => areas[_index].weight;
+
+  @override
+  bool moveNext() {
+    _index++;
+    return _index > -1 && _index < areas.length;
+  }
 }
 
 /// A widget to provides horizontal or vertical multiple split view.
@@ -228,7 +266,7 @@ class MultiSplitView extends StatefulWidget {
       required this.children,
       this.controller,
       this.dividerBuilder,
-      this.onSizeChange,
+      this.onWeightChange,
       this.resizable = true,
       this.antiAliasingWorkaround = true,
       List<Area>? initialAreas})
@@ -248,8 +286,10 @@ class MultiSplitView extends StatefulWidget {
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
 
-  /// Function to listen any children size change.
-  final OnSizeChange? onSizeChange;
+  /// Function to listen children weight change.
+  /// The listener will run on the parent's resize or
+  /// on the dragging end of the divisor.
+  final OnWeightChange? onWeightChange;
 
   /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
   final bool antiAliasingWorkaround;
@@ -266,6 +306,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   int? _draggingDividerIndex;
   int? _hoverDividerIndex;
   SizesCache? _sizesCache;
+  int? _weightsHashCode;
 
   @override
   void initState() {
@@ -373,6 +414,15 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               children: children,
               fullSize: constraints.maxHeight,
               themeData: themeData);
+        }
+
+        if (widget.onWeightChange != null) {
+          int newWeightsHashCode = _controller.weightsHashCode;
+          if (_weightsHashCode != null &&
+              _weightsHashCode != newWeightsHashCode) {
+            Future.microtask(widget.onWeightChange!);
+          }
+          _weightsHashCode = newWeightsHashCode;
         }
 
         return Stack(children: children);
@@ -690,9 +740,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         _sizesCache!.sizes[childIndex] = newChild1Size;
         _sizesCache!.sizes[childIndex + 1] = newChild2Size;
       });
-      if (widget.onSizeChange != null) {
-        widget.onSizeChange!(childIndex, childIndex + 1);
-      }
     }
   }
 
@@ -770,7 +817,8 @@ class _InitialDrag {
   bool posAfterMinimalChild2 = false;
 }
 
-typedef OnSizeChange = void Function(int childIndex1, int childIndex2);
+/// Signature for when a weight area is changed.
+typedef OnWeightChange = void Function();
 
 typedef DividerBuilder = Widget Function(Axis axis, int index, bool resizable,
     bool dragging, bool highlighted, MultiSplitViewThemeData themeData);
