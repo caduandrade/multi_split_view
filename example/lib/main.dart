@@ -29,10 +29,7 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   late final List<RandomColorBox> _boxes;
 
-  int a = 1;
-
-  MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(minimalSize: 500)]);
+  MultiSplitViewController _controller = MultiSplitViewController();
 
   @override
   void initState() {
@@ -48,7 +45,12 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
           SizedBox(width: 16),
           ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
           SizedBox(width: 16),
-          ElevatedButton(child: Text('Remove'), onPressed: _onRemoveButtonClick)
+          ElevatedButton(
+              child: Text('Remove'), onPressed: _onRemoveButtonClick),
+          SizedBox(width: 16),
+          ElevatedButton(
+              child: Text('Change second area weight'),
+              onPressed: _onSetWeightButtonClick)
         ], crossAxisAlignment: CrossAxisAlignment.center),
         color: Colors.white,
         padding: EdgeInsets.all(8));
@@ -74,12 +76,17 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onWeightChange() {
     print('weight change');
-    setState(() => a = 2);
   }
 
   _onRemoveButtonClick() {
     if (_boxes.isNotEmpty) {
       _removeBox(_boxes.first);
+    }
+  }
+
+  _onSetWeightButtonClick() {
+    if (_controller.areas.length >= 2) {
+      _controller.areas = [Area(), Area(weight: .1)];
     }
   }
 
