@@ -1,3 +1,8 @@
+## 2.2.0
+
+* Divider
+  * Tap and double tap callbacks. 
+
 ## 2.1.0
 
 * `OnSizeChange` renamed to `OnWeightChange`.
