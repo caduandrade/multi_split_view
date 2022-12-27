@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test
+name: Format
 
 on:
   push:
@@ -27,5 +27,5 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Run tests
-        run: flutter test
+      - name: Verify formatting
+        run: flutter format --output=none --set-exit-if-changed .
