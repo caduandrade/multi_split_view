@@ -1,8 +1,10 @@
 import 'dart:collection';
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
+import 'package:multi_split_view/src/divider_tap_typedefs.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/sizes_cache.dart';
 import 'package:multi_split_view/src/theme_data.dart';
@@ -267,6 +269,8 @@ class MultiSplitView extends StatefulWidget {
       this.controller,
       this.dividerBuilder,
       this.onWeightChange,
+      this.onDividerTap,
+      this.onDividerDoubleTap,
       this.resizable = true,
       this.antiAliasingWorkaround = true,
       List<Area>? initialAreas})
@@ -278,6 +282,12 @@ class MultiSplitView extends StatefulWidget {
   final List<Widget> children;
   final MultiSplitViewController? controller;
   final List<Area>? initialAreas;
+
+  /// Signature for when a divider tap has occurred.
+  final DividerTapCallback? onDividerTap;
+
+  /// Signature for when a divider double tap has occurred.
+  final DividerTapCallback? onDividerDoubleTap;
 
   /// Defines a builder of dividers. Overrides the default divider
   /// created by the theme.
@@ -487,6 +497,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         if (widget.resizable) {
           dividerWidget = GestureDetector(
               behavior: HitTestBehavior.translucent,
+              onTap: () => _onDividerTap(childIndex),
+              onDoubleTap: () => _onDividerDoubleTap(childIndex),
               onHorizontalDragStart: (detail) {
                 setState(() {
                   _draggingDividerIndex = childIndex;
@@ -516,6 +528,18 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             _buildPositioned(distance: dividerDistance, child: dividerWidget));
         childDistance.left = dividerDistance.left + themeData.dividerThickness;
       }
+    }
+  }
+
+  void _onDividerTap(int index) {
+    if (widget.onDividerTap != null) {
+      widget.onDividerTap!(index);
+    }
+  }
+
+  void _onDividerDoubleTap(int index) {
+    if (widget.onDividerDoubleTap != null) {
+      widget.onDividerDoubleTap!(index);
     }
   }
 

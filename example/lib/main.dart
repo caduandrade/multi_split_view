@@ -60,6 +60,8 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     MultiSplitView multiSplitView = MultiSplitView(
         children: children,
         onWeightChange: _onWeightChange,
+        onDividerTap: _onDividerTap,
+        onDividerDoubleTap: _onDividerDoubleTap,
         controller: _controller);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
@@ -88,6 +90,20 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     if (_controller.areas.length >= 2) {
       _controller.areas = [Area(), Area(weight: .1)];
     }
+  }
+
+  _onDividerTap(int dividerIndex) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text("Tap on divider: $dividerIndex"),
+    ));
+  }
+
+  _onDividerDoubleTap(int dividerIndex) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text("Double tap on divider: $dividerIndex"),
+    ));
   }
 
   _onAddButtonClick() {
