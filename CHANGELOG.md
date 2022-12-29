@@ -1,7 +1,7 @@
 ## 2.2.0
 
 * Divider
-  * Tap and double tap callbacks. 
+  * Tap gestures. 
 
 ## 2.1.0
 
