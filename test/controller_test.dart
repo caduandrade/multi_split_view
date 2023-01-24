@@ -4,8 +4,8 @@ import 'package:multi_split_view/multi_split_view.dart';
 const double delta = 0.00005;
 
 void main() {
-  group('fixWeights - minimal pixel', () {
-    test('1', () {
+  group('fixWeights', () {
+    test('children: 2 / 1 area(minimalSize)', () {
       MultiSplitViewController c =
           MultiSplitViewController(areas: [Area(minimalSize: 100)]);
       c.fixWeights(childrenCount: 2, fullSize: 210, dividerThickness: 10);
@@ -13,7 +13,7 @@ void main() {
       expect(c.getArea(0).weight, .5);
       expect(c.getArea(1).weight, .5);
     });
-    test('2', () {
+    test('children: 2 / 1 area(minimalSize)', () {
       MultiSplitViewController c =
           MultiSplitViewController(areas: [Area(minimalSize: 100)]);
       c.fixWeights(childrenCount: 2, fullSize: 110, dividerThickness: 10);
@@ -21,8 +21,6 @@ void main() {
       expect(c.getArea(0).weight, 1);
       expect(c.getArea(1).weight, 0);
     });
-  });
-  group('fixWeights', () {
     test('1', () {
       MultiSplitViewController c = MultiSplitViewController();
       c.fixWeights(childrenCount: 0, fullSize: 1000, dividerThickness: 10);
