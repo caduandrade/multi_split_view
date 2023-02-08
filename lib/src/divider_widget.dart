@@ -1,10 +1,14 @@
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/divider_painter.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 
-/// The divider widget.
-@internal
+/// The standard divider widget for [MultiSplitView] that renders
+/// the [DividerPainter] from the current [MultiSplitViewTheme].
+///
+/// Useful to use in conjunction with [MultiSplitView.dividerBuilder]
+/// if you still want to use the theme's [DividerPainter] but want to
+/// further customize the divider widget (e.g., surround with a
+/// tooltip widget).
 class DividerWidget extends StatefulWidget {
   const DividerWidget(
       {required this.axis,
