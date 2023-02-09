@@ -2,6 +2,8 @@
 
 * Behavior change
   * Canceling the divider drag after using the `areas` setter in the `MultiSplitViewController`.
+* Bugfix
+  * Divider animation not starting when touching it on mobile.
 
 ## 2.2.0
 

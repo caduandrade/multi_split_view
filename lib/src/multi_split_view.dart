@@ -197,7 +197,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 behavior: HitTestBehavior.translucent,
                 onTap: () => _onDividerTap(index),
                 onDoubleTap: () => _onDividerDoubleTap(index),
-                onHorizontalDragStart: widget.axis == Axis.vertical
+                onHorizontalDragDown: widget.axis == Axis.vertical
                     ? null
                     : (detail) {
                         setState(() {
@@ -206,6 +206,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                         final pos = _position(context, detail.globalPosition);
                         _updateInitialDrag(index, pos.dx);
                       },
+                onHorizontalDragCancel:
+                    widget.axis == Axis.vertical ? null : () => _onDragCancel(),
                 onHorizontalDragEnd: widget.axis == Axis.vertical
                     ? null
                     : (detail) => _onDragEnd(),
@@ -221,7 +223,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                         _updateDifferentWeights(
                             childIndex: index, diffPos: diffX, pos: pos.dx);
                       },
-                onVerticalDragStart: widget.axis == Axis.horizontal
+                onVerticalDragDown: widget.axis == Axis.horizontal
                     ? null
                     : (detail) {
                         setState(() {
@@ -230,6 +232,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                         final pos = _position(context, detail.globalPosition);
                         _updateInitialDrag(index, pos.dy);
                       },
+                onVerticalDragCancel: widget.axis == Axis.horizontal
+                    ? null
+                    : () => _onDragCancel(),
                 onVerticalDragEnd: widget.axis == Axis.horizontal
                     ? null
                     : (detail) => _onDragEnd(),
@@ -295,6 +300,15 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     }
   }
 
+  void _onDragCancel() {
+    if (_draggingDividerIndex == null) {
+      return;
+    }
+    setState(() {
+      _draggingDividerIndex = null;
+    });
+  }
+
   void _onDragEnd() {
     if (_draggingDividerIndex == null) {
       return;
@@ -305,7 +319,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       _controller.setAreaAt(
           i, area.copyWithNewWeight(weight: size / _sizesCache!.childrenSize));
     }
-
     setState(() {
       _draggingDividerIndex = null;
     });
