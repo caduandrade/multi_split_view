@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_tap_typedefs.dart';
-import 'package:multi_split_view/src/internal/divider_widget.dart';
+import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/internal/initial_drag.dart';
 import 'package:multi_split_view/src/internal/sizes_cache.dart';
 import 'package:multi_split_view/src/theme_data.dart';
