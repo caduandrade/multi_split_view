@@ -1,3 +1,8 @@
+## 2.3.0
+
+* Behavior change
+  * Canceling the divider drag after using the `areas` setter in the `MultiSplitViewController`.
+
 ## 2.2.0
 
 * Divider

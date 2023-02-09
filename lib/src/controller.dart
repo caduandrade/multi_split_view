@@ -26,8 +26,15 @@ class MultiSplitViewController extends ChangeNotifier {
 
   UnmodifiableListView<Area> get areas => UnmodifiableListView(_areas);
 
+  Object _areasUpdateHash = Object();
+
+  /// Hash to identify [areas] setter usage.
+  @internal
+  Object get areasUpdateHash => _areasUpdateHash;
+
   set areas(List<Area> areas) {
     _areas = List.from(areas);
+    _areasUpdateHash = Object();
     notifyListeners();
   }
 

@@ -79,6 +79,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   SizesCache? _sizesCache;
   int? _weightsHashCode;
 
+  Object? _lastAreasUpdateHash;
+
   @override
   void initState() {
     super.initState();
@@ -138,6 +140,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   @override
   Widget build(BuildContext context) {
+    if (_lastAreasUpdateHash != _controller.areasUpdateHash) {
+      _draggingDividerIndex = null;
+      _lastAreasUpdateHash = _controller.areasUpdateHash;
+    }
     if (widget.children.length > 0) {
       MultiSplitViewThemeData themeData = MultiSplitViewTheme.of(context);
 
@@ -206,6 +212,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 onHorizontalDragUpdate: widget.axis == Axis.vertical
                     ? null
                     : (detail) {
+                        if (_draggingDividerIndex == null) {
+                          return;
+                        }
                         final pos = _position(context, detail.globalPosition);
                         double diffX = pos.dx - _initialDrag!.initialDragPos;
 
@@ -227,6 +236,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 onVerticalDragUpdate: widget.axis == Axis.horizontal
                     ? null
                     : (detail) {
+                        if (_draggingDividerIndex == null) {
+                          return;
+                        }
                         final pos = _position(context, detail.globalPosition);
                         double diffY = pos.dy - _initialDrag!.initialDragPos;
                         _updateDifferentWeights(
@@ -284,6 +296,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   }
 
   void _onDragEnd() {
+    if (_draggingDividerIndex == null) {
+      return;
+    }
     for (int i = 0; i < _controller.areasLength; i++) {
       Area area = _controller.getArea(i);
       double size = _sizesCache!.sizes[i];
