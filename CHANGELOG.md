@@ -1,5 +1,6 @@
 ## 2.3.0
 
+* The standard divider widget (`DividerWidget`) has been exported to the public API.
 * Behavior change
   * Canceling the divider drag after using the `areas` setter in the `MultiSplitViewController`.
 * Bugfix
