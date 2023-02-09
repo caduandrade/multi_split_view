@@ -1,11 +1,14 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
-void main() => runApp(MultiSplitViewExampleApp());
+void main() => runApp(const MultiSplitViewExampleApp());
 
 class MultiSplitViewExampleApp extends StatelessWidget {
+  const MultiSplitViewExampleApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,23 +16,25 @@ class MultiSplitViewExampleApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MultiSplitViewExample(),
+      home: const MultiSplitViewExample(),
     );
   }
 }
 
 class MultiSplitViewExample extends StatefulWidget {
+  const MultiSplitViewExample({Key? key}) : super(key: key);
+
   @override
-  _MultiSplitViewExampleState createState() => _MultiSplitViewExampleState();
+  MultiSplitViewExampleState createState() => MultiSplitViewExampleState();
 }
 
-class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
+class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   static const int _max = 40;
   static const int _initial = 3;
 
   late final List<RandomColorBox> _boxes;
 
-  MultiSplitViewController _controller = MultiSplitViewController();
+  final MultiSplitViewController _controller = MultiSplitViewController();
 
   @override
   void initState() {
@@ -40,44 +45,47 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   @override
   Widget build(BuildContext context) {
     Widget buttons = Container(
-        child: Row(children: [
-          Text('Horizontal widgets: ${_boxes.length} / $_max'),
-          SizedBox(width: 16),
-          ElevatedButton(child: Text('Add'), onPressed: _onAddButtonClick),
-          SizedBox(width: 16),
-          ElevatedButton(
-              child: Text('Remove'), onPressed: _onRemoveButtonClick),
-          SizedBox(width: 16),
-          ElevatedButton(
-              child: Text('Change second area weight'),
-              onPressed: _onSetWeightButtonClick)
-        ], crossAxisAlignment: CrossAxisAlignment.center),
         color: Colors.white,
-        padding: EdgeInsets.all(8));
+        padding: const EdgeInsets.all(8),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text('Horizontal widgets: ${_boxes.length} / $_max'),
+          const SizedBox(width: 16),
+          ElevatedButton(
+              onPressed: _onAddButtonClick, child: const Text('Add')),
+          const SizedBox(width: 16),
+          ElevatedButton(
+              onPressed: _onRemoveButtonClick, child: const Text('Remove')),
+          const SizedBox(width: 16),
+          ElevatedButton(
+              onPressed: _onSetWeightButtonClick,
+              child: const Text('Change second area weight'))
+        ]));
 
     final List<Widget> children = _boxes;
 
     MultiSplitView multiSplitView = MultiSplitView(
-        children: children,
         onWeightChange: _onWeightChange,
         onDividerTap: _onDividerTap,
         onDividerDoubleTap: _onDividerDoubleTap,
-        controller: _controller);
+        controller: _controller,
+        children: children);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
-        data: MultiSplitViewThemeData(
-            dividerPainter: DividerPainters.grooved2()));
+        data:
+            MultiSplitViewThemeData(dividerPainter: DividerPainters.grooved2()),
+        child: multiSplitView);
 
     return Scaffold(
-        appBar: AppBar(title: Text('Multi Split View Example')),
+        appBar: AppBar(title: const Text('Multi Split View Example')),
         body: Column(children: [buttons, Expanded(child: theme)])
         // body: horizontal,
         );
   }
 
   _onWeightChange() {
-    print('weight change');
+    if (kDebugMode) {
+      print('weight change');
+    }
   }
 
   _onRemoveButtonClick() {
@@ -94,14 +102,14 @@ class _MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onDividerTap(int dividerIndex) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text("Tap on divider: $dividerIndex"),
     ));
   }
 
   _onDividerDoubleTap(int dividerIndex) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text("Double tap on divider: $dividerIndex"),
     ));
   }
