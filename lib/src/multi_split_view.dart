@@ -446,7 +446,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         newChild2Size -= diff;
       }
     }
-    if (newChild1Size >= 0 && newChild2Size >= 0) {
+    if (_sizesCache != null && newChild1Size >= 0 && newChild2Size >= 0) {
       setState(() {
         _sizesCache!.sizes[childIndex] = newChild1Size;
         _sizesCache!.sizes[childIndex + 1] = newChild2Size;
