@@ -121,7 +121,7 @@ and
 ## Minimal child size in pixels
 
 ```dart
-  MultiSplitViewController _controller =
+  final MultiSplitViewController _controller =
       MultiSplitViewController(areas: [Area(minimalSize: 150)]);
 ```
 
@@ -226,10 +226,10 @@ The `DividerPainters.background` allows setting the background color. The defaul
     MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.dashed(
-                color: Colors.deepOrange, highlightedColor: Colors.black)));
+                color: Colors.deepOrange, highlightedColor: Colors.black)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/dashed_divider_v1.gif)
@@ -237,11 +237,13 @@ The `DividerPainters.background` allows setting the background color. The defaul
 #### Dashed divider - Customizations
 
 ```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.dashed(
-                gap: 30, size: 20, thickness: 3, highlightedThickness: 6)));
+                gap: 30, size: 20, thickness: 3, highlightedThickness: 6)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/custom_dashed_divider_v1.png)
@@ -252,11 +254,11 @@ The `DividerPainters.background` allows setting the background color. The defaul
     MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.grooved1(
                 color: Colors.indigo[100]!,
-                highlightedColor: Colors.indigo[900]!)));
+                highlightedColor: Colors.indigo[900]!)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/grooved_divider_1_v1.gif)
@@ -264,14 +266,16 @@ The `DividerPainters.background` allows setting the background color. The defaul
 #### Grooved divider 1 - Customizations
 
 ```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.grooved1(
                 size: 5,
                 highlightedSize: 30,
                 thickness: 3,
-                highlightedThickness: 6)));
+                highlightedThickness: 6)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_1_v1.png)
@@ -282,10 +286,10 @@ The `DividerPainters.background` allows setting the background color. The defaul
     MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
 
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.grooved2(
-                color: Colors.grey[400]!, highlightedColor: Colors.red)));
+                color: Colors.grey[400]!, highlightedColor: Colors.red)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/grooved_divider_2_v1.gif)
@@ -293,15 +297,17 @@ The `DividerPainters.background` allows setting the background color. The defaul
 #### Grooved divider 2 - Customizations
 
 ```dart
+    MultiSplitView multiSplitView = MultiSplitView(children: [child1, child2]);
+
     MultiSplitViewTheme theme = MultiSplitViewTheme(
-        child: multiSplitView,
         data: MultiSplitViewThemeData(
             dividerPainter: DividerPainters.grooved2(
                 gap: 15,
                 thickness: 4,
                 count: 3,
                 highlightedCount: 9,
-                strokeCap: StrokeCap.square)));
+                strokeCap: StrokeCap.square)),
+        child: multiSplitView);
 ```
 
 ![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_2_v1.png)

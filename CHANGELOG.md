@@ -1,3 +1,8 @@
+## 2.3.1
+
+* Bugfix
+  * The anti-aliasing bug workaround is clipping a pixel.
+
 ## 2.3.0
 
 * The standard divider widget (`DividerWidget`) has been exported to the public API.

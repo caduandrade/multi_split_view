@@ -460,7 +460,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     return container.globalToLocal(globalPosition);
   }
 
-  /// Builds a [Positioned].
   Positioned _buildPositioned(
       {required double start,
       required double end,
@@ -468,9 +467,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       bool last = false}) {
     Positioned positioned = Positioned(
         key: child.key,
-        top: widget.axis == Axis.horizontal ? 0 : _convert(start, last),
+        top: widget.axis == Axis.horizontal ? 0 : _convert(start, false),
         bottom: widget.axis == Axis.horizontal ? 0 : _convert(end, last),
-        left: widget.axis == Axis.horizontal ? _convert(start, last) : 0,
+        left: widget.axis == Axis.horizontal ? _convert(start, false) : 0,
         right: widget.axis == Axis.horizontal ? _convert(end, last) : 0,
         child: ClipRect(child: child));
     return positioned;
@@ -480,11 +479,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// The problem minimizes by avoiding the use of coordinates with
   /// decimal values.
   double _convert(double value, bool last) {
-    if (widget.antiAliasingWorkaround) {
-      if (last) {
-        return value.roundToDouble();
-      }
-      return value.floorToDouble();
+    if (widget.antiAliasingWorkaround && !last) {
+      return value.roundToDouble();
     }
     return value;
   }
