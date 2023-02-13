@@ -1,3 +1,8 @@
+## 2.3.2
+
+* `Area`
+  * Replacing the factory constructor with a default constructor.
+
 ## 2.3.1
 
 * Bugfix

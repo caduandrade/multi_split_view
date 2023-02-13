@@ -7,11 +7,7 @@
 /// Before being visible for the first time, the [size] will be converted
 /// to [weight] according to the size of the widget.
 class Area {
-  factory Area(
-      {double? size,
-      double? weight,
-      double? minimalWeight,
-      double? minimalSize}) {
+  Area({this.size, this.weight, this.minimalWeight, this.minimalSize}) {
     if (size != null && weight != null) {
       throw Exception('Cannot provide both a size and a weight.');
     }
@@ -19,22 +15,14 @@ class Area {
       throw Exception('Cannot provide both a minimalWeight and a minimalSize.');
     }
 
-    if (minimalWeight != null && (minimalWeight < 0 || minimalWeight > 1)) {
+    if (minimalWeight != null && (minimalWeight! < 0 || minimalWeight! > 1)) {
       throw Exception('The minimum weight must be between 0 and 1.');
     }
-
-    return Area._(
-        size: _check('size', size),
-        weight: _check('weight', weight),
-        minimalWeight: _check('minimalWeight', minimalWeight),
-        minimalSize: _check('minimalSize', minimalSize));
+    _check('size', size);
+    _check('weight', weight);
+    _check('minimalWeight', minimalWeight);
+    _check('minimalSize', minimalSize);
   }
-
-  Area._(
-      {required this.size,
-      required this.weight,
-      required this.minimalWeight,
-      required this.minimalSize});
 
   final double? size;
   final double? weight;
@@ -52,7 +40,7 @@ class Area {
 
   bool get hasMinimal => minimalSize != null || minimalWeight != null;
 
-  static double? _check(String argument, double? value) {
+  void _check(String argument, double? value) {
     if (value != null) {
       if (value.isNaN) {
         throw Exception('$argument cannot be NaN');
@@ -64,7 +52,6 @@ class Area {
         throw Exception('$argument cannot be negative: $value');
       }
     }
-    return value;
   }
 
   static List<Area> sizes(List<double> sizes) {
