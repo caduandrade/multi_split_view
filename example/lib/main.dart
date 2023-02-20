@@ -115,7 +115,12 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onAddButtonClick() {
-    setState(() => _boxes.insert(0, _createBox()));
+    _boxes.insert(0, _createBox());
+    List<Area> list = List.from(_controller.areas);
+    list.add(Area());
+    _controller.areas = list;
+
+    //setState(() => _boxes.insert(0, _createBox()));
   }
 
   RandomColorBox _createBox() {

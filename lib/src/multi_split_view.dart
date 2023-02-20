@@ -314,10 +314,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       return;
     }
     for (int i = 0; i < _controller.areasLength; i++) {
-      Area area = _controller.getArea(i);
+      final Area area = _controller.getArea(i);
       double size = _sizesCache!.sizes[i];
-      _controller.setAreaAt(
-          i, area.copyWithNewWeight(weight: size / _sizesCache!.childrenSize));
+      area.updateWeight(size / _sizesCache!.childrenSize);
     }
     setState(() {
       _draggingDividerIndex = null;

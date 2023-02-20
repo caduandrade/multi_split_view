@@ -40,11 +40,6 @@ class MultiSplitViewController extends ChangeNotifier {
 
   int get areasLength => _areas.length;
 
-  @internal
-  void setAreaAt(int index, Area area) {
-    _areas[index] = area;
-  }
-
   /// Gets the area of a given widget index.
   Area getArea(int index) {
     return _areas[index];
@@ -74,9 +69,9 @@ class MultiSplitViewController extends ChangeNotifier {
 
     int nullWeightCount = 0;
     for (int i = 0; i < _areas.length; i++) {
-      Area area = _areas[i];
+      final Area area = _areas[i];
       if (area.size != null) {
-        _areas[i] = area.copyWithNewWeight(weight: area.size! / availableSize);
+        area.updateWeight(area.size! / availableSize);
       }
       if (area.weight == null) {
         nullWeightCount++;
@@ -91,10 +86,30 @@ class MultiSplitViewController extends ChangeNotifier {
       if (weightSum < MultiSplitViewController._higherPrecision) {
         r = (1 - weightSum) / nullWeightCount;
       }
-      for (int i = 0; i < _areas.length; i++) {
-        Area area = _areas[i];
-        if (area.weight == null) {
-          _areas[i] = area.copyWithNewWeight(weight: r);
+      if (r == 0) {
+        // shrinking non nulls
+        double newWeight = 0;
+        for (int i = 0; i < _areas.length; i++) {
+          final Area area = _areas[i];
+          if (area.weight != null) {
+            final double r = area.weight! / childrenCount;
+            area.updateWeight(area.weight! - r);
+            newWeight += r / nullWeightCount;
+          }
+        }
+        for (int i = 0; i < _areas.length; i++) {
+          final Area area = _areas[i];
+          if (area.weight == null) {
+            area.updateWeight(newWeight);
+          }
+        }
+      } else {
+        // updating the null weights
+        for (int i = 0; i < _areas.length; i++) {
+          final Area area = _areas[i];
+          if (area.weight == null) {
+            area.updateWeight(r);
+          }
         }
       }
       weightSum = _weightSum();
@@ -105,9 +120,8 @@ class MultiSplitViewController extends ChangeNotifier {
       final over = weightSum - 1;
       double r = over / weightSum;
       for (int i = 0; i < _areas.length; i++) {
-        Area area = _areas[i];
-        _areas[i] =
-            area.copyWithNewWeight(weight: area.weight! - (area.weight! * r));
+        final Area area = _areas[i];
+        area.updateWeight(area.weight! - (area.weight! * r));
       }
     }
 
@@ -123,9 +137,9 @@ class MultiSplitViewController extends ChangeNotifier {
         newWeight = (1 - weightSum) / addedChildrenCount;
       } else {
         for (int i = 0; i < _areas.length; i++) {
-          Area area = _areas[i];
-          double r = area.weight! / childrenCount;
-          _areas[i] = area.copyWithNewWeight(weight: area.weight! - r);
+          final Area area = _areas[i];
+          final double r = area.weight! / childrenCount;
+          area.updateWeight(area.weight! - r);
           newWeight += r / addedChildrenCount;
         }
       }
@@ -141,8 +155,8 @@ class MultiSplitViewController extends ChangeNotifier {
       if (_areas.isNotEmpty) {
         double w = removedWeight / _areas.length;
         for (int i = 0; i < _areas.length; i++) {
-          Area area = _areas[i];
-          _areas[i] = area.copyWithNewWeight(weight: area.weight! + w);
+          final Area area = _areas[i];
+          area.updateWeight(area.weight! + w);
         }
       }
     }
@@ -157,8 +171,8 @@ class MultiSplitViewController extends ChangeNotifier {
       if (availableWeight > 0) {
         double w = availableWeight / childrenCount;
         for (int i = 0; i < _areas.length; i++) {
-          Area area = _areas[i];
-          _areas[i] = area.copyWithNewWeight(weight: area.weight! + w);
+          final Area area = _areas[i];
+          area.updateWeight(area.weight! + w);
         }
       }
     }
@@ -194,25 +208,25 @@ class MultiSplitViewController extends ChangeNotifier {
             (totalMinimalWeight + totalNonMinimalWeight - 1);
       }
       for (int i = 0; i < _areas.length; i++) {
-        Area area = _areas[i];
+        final Area area = _areas[i];
         if (area.minimalSize != null) {
           double minimalWeight = math.max(
               0, (area.minimalSize! / availableSize) - reducerMinimalWeight);
           if (area.weight! < minimalWeight) {
-            _areas[i] = area.copyWithNewWeight(weight: minimalWeight);
+            area.updateWeight(minimalWeight);
           }
         } else if (area.minimalWeight != null) {
           double minimalWeight =
               math.max(0, area.minimalWeight! - reducerMinimalWeight);
           if (area.weight! < minimalWeight) {
-            _areas[i] = area.copyWithNewWeight(weight: minimalWeight);
+            area.updateWeight(minimalWeight);
           }
         } else if (totalReducerNonMinimalWeight > 0) {
           double reducer = totalReducerNonMinimalWeight *
               area.weight! /
               totalNonMinimalWeight;
           double newWeight = math.max(0, area.weight! - reducer);
-          _areas[i] = area.copyWithNewWeight(weight: newWeight);
+          area.updateWeight(newWeight);
         }
       }
     }

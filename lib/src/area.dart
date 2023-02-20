@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 /// Child area in the [MultiSplitView].
 ///
 /// The area may have a [size] defined in pixels or [weight]
@@ -7,7 +9,9 @@
 /// Before being visible for the first time, the [size] will be converted
 /// to [weight] according to the size of the widget.
 class Area {
-  Area({this.size, this.weight, this.minimalWeight, this.minimalSize}) {
+  Area({double? size, double? weight, this.minimalWeight, this.minimalSize})
+      : _size = size,
+        _weight = weight {
     if (size != null && weight != null) {
       throw Exception('Cannot provide both a size and a weight.');
     }
@@ -24,18 +28,19 @@ class Area {
     _check('minimalSize', minimalSize);
   }
 
-  final double? size;
-  final double? weight;
   final double? minimalWeight;
   final double? minimalSize;
 
-  Area copyWithNewWeight(
-      {double? weight, double? minimalWeight, double? minimalSize}) {
-    return Area(
-        size: null,
-        weight: weight ?? this.weight,
-        minimalSize: minimalSize ?? this.minimalSize,
-        minimalWeight: minimalWeight ?? this.minimalWeight);
+  double? _size;
+  double? get size => _size;
+
+  double? _weight;
+  double? get weight => _weight;
+
+  @internal
+  void updateWeight(double value) {
+    _size = null;
+    _weight = value;
   }
 
   bool get hasMinimal => minimalSize != null || minimalWeight != null;

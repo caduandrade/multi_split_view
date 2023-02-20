@@ -1,7 +1,11 @@
-## 2.3.2
+## 2.4.0
 
 * `Area`
   * Replacing the factory constructor with a default constructor.
+  * The `copyWithNewWeight` method has been removed.
+* `MultiSplitViewController`
+  * Keeping the reference to the areas received by the constructor parameter. A new instance of `Area` will no longer be built when resizing the layout. 
+  * The `setAreaAt` method has been removed.
 
 ## 2.3.1
 
