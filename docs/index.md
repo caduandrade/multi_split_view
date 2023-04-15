@@ -45,7 +45,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     MultiSplitView(children: [child1, child2, child3]);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/horizontal_v1.png)
+![](horizontal_v1.png)
 
 ## Vertical
 
@@ -53,7 +53,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     MultiSplitView(axis: Axis.vertical, children: [child1, child2]);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/vertical_v1.png)
+![](vertical_v1.png)
 
 ## Horizontal and vertical
 
@@ -64,7 +64,7 @@ A widget to provides horizontal or vertical multiple split view for Flutter.
     ]);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/horizontal_vertical_v1.png)
+![](horizontal_vertical_v1.png)
 
 ## Setting the initial weights
 
@@ -98,7 +98,7 @@ and
         children: [child1, child2, child3], controller: _controller);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/horizontal_weight_v1.png)
+![](horizontal_weight_v1.png)
 
 ## Changing the weights or sizes programmatically
 
@@ -146,7 +146,7 @@ and
         data: MultiSplitViewThemeData(dividerThickness: 30));
 ```
 
-![](https://caduandrade.github.io/multi_split_view/divider_thickness_v1.png)
+![](divider_thickness_v1.png)
 
 ## Widget as a custom divider
 
@@ -169,7 +169,7 @@ and
         data: MultiSplitViewThemeData(dividerThickness: 24));
 ```
 
-![](https://caduandrade.github.io/multi_split_view/divider_custom_widget_v1.png)
+![](divider_custom_widget_v1.png)
 
 ## Divider tap gestures
 
@@ -199,7 +199,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
             dividerPainter: DividerPainters.background(color: Colors.black)));
 ```
 
-![](https://caduandrade.github.io/multi_split_view/divider_color_v1.png)
+![](divider_color_v1.png)
 
 ### Divider - highlighted background color
 
@@ -213,7 +213,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
                 color: Colors.grey[200], highlightedColor: Colors.grey[800])));
 ```
 
-![](https://caduandrade.github.io/multi_split_view/highlighted_color_v1.gif)
+![](highlighted_color_v1.gif)
 
 ### Dashed divider
 
@@ -227,7 +227,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/dashed_divider_v1.gif)
+![](dashed_divider_v1.gif)
 
 #### Dashed divider - Customizations
 
@@ -241,7 +241,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/custom_dashed_divider_v1.png)
+![](custom_dashed_divider_v1.png)
 
 ### Grooved divider 1
 
@@ -256,7 +256,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/grooved_divider_1_v1.gif)
+![](grooved_divider_1_v1.gif)
 
 #### Grooved divider 1 - Customizations
 
@@ -273,7 +273,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_1_v1.png)
+![](custom_grooved_divider_1_v1.png)
 
 ### Grooved divider 2
 
@@ -287,7 +287,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/grooved_divider_2_v1.gif)
+![](grooved_divider_2_v1.gif)
 
 #### Grooved divider 2 - Customizations
 
@@ -305,7 +305,7 @@ The `DividerPainters.background` allows setting the background color. The defaul
         child: multiSplitView);
 ```
 
-![](https://caduandrade.github.io/multi_split_view/custom_grooved_divider_2_v1.png)
+![](custom_grooved_divider_2_v1.png)
 
 ### Divider - Custom painter
 
