@@ -90,9 +90,9 @@ void main() {
           areas: [Area(weight: .2), Area(weight: .2), Area(weight: .6)]);
       c.fixWeights(childrenCount: 4, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 4);
-      expect(c.getArea(0).weight, closeTo(.15, delta));
-      expect(c.getArea(1).weight, closeTo(.15, delta));
-      expect(c.getArea(2).weight, closeTo(.45, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.15, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.15, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.45, epsilon: delta));
       expect(c.getArea(3).weight, .25);
     });
     test('11', () {
@@ -132,79 +132,79 @@ void main() {
           MultiSplitViewController(areas: [Area(weight: 1), Area(weight: 1)]);
       c.fixWeights(childrenCount: 2, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 2);
-      expect(c.getArea(0).weight, closeTo(.5, delta));
-      expect(c.getArea(1).weight, closeTo(.5, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.5, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.5, epsilon: delta));
     });
     test('16', () {
       MultiSplitViewController c =
           MultiSplitViewController(areas: [Area(weight: .2), Area(weight: 1)]);
       c.fixWeights(childrenCount: 2, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 2);
-      expect(c.getArea(0).weight, closeTo(.16666, delta));
-      expect(c.getArea(1).weight, closeTo(.83333, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.16666, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.83333, epsilon: delta));
     });
     test('17', () {
       MultiSplitViewController c = MultiSplitViewController(areas: []);
       c.fixWeights(childrenCount: 2, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 2);
-      expect(c.getArea(0).weight, closeTo(.5, delta));
-      expect(c.getArea(1).weight, closeTo(.5, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.5, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.5, epsilon: delta));
       c.fixWeights(childrenCount: 3, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.33333, delta));
-      expect(c.getArea(1).weight, closeTo(.33333, delta));
-      expect(c.getArea(2).weight, closeTo(.33333, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.33333, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.33333, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.33333, epsilon: delta));
     });
     test('18', () {
       MultiSplitViewController c =
           MultiSplitViewController(areas: [Area(weight: .5), Area(weight: .5)]);
       c.fixWeights(childrenCount: 2, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 2);
-      expect(c.getArea(0).weight, closeTo(.5, delta));
-      expect(c.getArea(1).weight, closeTo(.5, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.5, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.5, epsilon: delta));
 
       c.areas = [Area(weight: .5), Area(weight: .5), Area()];
       c.fixWeights(childrenCount: 3, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.3333, delta));
-      expect(c.getArea(1).weight, closeTo(.3333, delta));
-      expect(c.getArea(2).weight, closeTo(.3333, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.3333, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.3333, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.3333, epsilon: delta));
     });
     test('19', () {
       MultiSplitViewController c = MultiSplitViewController(
           areas: [Area(weight: .5), Area(weight: .5), Area()]);
       c.fixWeights(childrenCount: 3, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.3333, delta));
-      expect(c.getArea(1).weight, closeTo(.3333, delta));
-      expect(c.getArea(2).weight, closeTo(.3333, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.3333, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.3333, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.3333, epsilon: delta));
     });
     test('20', () {
       MultiSplitViewController c = MultiSplitViewController(
           areas: [Area(weight: .2), Area(weight: .8), Area()]);
       c.fixWeights(childrenCount: 3, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.13333, delta));
-      expect(c.getArea(1).weight, closeTo(.53333, delta));
-      expect(c.getArea(2).weight, closeTo(.33333, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.13333, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.53333, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.33333, epsilon: delta));
     });
     test('21', () {
       MultiSplitViewController c = MultiSplitViewController(
           areas: [Area(weight: .2), Area(weight: .8), Area(minimalWeight: .5)]);
       c.fixWeights(childrenCount: 3, fullSize: 1000, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.1, delta));
-      expect(c.getArea(1).weight, closeTo(.4, delta));
-      expect(c.getArea(2).weight, closeTo(.5, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.1, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.4, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.5, epsilon: delta));
     });
     test('22', () {
       MultiSplitViewController c = MultiSplitViewController(
           areas: [Area(weight: .2), Area(weight: .8), Area(minimalSize: 500)]);
       c.fixWeights(childrenCount: 3, fullSize: 1020, dividerThickness: 10);
       expect(c.areas.length, 3);
-      expect(c.getArea(0).weight, closeTo(.1, delta));
-      expect(c.getArea(1).weight, closeTo(.4, delta));
-      expect(c.getArea(2).weight, closeTo(.5, delta));
+      expect(c.getArea(0).weight, moreOrLessEquals(.1, epsilon: delta));
+      expect(c.getArea(1).weight, moreOrLessEquals(.4, epsilon: delta));
+      expect(c.getArea(2).weight, moreOrLessEquals(.5, epsilon: delta));
     });
   });
 }
