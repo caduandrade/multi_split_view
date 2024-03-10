@@ -7,6 +7,7 @@ import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_tap_typedefs.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/internal/initial_drag.dart';
+import 'package:multi_split_view/src/internal/layout.dart';
 import 'package:multi_split_view/src/internal/sizes_cache.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
@@ -74,12 +75,20 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   late MultiSplitViewController _controller;
   InitialDrag? _initialDrag;
 
+  double _initialDragPos = 0;
+
   int? _draggingDividerIndex;
   int? _hoverDividerIndex;
+
+  @deprecated
+  //TODO remove
   SizesCache? _sizesCache;
   int? _weightsHashCode;
 
   Object? _lastAreasUpdateHash;
+
+  Layout _layout =
+      Layout(childrenCount: 0, containerSize: 0, dividerThickness: 0);
 
   @override
   void initState() {
@@ -140,127 +149,105 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   @override
   Widget build(BuildContext context) {
-    if (_lastAreasUpdateHash != _controller.areasUpdateHash) {
-      _draggingDividerIndex = null;
-      _lastAreasUpdateHash = _controller.areasUpdateHash;
-    }
     if (widget.children.length > 0) {
       MultiSplitViewThemeData themeData = MultiSplitViewTheme.of(context);
 
       return LayoutBuilder(builder: (context, constraints) {
-        final double fullSize = widget.axis == Axis.horizontal
+        ControllerHelper controllerHelper = ControllerHelper(_controller);
+
+        final double containerSize = widget.axis == Axis.horizontal
             ? constraints.maxWidth
             : constraints.maxHeight;
 
-        _controller.fixWeights(
-            childrenCount: widget.children.length,
-            fullSize: fullSize,
-            dividerThickness: themeData.dividerThickness);
-        if (_sizesCache == null ||
-            _sizesCache!.childrenCount != widget.children.length ||
-            _sizesCache!.fullSize != fullSize) {
-          _sizesCache = SizesCache(
-              areas: _controller.areas,
-              fullSize: fullSize,
+        if (_layout.containerSize != containerSize ||
+            _layout.childrenCount != widget.children.length ||
+            _layout.dividerThickness != themeData.dividerThickness) {
+          _layout = Layout(
+              childrenCount: widget.children.length,
+              containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
+          _layout.adjustAreas(controller: _controller);
+        } else if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash) {
+          _draggingDividerIndex = null;
+          _layout.adjustAreas(controller: _controller);
         }
+
+        _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
+
+        _layout.updateAreaConstraints(controller: _controller);
 
         List<Widget> children = [];
 
-        _sizesCache!.iterate(child: (int index, double start, double end) {
-          children.add(_buildPositioned(
-              start: start, end: end, child: widget.children[index]));
-        }, divider: (int index, double start, double end) {
-          bool highlighted = (_draggingDividerIndex == index ||
-              (_draggingDividerIndex == null && _hoverDividerIndex == index));
-          Widget dividerWidget = widget.dividerBuilder != null
-              ? widget.dividerBuilder!(
-                  widget.axis == Axis.horizontal
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  index,
-                  widget.resizable,
-                  _draggingDividerIndex == index,
-                  highlighted,
-                  themeData)
-              : DividerWidget(
-                  axis: widget.axis == Axis.horizontal
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  index: index,
-                  themeData: themeData,
-                  highlighted: highlighted,
-                  resizable: widget.resizable,
-                  dragging: _draggingDividerIndex == index);
-          if (widget.resizable) {
-            dividerWidget = GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () => _onDividerTap(index),
-                onDoubleTap: () => _onDividerDoubleTap(index),
-                onHorizontalDragDown: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) {
-                        setState(() {
-                          _draggingDividerIndex = index;
-                        });
-                        final pos = _position(context, detail.globalPosition);
-                        _updateInitialDrag(index, pos.dx);
-                      },
-                onHorizontalDragCancel:
-                    widget.axis == Axis.vertical ? null : () => _onDragCancel(),
-                onHorizontalDragEnd: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) => _onDragEnd(),
-                onHorizontalDragUpdate: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) {
-                        if (_draggingDividerIndex == null) {
-                          return;
-                        }
-                        final pos = _position(context, detail.globalPosition);
-                        double diffX = pos.dx - _initialDrag!.initialDragPos;
-
-                        _updateDifferentWeights(
-                            childIndex: index, diffPos: diffX, pos: pos.dx);
-                      },
-                onVerticalDragDown: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) {
-                        setState(() {
-                          _draggingDividerIndex = index;
-                        });
-                        final pos = _position(context, detail.globalPosition);
-                        _updateInitialDrag(index, pos.dy);
-                      },
-                onVerticalDragCancel: widget.axis == Axis.horizontal
-                    ? null
-                    : () => _onDragCancel(),
-                onVerticalDragEnd: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) => _onDragEnd(),
-                onVerticalDragUpdate: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) {
-                        if (_draggingDividerIndex == null) {
-                          return;
-                        }
-                        final pos = _position(context, detail.globalPosition);
-                        double diffY = pos.dy - _initialDrag!.initialDragPos;
-                        _updateDifferentWeights(
-                            childIndex: index, diffPos: diffY, pos: pos.dy);
-                      },
-                child: dividerWidget);
-            dividerWidget = _mouseRegion(
-                index: index,
-                axis: widget.axis == Axis.horizontal
-                    ? Axis.vertical
-                    : Axis.horizontal,
-                dividerWidget: dividerWidget,
-                themeData: themeData);
-          }
-          children.add(
-              _buildPositioned(start: start, end: end, child: dividerWidget));
-        });
+        _layout.iterate(
+            controller: _controller,
+            child: (int index, double start, double end) {
+              children.add(_buildPositioned(
+                  start: start, end: end, child: widget.children[index]));
+            },
+            divider: (int index, double start, double end) {
+              bool highlighted = (_draggingDividerIndex == index ||
+                  (_draggingDividerIndex == null &&
+                      _hoverDividerIndex == index));
+              Widget dividerWidget = widget.dividerBuilder != null
+                  ? widget.dividerBuilder!(
+                      widget.axis == Axis.horizontal
+                          ? Axis.vertical
+                          : Axis.horizontal,
+                      index,
+                      widget.resizable,
+                      _draggingDividerIndex == index,
+                      highlighted,
+                      themeData)
+                  : DividerWidget(
+                      axis: widget.axis == Axis.horizontal
+                          ? Axis.vertical
+                          : Axis.horizontal,
+                      index: index,
+                      themeData: themeData,
+                      highlighted: highlighted,
+                      resizable: widget.resizable,
+                      dragging: _draggingDividerIndex == index);
+              if (widget.resizable) {
+                dividerWidget = GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => _onDividerTap(index),
+                    onDoubleTap: () => _onDividerDoubleTap(index),
+                    onHorizontalDragDown: widget.axis == Axis.vertical
+                        ? null
+                        : (detail) => _onDragDown(detail, index),
+                    onHorizontalDragCancel: widget.axis == Axis.vertical
+                        ? null
+                        : () => _onDragCancel(),
+                    onHorizontalDragEnd: widget.axis == Axis.vertical
+                        ? null
+                        : (detail) => _onDragEnd(),
+                    onHorizontalDragUpdate: widget.axis == Axis.vertical
+                        ? null
+                        : (detail) => _onDragUpdate(detail, index),
+                    onVerticalDragDown: widget.axis == Axis.horizontal
+                        ? null
+                        : (detail) => _onDragDown(detail, index),
+                    onVerticalDragCancel: widget.axis == Axis.horizontal
+                        ? null
+                        : () => _onDragCancel(),
+                    onVerticalDragEnd: widget.axis == Axis.horizontal
+                        ? null
+                        : (detail) => _onDragEnd(),
+                    onVerticalDragUpdate: widget.axis == Axis.horizontal
+                        ? null
+                        : (detail) => _onDragUpdate(detail, index),
+                    child: dividerWidget);
+                dividerWidget = _mouseRegion(
+                    index: index,
+                    axis: widget.axis == Axis.horizontal
+                        ? Axis.vertical
+                        : Axis.horizontal,
+                    dividerWidget: dividerWidget,
+                    themeData: themeData);
+              }
+              children.add(_buildPositioned(
+                  start: start, end: end, child: dividerWidget));
+            });
 
         if (widget.onWeightChange != null) {
           int newWeightsHashCode = _controller.weightsHashCode;
@@ -300,6 +287,42 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     }
   }
 
+  void _onDragDown(DragDownDetails detail, int index) {
+    setState(() {
+      _draggingDividerIndex = index;
+    });
+    final Offset pos = _position(context, detail.globalPosition);
+    final double delta = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
+    _initialDragPos = delta;
+    _updateInitialDrag(index, delta);
+  }
+
+  void _onDragUpdate(DragUpdateDetails detail, int index) {
+    if (_draggingDividerIndex == null) {
+      return;
+    }
+    final Offset pos = _position(context, detail.globalPosition);
+
+    final double delta = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
+
+    final double newDiffX = delta - _initialDragPos;
+
+    if (_layout.moveDivider(
+        controller: _controller, dividerIndex: index, pixels: newDiffX)) {
+      setState(() {
+        _initialDragPos = delta;
+      });
+    } else if (newDiffX < 0) {
+      setState(() {
+        _initialDragPos = _layout.dividers[index].start;
+      });
+    } else if (newDiffX > 0) {
+      setState(() {
+        _initialDragPos = _layout.dividers[index].end;
+      });
+    }
+  }
+
   void _onDragCancel() {
     if (_draggingDividerIndex == null) {
       return;
@@ -312,11 +335,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   void _onDragEnd() {
     if (_draggingDividerIndex == null) {
       return;
-    }
-    for (int i = 0; i < _controller.areasLength; i++) {
-      final Area area = _controller.getArea(i);
-      double size = _sizesCache!.sizes[i];
-      area.updateWeight(size / _sizesCache!.childrenSize);
     }
     setState(() {
       _draggingDividerIndex = null;
@@ -340,7 +358,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         child: dividerWidget);
   }
 
+  //TODO remove
+  @deprecated
   void _updateInitialDrag(int childIndex, double initialDragPos) {
+    if (true) {
+      return;
+    }
     final double initialChild1Size = _sizesCache!.sizes[childIndex];
     final double initialChild2Size = _sizesCache!.sizes[childIndex + 1];
     final double minimalChild1Size = _sizesCache!.minimalSizes[childIndex];
@@ -392,8 +415,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   }
 
   /// Calculates the new weights and sets if they are different from the current one.
+  //TODO remove
+  @deprecated
   void _updateDifferentWeights(
-      {required int childIndex, required double diffPos, required double pos}) {
+      {required int childIndex, required double diffPos}) {
     if (diffPos == 0) {
       return;
     }

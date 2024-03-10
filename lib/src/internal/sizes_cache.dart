@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area.dart';
 
 @internal
+@deprecated
 class SizesCache {
   factory SizesCache(
       {required List<Area> areas,
@@ -13,7 +14,7 @@ class SizesCache {
     List<double> sizes = [];
     List<double> minimalSizes = [];
     for (Area area in areas) {
-      double size = area.weight! * childrenSize;
+      double size = area.flex! * childrenSize;
       sizes.add(size);
       double minimalSize = area.minimalSize ?? 0;
       if (area.minimalWeight != null) {

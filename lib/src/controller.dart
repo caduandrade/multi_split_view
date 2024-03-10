@@ -28,10 +28,6 @@ class MultiSplitViewController extends ChangeNotifier {
 
   Object _areasUpdateHash = Object();
 
-  /// Hash to identify [areas] setter usage.
-  @internal
-  Object get areasUpdateHash => _areasUpdateHash;
-
   set areas(List<Area> areas) {
     _areas = List.from(areas);
     _areasUpdateHash = Object();
@@ -49,7 +45,7 @@ class MultiSplitViewController extends ChangeNotifier {
   double _weightSum() {
     double sum = 0;
     _areas.forEach((area) {
-      sum += area.weight ?? 0;
+      sum += area.flex ?? 0;
     });
     return sum;
   }
@@ -58,6 +54,7 @@ class MultiSplitViewController extends ChangeNotifier {
   /// New children will receive a percentage of current children.
   /// Excluded children will distribute their weights to the existing ones.
   @internal
+  @deprecated
   void fixWeights(
       {required int childrenCount,
       required double fullSize,
@@ -73,7 +70,7 @@ class MultiSplitViewController extends ChangeNotifier {
       if (area.size != null) {
         area.updateWeight(area.size! / availableSize);
       }
-      if (area.weight == null) {
+      if (area.flex == null) {
         nullWeightCount++;
       }
     }
@@ -91,15 +88,15 @@ class MultiSplitViewController extends ChangeNotifier {
         double newWeight = 0;
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          if (area.weight != null) {
-            final double r = area.weight! / childrenCount;
-            area.updateWeight(area.weight! - r);
+          if (area.flex != null) {
+            final double r = area.flex! / childrenCount;
+            area.updateWeight(area.flex! - r);
             newWeight += r / nullWeightCount;
           }
         }
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          if (area.weight == null) {
+          if (area.flex == null) {
             area.updateWeight(newWeight);
           }
         }
@@ -107,7 +104,7 @@ class MultiSplitViewController extends ChangeNotifier {
         // updating the null weights
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          if (area.weight == null) {
+          if (area.flex == null) {
             area.updateWeight(r);
           }
         }
@@ -121,7 +118,7 @@ class MultiSplitViewController extends ChangeNotifier {
       double r = over / weightSum;
       for (int i = 0; i < _areas.length; i++) {
         final Area area = _areas[i];
-        area.updateWeight(area.weight! - (area.weight! * r));
+        area.updateWeight(area.flex! - (area.flex! * r));
       }
     }
 
@@ -138,25 +135,25 @@ class MultiSplitViewController extends ChangeNotifier {
       } else {
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          final double r = area.weight! / childrenCount;
-          area.updateWeight(area.weight! - r);
+          final double r = area.flex! / childrenCount;
+          area.updateWeight(area.flex! - r);
           newWeight += r / addedChildrenCount;
         }
       }
       for (int i = 0; i < addedChildrenCount; i++) {
-        _areas.add(Area(weight: newWeight));
+        //_areas.add(Area(weight: newWeight));
       }
     } else {
       // children has been removed.
       double removedWeight = 0;
       while (_areas.length > childrenCount) {
-        removedWeight += _areas.removeLast().weight!;
+        removedWeight += _areas.removeLast().flex!;
       }
       if (_areas.isNotEmpty) {
         double w = removedWeight / _areas.length;
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          area.updateWeight(area.weight! + w);
+          area.updateWeight(area.flex! + w);
         }
       }
     }
@@ -165,6 +162,7 @@ class MultiSplitViewController extends ChangeNotifier {
   }
 
   /// Fills equally the missing weights
+  @deprecated
   void _fillWeightsEqually(int childrenCount, double weightSum) {
     if (weightSum < 1) {
       double availableWeight = 1 - weightSum;
@@ -172,13 +170,14 @@ class MultiSplitViewController extends ChangeNotifier {
         double w = availableWeight / childrenCount;
         for (int i = 0; i < _areas.length; i++) {
           final Area area = _areas[i];
-          area.updateWeight(area.weight! + w);
+          area.updateWeight(area.flex! + w);
         }
       }
     }
   }
 
   /// Fix the weights to the minimal size/weight.
+  @deprecated
   void _applyMinimal({required double availableSize}) {
     double totalNonMinimalWeight = 0;
     double totalMinimalWeight = 0;
@@ -193,7 +192,7 @@ class MultiSplitViewController extends ChangeNotifier {
         totalMinimalWeight += area.minimalWeight!;
         minimalCount++;
       } else {
-        totalNonMinimalWeight += area.weight!;
+        totalNonMinimalWeight += area.flex!;
       }
     }
     if (totalMinimalWeight > 0) {
@@ -212,20 +211,19 @@ class MultiSplitViewController extends ChangeNotifier {
         if (area.minimalSize != null) {
           double minimalWeight = math.max(
               0, (area.minimalSize! / availableSize) - reducerMinimalWeight);
-          if (area.weight! < minimalWeight) {
+          if (area.flex! < minimalWeight) {
             area.updateWeight(minimalWeight);
           }
         } else if (area.minimalWeight != null) {
           double minimalWeight =
               math.max(0, area.minimalWeight! - reducerMinimalWeight);
-          if (area.weight! < minimalWeight) {
+          if (area.flex! < minimalWeight) {
             area.updateWeight(minimalWeight);
           }
         } else if (totalReducerNonMinimalWeight > 0) {
-          double reducer = totalReducerNonMinimalWeight *
-              area.weight! /
-              totalNonMinimalWeight;
-          double newWeight = math.max(0, area.weight! - reducer);
+          double reducer =
+              totalReducerNonMinimalWeight * area.flex! / totalNonMinimalWeight;
+          double newWeight = math.max(0, area.flex! - reducer);
           area.updateWeight(newWeight);
         }
       }
@@ -267,11 +265,22 @@ class _WeightIterator extends Iterator<double?> {
   int _index = -1;
 
   @override
-  double? get current => areas[_index].weight;
+  double? get current => areas[_index].flex;
 
   @override
   bool moveNext() {
     _index++;
     return _index > -1 && _index < areas.length;
   }
+}
+
+@internal
+class ControllerHelper {
+  const ControllerHelper(this.controller);
+
+  final MultiSplitViewController controller;
+
+  List<Area> get areas => controller._areas;
+
+  Object get areasUpdateHash => controller._areasUpdateHash;
 }

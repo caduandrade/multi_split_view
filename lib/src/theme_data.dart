@@ -10,8 +10,9 @@ class MultiSplitViewThemeData {
   /// The [dividerThickness] argument must also be positive.
   MultiSplitViewThemeData(
       {this.dividerThickness = defaultDividerThickness, this.dividerPainter}) {
-    if (dividerThickness <= 0) {
-      throw Exception('The thickness of the divider must be positive.');
+    if (dividerThickness < 0) {
+      throw ArgumentError('The value cannot be negative: $dividerThickness.',
+          'dividerThickness');
     }
   }
 

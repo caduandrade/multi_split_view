@@ -1,3 +1,11 @@
+### 3.0.0
+
+* Changes
+  * `Area`
+    * The algorithm has been changed to use `flex` factor instead of `weight`.
+  * `Theme`
+    * The `dividerThickness` now can be zero.
+
 ## 2.4.0
 
 * `Area`

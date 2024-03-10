@@ -84,7 +84,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onWeightChange() {
     if (kDebugMode) {
-      print('weight change');
+      // print('weight change');
     }
   }
 
@@ -96,7 +96,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   _onSetWeightButtonClick() {
     if (_controller.areas.length >= 2) {
-      _controller.areas = [Area(), Area(weight: .1)];
+      _controller.areas = [Area(flex: 3), Area(flex: 1)];
     }
   }
 
