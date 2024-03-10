@@ -1,5 +1,3 @@
-
-
 const double delta = 0.00005;
 
 void main() {

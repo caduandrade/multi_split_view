@@ -9,19 +9,19 @@ void main() {
       MultiSplitViewController controller =
           MultiSplitViewController(areas: [Area()]);
       Layout(childrenCount: 0, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 0);
 
       controller = MultiSplitViewController(
           areas: [Area(data: 'a'), Area(data: 'b'), Area(data: 'c')]);
       Layout(childrenCount: 1, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 1);
       expect(controller.areas[0].data, 'a');
 
       controller = MultiSplitViewController(areas: [Area(data: 'a')]);
       Layout(childrenCount: 2, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 2);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[1].data, null);
@@ -31,7 +31,7 @@ void main() {
       MultiSplitViewController controller =
           MultiSplitViewController(areas: [Area(data: 'a', size: 10, max: 20)]);
       Layout(childrenCount: 1, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 1);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[0].size, null);
@@ -44,7 +44,7 @@ void main() {
         Area(data: 'b', size: 2, min: 1)
       ]);
       Layout(childrenCount: 2, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 2);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[0].size, null);
@@ -62,7 +62,7 @@ void main() {
         Area(data: 'b', size: 2, min: 1)
       ]);
       Layout(childrenCount: 2, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 2);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[0].size, null);
@@ -80,7 +80,7 @@ void main() {
       MultiSplitViewController controller =
           MultiSplitViewController(areas: [Area(data: 'a', flex: 0)]);
       Layout(childrenCount: 1, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 1);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[0].size, null);
@@ -91,7 +91,7 @@ void main() {
       controller = MultiSplitViewController(
           areas: [Area(data: 'a', flex: 0), Area(data: 'b', flex: 0)]);
       Layout(childrenCount: 2, containerSize: 100, dividerThickness: 5)
-          .adjustAreas(controller: controller);
+          .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 2);
       expect(controller.areas[0].data, 'a');
       expect(controller.areas[0].size, null);

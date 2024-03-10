@@ -8,8 +8,9 @@ void main() {
       MultiSplitViewController controller = MultiSplitViewController();
       Layout layout =
           Layout(childrenCount: 2, containerSize: 100, dividerThickness: 10);
-      layout.adjustAreas(controller: controller);
-      layout.updateAreaConstraints(controller: controller);
+      ControllerHelper controllerHelper = ControllerHelper(controller);
+      layout.adjustAreas(controllerHelper: controllerHelper);
+      layout.updateAreaConstraints(controllerHelper: controllerHelper);
 
       expect(layout.areaConstraintsList.length, 2);
       expect(layout.areaConstraintsList[0].start, 0);

@@ -166,15 +166,15 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               childrenCount: widget.children.length,
               containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
-          _layout.adjustAreas(controller: _controller);
+          _layout.adjustAreas(controllerHelper: controllerHelper);
         } else if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash) {
           _draggingDividerIndex = null;
-          _layout.adjustAreas(controller: _controller);
+          _layout.adjustAreas(controllerHelper: controllerHelper);
         }
 
         _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
 
-        _layout.updateAreaConstraints(controller: _controller);
+        _layout.updateAreaConstraints(controllerHelper: controllerHelper);
 
         List<Widget> children = [];
 
@@ -223,7 +223,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                         : (detail) => _onDragEnd(),
                     onHorizontalDragUpdate: widget.axis == Axis.vertical
                         ? null
-                        : (detail) => _onDragUpdate(detail, index),
+                        : (detail) =>
+                            _onDragUpdate(detail, index, controllerHelper),
                     onVerticalDragDown: widget.axis == Axis.horizontal
                         ? null
                         : (detail) => _onDragDown(detail, index),
@@ -235,7 +236,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                         : (detail) => _onDragEnd(),
                     onVerticalDragUpdate: widget.axis == Axis.horizontal
                         ? null
-                        : (detail) => _onDragUpdate(detail, index),
+                        : (detail) =>
+                            _onDragUpdate(detail, index, controllerHelper),
                     child: dividerWidget);
                 dividerWidget = _mouseRegion(
                     index: index,
@@ -297,7 +299,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     _updateInitialDrag(index, delta);
   }
 
-  void _onDragUpdate(DragUpdateDetails detail, int index) {
+  void _onDragUpdate(
+      DragUpdateDetails detail, int index, ControllerHelper controllerHelper) {
     if (_draggingDividerIndex == null) {
       return;
     }
@@ -308,7 +311,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     final double newDiffX = delta - _initialDragPos;
 
     if (_layout.moveDivider(
-        controller: _controller, dividerIndex: index, pixels: newDiffX)) {
+        controllerHelper: controllerHelper,
+        dividerIndex: index,
+        pixels: newDiffX)) {
       setState(() {
         _initialDragPos = delta;
       });

@@ -54,8 +54,7 @@ class Layout {
   /// * Transforms all areas into flex if they are all size valued.
   /// Nullifies min and max.
   /// * Change flex value to 1 if all areas are flex 0.
-  void adjustAreas({required MultiSplitViewController controller}) {
-    ControllerHelper controllerHelper = ControllerHelper(controller);
+  void adjustAreas({required ControllerHelper controllerHelper}) {
     if (controllerHelper.areas.length > childrenCount) {
       controllerHelper.areas
           .removeRange(childrenCount, controllerHelper.areas.length);
@@ -103,8 +102,7 @@ class Layout {
     return sum;
   }
 
-  void updateAreaConstraints({required MultiSplitViewController controller}) {
-    ControllerHelper controllerHelper = ControllerHelper(controller);
+  void updateAreaConstraints({required ControllerHelper controllerHelper}) {
     dividers.clear();
     areaConstraintsList.clear();
     double start = 0;
@@ -156,17 +154,15 @@ class Layout {
   }
 
   bool moveDivider(
-      {required MultiSplitViewController controller,
+      {required ControllerHelper controllerHelper,
       required int dividerIndex,
       required double pixels}) {
     if (pixels == 0) {
       return false;
     }
 
-    ControllerHelper controllerHelper = ControllerHelper(controller);
-
-    Area area1 = controller.areas[dividerIndex];
-    Area area2 = controller.areas[dividerIndex + 1];
+    Area area1 = controllerHelper.areas[dividerIndex];
+    Area area2 = controllerHelper.areas[dividerIndex + 1];
 
     // amount of flex for each pixel
     final double flexPerPixel =
