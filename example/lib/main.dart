@@ -29,7 +29,6 @@ class MultiSplitViewExample extends StatefulWidget {
 }
 
 class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
-  static const int _max = 40;
   static const int _initial = 3;
 
   late final List<RandomColorBox> _boxes;
@@ -48,37 +47,47 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     Widget buttons = Container(
         color: Colors.white,
         padding: const EdgeInsets.all(8),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text('Horizontal widgets: ${_boxes.length} / $_max'),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onAddButtonClick, child: const Text('Add')),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onRemoveButtonClick, child: const Text('Remove')),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onSetWeightButtonClick,
-              child: const Text('Change second area weight'))
-        ]));
+        child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              ElevatedButton(
+                  onPressed: _onAddFlexButtonClick,
+                  child: const Text('Add flex')),
+              ElevatedButton(
+                  onPressed: _onAddSizeButtonClick,
+                  child: const Text('Add size')),
+              ElevatedButton(
+                  onPressed:
+                      _boxes.isNotEmpty ? _onRemoveFirstButtonClick : null,
+                  child: const Text('Remove first')),
+              ElevatedButton(
+                  onPressed:
+                      _boxes.isNotEmpty ? _onSetFirstFlexButtonClick : null,
+                  child: const Text('Change first area flex'))
+            ]));
 
-    final List<Widget> children = _boxes;
+    Widget? content;
+    if (_boxes.isNotEmpty) {
+      MultiSplitView multiSplitView = MultiSplitView(
+          onWeightChange: _onWeightChange,
+          onDividerTap: _onDividerTap,
+          onDividerDoubleTap: _onDividerDoubleTap,
+          controller: _controller,
+          children: _boxes);
 
-    MultiSplitView multiSplitView = MultiSplitView(
-        onWeightChange: _onWeightChange,
-        onDividerTap: _onDividerTap,
-        onDividerDoubleTap: _onDividerDoubleTap,
-        controller: _controller,
-        children: children);
-
-    MultiSplitViewTheme theme = MultiSplitViewTheme(
-        data:
-            MultiSplitViewThemeData(dividerPainter: DividerPainters.grooved2()),
-        child: multiSplitView);
+      content = MultiSplitViewTheme(
+          data: MultiSplitViewThemeData(
+              dividerPainter: DividerPainters.grooved2()),
+          child: multiSplitView);
+    } else {
+      content = const Center(child: Text('Empty'));
+    }
 
     return Scaffold(
         appBar: AppBar(title: const Text('Multi Split View Example')),
-        body: Column(children: [buttons, Expanded(child: theme)])
+        body: Column(children: [buttons, Expanded(child: content)])
         // body: horizontal,
         );
   }
@@ -89,15 +98,17 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     }
   }
 
-  _onRemoveButtonClick() {
+  _onRemoveFirstButtonClick() {
     if (_boxes.isNotEmpty) {
       _removeBox(_boxes.first);
     }
   }
 
-  _onSetWeightButtonClick() {
-    if (_controller.areas.length >= 2) {
-      _controller.areas = [Area(flex: 3), Area(flex: 1)];
+  _onSetFirstFlexButtonClick() {
+    if (_controller.areas.isNotEmpty) {
+      List<Area> list = List.from(_controller.areas);
+      list[0] = Area(flex: 3);
+      _controller.areas = list;
     }
   }
 
@@ -115,13 +126,22 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     ));
   }
 
-  _onAddButtonClick() {
-    _boxes.insert(0, _createBox());
-    List<Area> list = List.from(_controller.areas);
-    list.add(Area());
-    _controller.areas = list;
+  _onAddFlexButtonClick() {
+    _add(Area());
+  }
 
-    //setState(() => _boxes.insert(0, _createBox()));
+  _onAddSizeButtonClick() {
+    _add(Area(size: 100));
+  }
+
+  _add(Area area) {
+    _boxes.add(_createBox());
+    List<Area> list = List.from(_controller.areas);
+    list.add(area);
+    _controller.areas = list;
+    setState(() {
+      // update empty text and buttons
+    });
   }
 
   RandomColorBox _createBox() {
@@ -132,7 +152,14 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   void _removeBox(RandomColorBox box) {
-    setState(() => _boxes.remove(box));
+    int index = _boxes.indexOf(box);
+    List<Area> list = List.from(_controller.areas);
+    list.removeAt(index);
+    _boxes.removeAt(index);
+    _controller.areas = list;
+    setState(() {
+      // update empty text and buttons
+    });
   }
 }
 
