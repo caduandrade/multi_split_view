@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 @internal
+@deprecated
 class InitialDrag {
   InitialDrag(
       {required this.initialDragPos,

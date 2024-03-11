@@ -73,6 +73,7 @@ class MultiSplitView extends StatefulWidget {
 /// State for [MultiSplitView]
 class _MultiSplitViewState extends State<MultiSplitView> {
   late MultiSplitViewController _controller;
+  @deprecated
   InitialDrag? _initialDrag;
 
   double _initialDragPos = 0;
@@ -159,22 +160,20 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             ? constraints.maxWidth
             : constraints.maxHeight;
 
-        if (_layout.containerSize != containerSize ||
+        if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash ||
+            _layout.containerSize != containerSize ||
             _layout.childrenCount != widget.children.length ||
             _layout.dividerThickness != themeData.dividerThickness) {
+          _draggingDividerIndex = null;
+          _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
+
           _layout = Layout(
               childrenCount: widget.children.length,
               containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
           _layout.adjustAreas(controllerHelper: controllerHelper);
-        } else if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash) {
-          _draggingDividerIndex = null;
-          _layout.adjustAreas(controllerHelper: controllerHelper);
+          _layout.updateAreaIntervals(controllerHelper: controllerHelper);
         }
-
-        _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
-
-        _layout.updateAreaConstraints(controllerHelper: controllerHelper);
 
         List<Widget> children = [];
 
@@ -294,9 +293,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       _draggingDividerIndex = index;
     });
     final Offset pos = _position(context, detail.globalPosition);
-    final double delta = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
-    _initialDragPos = delta;
-    _updateInitialDrag(index, delta);
+    final double position = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
+    _initialDragPos = position;
+    _updateInitialDrag(index, position);
   }
 
   void _onDragUpdate(
@@ -306,26 +305,29 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     }
     final Offset pos = _position(context, detail.globalPosition);
 
-    final double delta = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
+    final double position = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
 
-    final double newDiffX = delta - _initialDragPos;
+    final double delta = position - _initialDragPos;
+
+    if (delta == 0) {
+      return;
+    }
 
     if (_layout.moveDivider(
         controllerHelper: controllerHelper,
         dividerIndex: index,
-        pixels: newDiffX)) {
-      setState(() {
-        _initialDragPos = delta;
-      });
-    } else if (newDiffX < 0) {
-      setState(() {
-        _initialDragPos = _layout.dividers[index].start;
-      });
-    } else if (newDiffX > 0) {
-      setState(() {
-        _initialDragPos = _layout.dividers[index].end;
-      });
+        pixels: delta)) {
+      _initialDragPos = position;
+    } else if (delta < 0) {
+      _initialDragPos = _layout.areaIntervals[index].start +
+          _layout.areaIntervals[index].size +
+          _layout.dividerThickness;
+    } else if (delta > 0) {
+      _initialDragPos = _layout.areaIntervals[index + 1].start +
+          _layout.areaIntervals[index + 1].size;
     }
+
+    setState(() {});
   }
 
   void _onDragCancel() {

@@ -110,8 +110,8 @@ class Area {
 @internal
 class AreaHelper {
   static void setFlex({required Area area, required double? flex}) {
-    if (flex != null && flex < 0) {
-      throw ArgumentError('Negative value: $flex', 'flex');
+    if (flex != null) {
+      flex = math.max(0, flex);
     }
     area._flex = flex;
   }

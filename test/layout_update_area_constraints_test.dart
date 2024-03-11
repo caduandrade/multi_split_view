@@ -10,19 +10,15 @@ void main() {
           Layout(childrenCount: 2, containerSize: 100, dividerThickness: 10);
       ControllerHelper controllerHelper = ControllerHelper(controller);
       layout.adjustAreas(controllerHelper: controllerHelper);
-      layout.updateAreaConstraints(controllerHelper: controllerHelper);
+      layout.updateAreaIntervals(controllerHelper: controllerHelper);
 
-      expect(layout.areaConstraintsList.length, 2);
-      expect(layout.areaConstraintsList[0].start, 0);
-      expect(layout.areaConstraintsList[0].size, 45);
-      expect(layout.areaConstraintsList[0].end, 45);
-      expect(layout.dividers.length, 1);
-      expect(layout.dividers[0].start, 45);
-      expect(layout.dividers[0].size, 10);
-      expect(layout.dividers[0].end, 55);
-      expect(layout.areaConstraintsList[1].start, 55);
-      expect(layout.areaConstraintsList[1].size, 45);
-      expect(layout.areaConstraintsList[1].end, 100);
+      expect(layout.areaIntervals.length, 2);
+      expect(layout.areaIntervals[0].start, 0);
+      expect(layout.areaIntervals[0].size, 45);
+      expect(layout.areaIntervals[0].end, 45);
+      expect(layout.areaIntervals[1].start, 55);
+      expect(layout.areaIntervals[1].size, 45);
+      expect(layout.areaIntervals[1].end, 100);
     });
   });
 }

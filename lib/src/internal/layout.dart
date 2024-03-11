@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
-import 'package:multi_split_view/src/internal/area_constraints.dart';
+import 'package:multi_split_view/src/internal/area_interval.dart';
 import 'package:multi_split_view/src/internal/argument_validator.dart';
 
 @internal
@@ -44,8 +44,7 @@ class Layout {
   final double totalDividerSize;
   final double availableSize;
 
-  final List<AreaConstraints> areaConstraintsList = [];
-  final List<DividerConstraints> dividers = [];
+  final List<AreaInterval> areaIntervals = [];
 
   /// Applies the following adjustments:
   ///
@@ -55,10 +54,13 @@ class Layout {
   /// Nullifies min and max.
   /// * Change flex value to 1 if all areas are flex 0.
   void adjustAreas({required ControllerHelper controllerHelper}) {
+    // Removes unused areas.
     if (controllerHelper.areas.length > childrenCount) {
       controllerHelper.areas
           .removeRange(childrenCount, controllerHelper.areas.length);
     }
+
+    // Creates new areas to accommodate all child widgets.
     while (controllerHelper.areas.length < childrenCount) {
       controllerHelper.areas.add(Area());
     }
@@ -77,6 +79,8 @@ class Layout {
       }
     }
     if (sizedCount == controllerHelper.areas.length) {
+      // Transforms all areas into flex if they are all size valued.
+      // Nullifies min and max.
       for (Area area in controllerHelper.areas) {
         AreaHelper.setFlex(
             area: area,
@@ -86,6 +90,7 @@ class Layout {
         AreaHelper.setMax(area: area, max: null);
       }
     } else if (flexCount == controllerHelper.areas.length && sumFlex == 0) {
+      // Change flex value to 1 if all areas are flex 0.
       for (Area area in controllerHelper.areas) {
         AreaHelper.setFlex(area: area, flex: 1);
       }
@@ -102,36 +107,31 @@ class Layout {
     return sum;
   }
 
-  void updateAreaConstraints({required ControllerHelper controllerHelper}) {
-    dividers.clear();
-    areaConstraintsList.clear();
+  void updateAreaIntervals({required ControllerHelper controllerHelper}) {
+    areaIntervals.clear();
     double start = 0;
 
-    final double pixelPerFlex = availableSize / sumFlex(controllerHelper);
+    final double availableFlexSize =
+        _calculateAvailableFlexSize(controllerHelper);
+
+    final double pixelPerFlex = availableFlexSize / sumFlex(controllerHelper);
 
     for (int areaIndex = 0;
         areaIndex < controllerHelper.areas.length;
         areaIndex++) {
       Area area = controllerHelper.areas[areaIndex];
 
-      AreaConstraints areaConstraints = AreaConstraints();
-      areaConstraintsList.add(areaConstraints);
+      AreaInterval areaInterval = AreaInterval();
+      areaIntervals.add(areaInterval);
 
-      areaConstraints.start = start;
+      areaInterval.start = start;
       if (area.flex != null) {
-        areaConstraints.size = area.flex! * pixelPerFlex;
+        areaInterval.size = area.flex! * pixelPerFlex;
+      } else {
+        areaInterval.size = area.size!;
       }
 
-      start += areaConstraints.size;
-
-      if (areaIndex < controllerHelper.areas.length - 1) {
-        DividerConstraints dividerConstraints = DividerConstraints();
-        dividerConstraints.start = start;
-        dividerConstraints.size = dividerThickness;
-        dividers.add(dividerConstraints);
-      }
-
-      start += dividerThickness;
+      start += areaInterval.size + dividerThickness;
     }
   }
 
@@ -141,16 +141,26 @@ class Layout {
       required IteratorBuilder divider}) {
     double childStart = 0, childEnd = 0, dividerStart = 0, dividerEnd = 0;
     for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
-      final AreaConstraints constraints = areaConstraintsList[childIndex];
-      childEnd = containerSize - constraints.size - childStart;
+      final AreaInterval interval = areaIntervals[childIndex];
+      childEnd = containerSize - interval.size - childStart;
       child(childIndex, childStart, childEnd);
       if (childIndex < childrenCount - 1) {
-        dividerStart = childStart + constraints.size;
+        dividerStart = childStart + interval.size;
         dividerEnd = childEnd - dividerThickness;
         divider(childIndex, dividerStart, dividerEnd);
         childStart = dividerStart + dividerThickness;
       }
     }
+  }
+
+  double _calculateAvailableFlexSize(ControllerHelper controllerHelper) {
+    double size = availableSize;
+    for (Area area in controllerHelper.areas) {
+      if (area.size != null) {
+        size -= area.size!;
+      }
+    }
+    return math.max(size, 0);
   }
 
   bool moveDivider(
@@ -162,46 +172,63 @@ class Layout {
     }
 
     Area area1 = controllerHelper.areas[dividerIndex];
+    AreaInterval area1Intervals = areaIntervals[dividerIndex];
     Area area2 = controllerHelper.areas[dividerIndex + 1];
+    AreaInterval area2Intervals = areaIntervals[dividerIndex + 1];
+
+    final double availableFlexSize =
+        _calculateAvailableFlexSize(controllerHelper);
 
     // amount of flex for each pixel
-    final double flexPerPixel =
-        availableSize == 0 ? 0 : sumFlex(controllerHelper) / availableSize;
+    final double flexPerPixel = availableFlexSize == 0
+        ? 0
+        : sumFlex(controllerHelper) / availableFlexSize;
 
-    // amount of flex equivalent to the pixels covered by dragging the divider
-    double movedFlex = pixels * flexPerPixel;
+    double movedPixels = pixels;
 
     if (pixels < 0) {
       // negative: area1 shrinking
-      final double totalShrinkage = area1.flex! + movedFlex;
-      if (totalShrinkage < 0) {
+      final double candidateArea1Size = area1Intervals.size + movedPixels;
+      if (candidateArea1Size < 0) {
         // shrinking over limit, removing excess
-        movedFlex -= totalShrinkage;
+        movedPixels -= candidateArea1Size;
       }
     } else {
-      // positive: area2 growing
-      final double totalGrowth = area2.flex! - movedFlex;
-      if (totalGrowth < 0) {
-        // growth over limit, removing excess
-        movedFlex += totalGrowth;
+      // positive: area2 shrinking
+      final double candidateArea2Size = area2Intervals.size - movedPixels;
+      if (candidateArea2Size < 0) {
+        // shrinking over limit, removing excess
+        movedPixels += candidateArea2Size;
       }
     }
 
-    AreaHelper.setFlex(area: area1, flex: area1.flex! + movedFlex);
-    AreaHelper.setFlex(area: area2, flex: area2.flex! - movedFlex);
+    area1Intervals.size = area1Intervals.size + movedPixels;
+    area2Intervals.size = area2Intervals.size - movedPixels;
 
-    if (area1.flex == 0 || area2.flex == 0) {
+    double start = 0;
+    for (AreaInterval areaInterval in areaIntervals) {
+      areaInterval.start = start;
+      start += areaInterval.size + dividerThickness;
+    }
+
+    if (area1.flex != null) {
+      AreaHelper.setFlex(
+          area: area1, flex: area1.flex! + movedPixels * flexPerPixel);
+    } else {
+      AreaHelper.setSize(area: area1, size: area1.size! + movedPixels);
+    }
+    if (area2.flex != null) {
+      AreaHelper.setFlex(
+          area: area2, flex: area2.flex! - movedPixels * flexPerPixel);
+    } else {
+      AreaHelper.setSize(area: area2, size: area2.size! - movedPixels);
+    }
+
+    if (area1Intervals.size == 0 || area2Intervals.size == 0) {
       return false;
     }
     return true;
   }
-}
-
-class DividerConstraints {
-  double start = 0;
-  double size = 0;
-
-  double get end => start + size;
 }
 
 typedef IteratorBuilder = void Function(int index, double start, double end);

@@ -34,7 +34,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   late final List<RandomColorBox> _boxes;
 
-  final MultiSplitViewController _controller = MultiSplitViewController();
+  final MultiSplitViewController _controller =
+      MultiSplitViewController(areas: [Area(size: 100)]);
 
   @override
   void initState() {
@@ -160,9 +161,7 @@ class _RandomColorBoxState extends State<RandomColorBox> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => widget.onRemove(widget),
-      child: ColoredBox(
-        color: _color,
-      ),
+      child: Container(color: _color, child: const Placeholder()),
     );
   }
 }
