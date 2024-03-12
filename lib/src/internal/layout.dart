@@ -132,12 +132,8 @@ class Layout {
         }
         areaInterval.size = area.flex! * pixelPerFlex;
       } else {
-        if (area.min != null) {
-          areaInterval.minSize = area.min!;
-        }
-        if (area.max != null) {
-          areaInterval.maxSize = area.max!;
-        }
+        areaInterval.minSize = area.min;
+        areaInterval.maxSize = area.max;
         areaInterval.size = area.size!;
       }
 
@@ -183,6 +179,8 @@ class Layout {
       return false;
     }
 
+    bool exceeded = false;
+
     AreaInterval area1Intervals = areaIntervals[dividerIndex];
     AreaInterval area2Intervals = areaIntervals[dividerIndex + 1];
 
@@ -191,16 +189,22 @@ class Layout {
     if (pixels < 0) {
       // negative: area1 shrinking
       final double candidateArea1Size = area1Intervals.size + movedPixels;
-      if (candidateArea1Size < 0) {
+      final double limit = area1Intervals.minSize ?? 0;
+      if (candidateArea1Size < limit) {
         // shrinking over limit, removing excess
-        movedPixels -= candidateArea1Size;
+        final double excess = limit - candidateArea1Size;
+        movedPixels += excess;
+        exceeded = true;
       }
     } else {
       // positive: area2 shrinking
       final double candidateArea2Size = area2Intervals.size - movedPixels;
-      if (candidateArea2Size < 0) {
+      final double limit = area2Intervals.minSize ?? 0;
+      if (candidateArea2Size < limit) {
         // shrinking over limit, removing excess
-        movedPixels += candidateArea2Size;
+        final double excess = limit - candidateArea2Size;
+        movedPixels -= excess;
+        exceeded = true;
       }
     }
 
@@ -236,10 +240,7 @@ class Layout {
       AreaHelper.setSize(area: area2, size: area2.size! - movedPixels);
     }
 
-    if (area1Intervals.size == 0 || area2Intervals.size == 0) {
-      return false;
-    }
-    return true;
+    return exceeded;
   }
 }
 

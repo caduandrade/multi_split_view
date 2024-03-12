@@ -384,7 +384,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       return;
     }
 
-    if (_layout.moveDivider(
+    if (!_layout.moveDivider(
         controllerHelper: controllerHelper,
         dividerIndex: index,
         pixels: delta)) {

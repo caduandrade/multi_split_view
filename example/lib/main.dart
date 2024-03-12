@@ -32,7 +32,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final List<Color> _colors = [];
 
   final MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(size: 100)]);
+      MultiSplitViewController(areas: [Area(size: 100, min: 50)]);
 
   @override
   void initState() {
@@ -201,11 +201,16 @@ class ColorWidget extends StatelessWidget {
           if (area.flex != null) {
             children.add(Text('flex: ${area.flex!}', style: textStyle));
           }
+          if (area.min != null) {
+            children.add(Text('min: ${area.min!}', style: textStyle));
+          }
           return Center(
               child: Container(
                   color: const Color.fromARGB(200, 255, 255, 255),
                   padding: const EdgeInsets.fromLTRB(3, 2, 3, 2),
                   child: Wrap(
+                      runSpacing: 5,
+                      spacing: 5,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: children)));
         });

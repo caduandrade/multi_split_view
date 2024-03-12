@@ -13,12 +13,17 @@ class AreaInterval {
   double get size => _size;
 
   set size(double value) {
-    _size = math.min(value, minSize);
-    _size = math.max(value, maxSize);
+    if (minSize != null) {
+      value = math.max(minSize!, value);
+    }
+    if (maxSize != null) {
+      value = math.min(maxSize!, value);
+    }
+    _size = value;
   }
 
-  double minSize = 0;
-  double maxSize = 0;
+  double? minSize;
+  double? maxSize;
 
   double get end => start + size;
 
