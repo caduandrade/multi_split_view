@@ -21,27 +21,82 @@ class MultiSplitView extends StatefulWidget {
   ///
   /// The default value for [axis] argument is [Axis.horizontal].
   /// The [children] argument is required.
-  /// The sum of the [initialWeights] cannot exceed 1.
-  /// The [initialWeights] parameter will be ignored if the [controller]
-  /// has been provided.
-  MultiSplitView(
+  const MultiSplitView(
       {Key? key,
-      this.axis = MultiSplitView.defaultAxis,
-      required this.children,
-      this.controller,
-      this.dividerBuilder,
-      this.onWeightChange,
-      this.onDividerTap,
-      this.onDividerDoubleTap,
-      this.resizable = true,
-      this.antiAliasingWorkaround = true,
+      Axis axis = MultiSplitView.defaultAxis,
+      required List<Widget> children,
+      MultiSplitViewController? controller,
+      DividerBuilder? dividerBuilder,
+      OnWeightChange? onWeightChange,
+      DividerTapCallback? onDividerTap,
+      DividerTapCallback? onDividerDoubleTap,
+      bool resizable = true,
+      bool antiAliasingWorkaround = true,
       List<Area>? initialAreas})
-      : this.initialAreas =
-            initialAreas != null ? List.from(initialAreas) : null,
-        super(key: key);
+      : this._(
+            key: key,
+            axis: axis,
+            children: children,
+            controller: controller,
+            dividerBuilder: dividerBuilder,
+            onWeightChange: onWeightChange,
+            onDividerTap: onDividerTap,
+            onDividerDoubleTap: onDividerDoubleTap,
+            resizable: resizable,
+            antiAliasingWorkaround: antiAliasingWorkaround,
+            count: null,
+            widgetBuilder: null,
+            initialAreas: initialAreas);
+
+  /// Creates an [MultiSplitView].
+  ///
+  /// The default value for [axis] argument is [Axis.horizontal].
+  const MultiSplitView.builder(
+      {Key? key,
+      Axis axis = MultiSplitView.defaultAxis,
+      MultiSplitViewController? controller,
+      required int count,
+      required AreaWidgetBuilder widgetBuilder,
+      DividerBuilder? dividerBuilder,
+      OnWeightChange? onWeightChange,
+      DividerTapCallback? onDividerTap,
+      DividerTapCallback? onDividerDoubleTap,
+      bool resizable = true,
+      bool antiAliasingWorkaround = true,
+      List<Area>? initialAreas})
+      : this._(
+            key: key,
+            axis: axis,
+            children: null,
+            controller: controller,
+            dividerBuilder: dividerBuilder,
+            onWeightChange: onWeightChange,
+            onDividerTap: onDividerTap,
+            onDividerDoubleTap: onDividerDoubleTap,
+            resizable: resizable,
+            antiAliasingWorkaround: antiAliasingWorkaround,
+            count: count,
+            widgetBuilder: widgetBuilder,
+            initialAreas: initialAreas);
+
+  const MultiSplitView._(
+      {Key? key,
+      required this.axis,
+      required this.children,
+      required this.controller,
+      required this.dividerBuilder,
+      required this.onWeightChange,
+      required this.onDividerTap,
+      required this.onDividerDoubleTap,
+      required this.resizable,
+      required this.antiAliasingWorkaround,
+      required this.count,
+      required this.widgetBuilder,
+      required this.initialAreas})
+      : super(key: key);
 
   final Axis axis;
-  final List<Widget> children;
+  final List<Widget>? children;
   final MultiSplitViewController? controller;
   final List<Area>? initialAreas;
 
@@ -63,8 +118,19 @@ class MultiSplitView extends StatefulWidget {
   /// on the dragging end of the divisor.
   final OnWeightChange? onWeightChange;
 
+  final int? count;
+
+  final AreaWidgetBuilder? widgetBuilder;
+
   /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
   final bool antiAliasingWorkaround;
+
+  int get _childrenCount {
+    if (children != null) {
+      return children!.length;
+    }
+    return count!;
+  }
 
   @override
   State createState() => _MultiSplitViewState();
@@ -150,7 +216,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.children.length > 0) {
+    if (widget._childrenCount > 0) {
       MultiSplitViewThemeData themeData = MultiSplitViewTheme.of(context);
 
       return LayoutBuilder(builder: (context, constraints) {
@@ -162,13 +228,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
         if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash ||
             _layout.containerSize != containerSize ||
-            _layout.childrenCount != widget.children.length ||
+            _layout.childrenCount != widget._childrenCount ||
             _layout.dividerThickness != themeData.dividerThickness) {
           _draggingDividerIndex = null;
           _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
 
           _layout = Layout(
-              childrenCount: widget.children.length,
+              childrenCount: widget._childrenCount,
               containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
           _layout.adjustAreas(controllerHelper: controllerHelper);
@@ -180,8 +246,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         _layout.iterate(
             controller: _controller,
             child: (int index, double start, double end) {
-              children.add(_buildPositioned(
-                  start: start, end: end, child: widget.children[index]));
+              Widget child = widget.children != null
+                  ? widget.children![index]
+                  : widget.widgetBuilder!(
+                      context, index, _controller.areas[index]);
+
+              children
+                  .add(_buildPositioned(start: start, end: end, child: child));
             },
             divider: (int index, double start, double end) {
               bool highlighted = (_draggingDividerIndex == index ||
@@ -292,8 +363,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     setState(() {
       _draggingDividerIndex = index;
     });
-    final Offset pos = _position(context, detail.globalPosition);
-    final double position = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
+    final Offset offset = _offset(context, detail.globalPosition);
+    final double position =
+        widget.axis == Axis.horizontal ? offset.dx : offset.dy;
     _initialDragPos = position;
     _updateInitialDrag(index, position);
   }
@@ -303,10 +375,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (_draggingDividerIndex == null) {
       return;
     }
-    final Offset pos = _position(context, detail.globalPosition);
-
-    final double position = widget.axis == Axis.horizontal ? pos.dx : pos.dy;
-
+    final Offset offset = _offset(context, detail.globalPosition);
+    final double position =
+        widget.axis == Axis.horizontal ? offset.dx : offset.dy;
     final double delta = position - _initialDragPos;
 
     if (delta == 0) {
@@ -320,14 +391,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       _initialDragPos = position;
     } else if (delta < 0) {
       _initialDragPos = _layout.areaIntervals[index].start +
-          _layout.areaIntervals[index].size +
-          _layout.dividerThickness;
+          _layout.areaIntervals[index].size;
     } else if (delta > 0) {
-      _initialDragPos = _layout.areaIntervals[index + 1].start +
-          _layout.areaIntervals[index + 1].size;
+      _initialDragPos =
+          _layout.areaIntervals[index + 1].start - _layout.dividerThickness;
     }
 
-    setState(() {});
+    controllerHelper.notifyListeners();
   }
 
   void _onDragCancel() {
@@ -486,7 +556,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   }
 
   /// Builds an [Offset] for cursor position.
-  Offset _position(BuildContext context, Offset globalPosition) {
+  Offset _offset(BuildContext context, Offset globalPosition) {
     final RenderBox container = context.findRenderObject() as RenderBox;
     return container.globalToLocal(globalPosition);
   }

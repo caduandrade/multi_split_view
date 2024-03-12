@@ -11,6 +11,7 @@ import 'package:multi_split_view/src/area.dart';
 /// It is not allowed to share this controller between [MultiSplitView]
 /// instances.
 class MultiSplitViewController extends ChangeNotifier {
+  @deprecated
   static const double _higherPrecision = 1.0000000000001;
 
   /// Creates an [MultiSplitViewController].
@@ -247,6 +248,10 @@ class MultiSplitViewController extends ChangeNotifier {
   int get hashCode => _areas.hashCode;
 
   int get weightsHashCode => Object.hashAll(_WeightIterable(areas));
+
+  void _forceNotifyListeners() {
+    notifyListeners();
+  }
 }
 
 class _WeightIterable extends Iterable<double?> {
@@ -283,4 +288,6 @@ class ControllerHelper {
   List<Area> get areas => controller._areas;
 
   Object get areasUpdateHash => controller._areasUpdateHash;
+
+  void notifyListeners() => controller._forceNotifyListeners();
 }

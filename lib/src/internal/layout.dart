@@ -116,18 +116,28 @@ class Layout {
 
     final double pixelPerFlex = availableFlexSize / sumFlex(controllerHelper);
 
-    for (int areaIndex = 0;
-        areaIndex < controllerHelper.areas.length;
-        areaIndex++) {
-      Area area = controllerHelper.areas[areaIndex];
+    for (int index = 0; index < controllerHelper.areas.length; index++) {
+      Area area = controllerHelper.areas[index];
 
       AreaInterval areaInterval = AreaInterval();
       areaIntervals.add(areaInterval);
 
       areaInterval.start = start;
       if (area.flex != null) {
+        if (area.min != null) {
+          areaInterval.minSize = area.min! * pixelPerFlex;
+        }
+        if (area.max != null) {
+          areaInterval.maxSize = area.max! * pixelPerFlex;
+        }
         areaInterval.size = area.flex! * pixelPerFlex;
       } else {
+        if (area.min != null) {
+          areaInterval.minSize = area.min!;
+        }
+        if (area.max != null) {
+          areaInterval.maxSize = area.max!;
+        }
         areaInterval.size = area.size!;
       }
 
@@ -146,8 +156,10 @@ class Layout {
       child(childIndex, childStart, childEnd);
       if (childIndex < childrenCount - 1) {
         dividerStart = childStart + interval.size;
-        dividerEnd = childEnd - dividerThickness;
-        divider(childIndex, dividerStart, dividerEnd);
+        if (dividerThickness > 0) {
+          dividerEnd = childEnd - dividerThickness;
+          divider(childIndex, dividerStart, dividerEnd);
+        }
         childStart = dividerStart + dividerThickness;
       }
     }
@@ -171,18 +183,8 @@ class Layout {
       return false;
     }
 
-    Area area1 = controllerHelper.areas[dividerIndex];
     AreaInterval area1Intervals = areaIntervals[dividerIndex];
-    Area area2 = controllerHelper.areas[dividerIndex + 1];
     AreaInterval area2Intervals = areaIntervals[dividerIndex + 1];
-
-    final double availableFlexSize =
-        _calculateAvailableFlexSize(controllerHelper);
-
-    // amount of flex for each pixel
-    final double flexPerPixel = availableFlexSize == 0
-        ? 0
-        : sumFlex(controllerHelper) / availableFlexSize;
 
     double movedPixels = pixels;
 
@@ -211,12 +213,22 @@ class Layout {
       start += areaInterval.size + dividerThickness;
     }
 
+    final double availableFlexSize =
+        _calculateAvailableFlexSize(controllerHelper);
+
+    // amount of flex for each pixel
+    final double flexPerPixel = availableFlexSize == 0
+        ? 0
+        : sumFlex(controllerHelper) / availableFlexSize;
+
+    Area area1 = controllerHelper.areas[dividerIndex];
     if (area1.flex != null) {
       AreaHelper.setFlex(
           area: area1, flex: area1.flex! + movedPixels * flexPerPixel);
     } else {
       AreaHelper.setSize(area: area1, size: area1.size! + movedPixels);
     }
+    Area area2 = controllerHelper.areas[dividerIndex + 1];
     if (area2.flex != null) {
       AreaHelper.setFlex(
           area: area2, flex: area2.flex! - movedPixels * flexPerPixel);

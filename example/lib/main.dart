@@ -29,9 +29,7 @@ class MultiSplitViewExample extends StatefulWidget {
 }
 
 class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
-  static const int _initial = 3;
-
-  late final List<RandomColorBox> _boxes;
+  final List<Color> _colors = [];
 
   final MultiSplitViewController _controller =
       MultiSplitViewController(areas: [Area(size: 100)]);
@@ -39,7 +37,20 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   @override
   void initState() {
     super.initState();
-    _boxes = List.generate(_initial, (_) => _createBox());
+    _colors.addAll(List.generate(3, (_) => _randomColor()));
+    _controller.addListener(_rebuild);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.removeListener(_rebuild);
+  }
+
+  void _rebuild() {
+    setState(() {
+      // rebuild to update empty text and buttons
+    });
   }
 
   @override
@@ -60,22 +71,28 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
                   child: const Text('Add size')),
               ElevatedButton(
                   onPressed:
-                      _boxes.isNotEmpty ? _onRemoveFirstButtonClick : null,
+                      _colors.isNotEmpty ? _onRemoveFirstButtonClick : null,
                   child: const Text('Remove first')),
               ElevatedButton(
                   onPressed:
-                      _boxes.isNotEmpty ? _onSetFirstFlexButtonClick : null,
+                      _colors.isNotEmpty ? _onSetFirstFlexButtonClick : null,
                   child: const Text('Change first area flex'))
             ]));
 
     Widget? content;
-    if (_boxes.isNotEmpty) {
-      MultiSplitView multiSplitView = MultiSplitView(
+    if (_colors.isNotEmpty) {
+      MultiSplitView multiSplitView = MultiSplitView.builder(
           onWeightChange: _onWeightChange,
           onDividerTap: _onDividerTap,
           onDividerDoubleTap: _onDividerDoubleTap,
           controller: _controller,
-          children: _boxes);
+          count: _colors.length,
+          widgetBuilder: (context, index, area) => ColorWidget(
+              index: index,
+              area: area,
+              color: _colors[index],
+              controller: _controller,
+              onRemove: _removeColor));
 
       content = MultiSplitViewTheme(
           data: MultiSplitViewThemeData(
@@ -92,6 +109,12 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         );
   }
 
+  Color _randomColor() {
+    Random random = Random();
+    return Color.fromARGB(
+        255, random.nextInt(200), random.nextInt(200), random.nextInt(200));
+  }
+
   _onWeightChange() {
     if (kDebugMode) {
       // print('weight change');
@@ -99,8 +122,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onRemoveFirstButtonClick() {
-    if (_boxes.isNotEmpty) {
-      _removeBox(_boxes.first);
+    if (_colors.isNotEmpty) {
+      _removeColor(0);
     }
   }
 
@@ -135,60 +158,75 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _add(Area area) {
-    _boxes.add(_createBox());
-    List<Area> list = List.from(_controller.areas);
-    list.add(area);
-    _controller.areas = list;
-    setState(() {
-      // update empty text and buttons
-    });
+    _colors.add(_randomColor());
+    List<Area> areas = List.from(_controller.areas);
+    areas.add(area);
+    _controller.areas = areas;
   }
 
-  RandomColorBox _createBox() {
-    return RandomColorBox(
-      key: UniqueKey(),
-      onRemove: _removeBox,
-    );
-  }
-
-  void _removeBox(RandomColorBox box) {
-    int index = _boxes.indexOf(box);
-    List<Area> list = List.from(_controller.areas);
-    list.removeAt(index);
-    _boxes.removeAt(index);
-    _controller.areas = list;
-    setState(() {
-      // update empty text and buttons
-    });
+  void _removeColor(int index) {
+    _colors.removeAt(index);
+    List<Area> areas = List.from(_controller.areas);
+    areas.removeAt(index);
+    _controller.areas = areas;
   }
 }
 
-class RandomColorBox extends StatefulWidget {
-  const RandomColorBox({
-    required this.onRemove,
-    Key? key,
-  }) : super(key: key);
+class ColorWidget extends StatelessWidget {
+  const ColorWidget(
+      {Key? key,
+      required this.color,
+      required this.index,
+      required this.onRemove,
+      required this.area,
+      required this.controller})
+      : super(key: key);
 
-  final void Function(RandomColorBox box) onRemove;
-
-  @override
-  State<RandomColorBox> createState() => _RandomColorBoxState();
-}
-
-class _RandomColorBoxState extends State<RandomColorBox> {
-  late Color _color;
-
-  @override
-  void initState() {
-    super.initState();
-    _color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-  }
+  final Color color;
+  final int index;
+  final Area area;
+  final void Function(int index) onRemove;
+  final MultiSplitViewController controller;
 
   @override
   Widget build(BuildContext context) {
+    Widget info = ListenableBuilder(
+        listenable: controller,
+        builder: (BuildContext context, Widget? child) {
+          List<Widget> children = [];
+          TextStyle textStyle = const TextStyle(fontSize: 10);
+          if (area.size != null) {
+            children.add(Text('size: ${area.size!}', style: textStyle));
+          }
+          if (area.flex != null) {
+            children.add(Text('flex: ${area.flex!}', style: textStyle));
+          }
+          return Center(
+              child: Container(
+                  color: const Color.fromARGB(200, 255, 255, 255),
+                  padding: const EdgeInsets.fromLTRB(3, 2, 3, 2),
+                  child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: children)));
+        });
+
     return InkWell(
-      onTap: () => widget.onRemove(widget),
-      child: Container(color: _color, child: const Placeholder()),
-    );
+        onTap: () => onRemove(index),
+        child: Container(
+            color: color,
+            child: Stack(children: [
+              Placeholder(
+                color: invert(color),
+              ),
+              info
+            ])));
+  }
+
+  Color invert(Color color) {
+    final r = 255 - color.red;
+    final g = 255 - color.green;
+    final b = 255 - color.blue;
+
+    return Color.fromARGB(255, r, g, b);
   }
 }
