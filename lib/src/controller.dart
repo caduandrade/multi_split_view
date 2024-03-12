@@ -237,45 +237,8 @@ class MultiSplitViewController extends ChangeNotifier {
   @internal
   int? stateHashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MultiSplitViewController &&
-          runtimeType == other.runtimeType &&
-          _areas == other._areas;
-
-  @override
-  int get hashCode => _areas.hashCode;
-
-  int get weightsHashCode => Object.hashAll(_WeightIterable(areas));
-
   void _forceNotifyListeners() {
     notifyListeners();
-  }
-}
-
-class _WeightIterable extends Iterable<double?> {
-  _WeightIterable(this.areas);
-
-  final List<Area> areas;
-
-  @override
-  Iterator<double?> get iterator => _WeightIterator(areas);
-}
-
-class _WeightIterator extends Iterator<double?> {
-  _WeightIterator(this.areas);
-
-  final List<Area> areas;
-  int _index = -1;
-
-  @override
-  double? get current => areas[_index].flex;
-
-  @override
-  bool moveNext() {
-    _index++;
-    return _index > -1 && _index < areas.length;
   }
 }
 

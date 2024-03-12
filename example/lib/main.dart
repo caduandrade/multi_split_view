@@ -82,7 +82,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     Widget? content;
     if (_colors.isNotEmpty) {
       MultiSplitView multiSplitView = MultiSplitView.builder(
-          onWeightChange: _onWeightChange,
+          onDividerDragUpdate: _onDividerDragUpdate,
           onDividerTap: _onDividerTap,
           onDividerDoubleTap: _onDividerDoubleTap,
           controller: _controller,
@@ -115,9 +115,9 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
         255, random.nextInt(200), random.nextInt(200), random.nextInt(200));
   }
 
-  _onWeightChange() {
+  _onDividerDragUpdate(int index) {
     if (kDebugMode) {
-      // print('weight change');
+      // print('drag update: $index');
     }
   }
 

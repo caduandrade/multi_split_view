@@ -27,7 +27,7 @@ class MultiSplitView extends StatefulWidget {
       required List<Widget> children,
       MultiSplitViewController? controller,
       DividerBuilder? dividerBuilder,
-      OnWeightChange? onWeightChange,
+      OnDividerDragUpdate? onDividerDragUpdate,
       DividerTapCallback? onDividerTap,
       DividerTapCallback? onDividerDoubleTap,
       bool resizable = true,
@@ -39,7 +39,7 @@ class MultiSplitView extends StatefulWidget {
             children: children,
             controller: controller,
             dividerBuilder: dividerBuilder,
-            onWeightChange: onWeightChange,
+            onDividerDragUpdate: onDividerDragUpdate,
             onDividerTap: onDividerTap,
             onDividerDoubleTap: onDividerDoubleTap,
             resizable: resizable,
@@ -58,7 +58,7 @@ class MultiSplitView extends StatefulWidget {
       required int count,
       required AreaWidgetBuilder widgetBuilder,
       DividerBuilder? dividerBuilder,
-      OnWeightChange? onWeightChange,
+      OnDividerDragUpdate? onDividerDragUpdate,
       DividerTapCallback? onDividerTap,
       DividerTapCallback? onDividerDoubleTap,
       bool resizable = true,
@@ -70,7 +70,7 @@ class MultiSplitView extends StatefulWidget {
             children: null,
             controller: controller,
             dividerBuilder: dividerBuilder,
-            onWeightChange: onWeightChange,
+            onDividerDragUpdate: onDividerDragUpdate,
             onDividerTap: onDividerTap,
             onDividerDoubleTap: onDividerDoubleTap,
             resizable: resizable,
@@ -85,7 +85,7 @@ class MultiSplitView extends StatefulWidget {
       required this.children,
       required this.controller,
       required this.dividerBuilder,
-      required this.onWeightChange,
+      required this.onDividerDragUpdate,
       required this.onDividerTap,
       required this.onDividerDoubleTap,
       required this.resizable,
@@ -113,10 +113,8 @@ class MultiSplitView extends StatefulWidget {
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
 
-  /// Function to listen children weight change.
-  /// The listener will run on the parent's resize or
-  /// on the dragging end of the divisor.
-  final OnWeightChange? onWeightChange;
+  /// Function to listen divider dragging.
+  final OnDividerDragUpdate? onDividerDragUpdate;
 
   final int? count;
 
@@ -150,7 +148,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   @deprecated
   //TODO remove
   SizesCache? _sizesCache;
-  int? _weightsHashCode;
 
   Object? _lastAreasUpdateHash;
 
@@ -320,16 +317,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               children.add(_buildPositioned(
                   start: start, end: end, child: dividerWidget));
             });
-
-        if (widget.onWeightChange != null) {
-          int newWeightsHashCode = _controller.weightsHashCode;
-          if (_weightsHashCode != null &&
-              _weightsHashCode != newWeightsHashCode) {
-            Future.microtask(widget.onWeightChange!);
-          }
-          _weightsHashCode = newWeightsHashCode;
-        }
-
         return Stack(children: children);
       });
     }
@@ -396,8 +383,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       _initialDragPos =
           _layout.areaIntervals[index + 1].start - _layout.dividerThickness;
     }
-
     controllerHelper.notifyListeners();
+    if (widget.onDividerDragUpdate != null) {
+      Future.delayed(Duration.zero, () => widget.onDividerDragUpdate!(index));
+    }
   }
 
   void _onDragCancel() {
