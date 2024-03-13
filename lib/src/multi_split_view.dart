@@ -248,6 +248,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                   : widget.widgetBuilder!(
                       context, index, _controller.areas[index]);
 
+              child = IgnorePointer(
+                  child: child, ignoring: _draggingDividerIndex != null);
+              child = MouseRegion(
+                  cursor: widget.axis == Axis.horizontal
+                      ? SystemMouseCursors.resizeColumn
+                      : SystemMouseCursors.resizeRow,
+                  child: child);
+
               children
                   .add(_buildPositioned(start: start, end: end, child: child));
             },
