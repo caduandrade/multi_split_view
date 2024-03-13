@@ -151,7 +151,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         ? widget.controller!
         : MultiSplitViewController(areas: widget.initialAreas);
     _stateHashCodeValidation();
-    _controller.stateHashCode = hashCode;
+    ControllerHelper.setStateHashCode(_controller, hashCode);
     _controller.addListener(_rebuild);
   }
 
@@ -167,7 +167,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   @override
   void deactivate() {
-    _controller.stateHashCode = null;
+    ControllerHelper.setStateHashCode(_controller, null);
     super.deactivate();
   }
 
@@ -177,14 +177,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
     if (widget.controller != _controller) {
       List<Area> areas = _controller.areas;
-      _controller.stateHashCode = null;
+      ControllerHelper.setStateHashCode(_controller, null);
       _controller.removeListener(_rebuild);
 
       _controller = widget.controller != null
           ? widget.controller!
           : MultiSplitViewController(areas: areas);
       _stateHashCodeValidation();
-      _controller.stateHashCode = hashCode;
+      ControllerHelper.setStateHashCode(_controller, hashCode);
       _controller.addListener(_rebuild);
     }
   }
@@ -192,8 +192,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// Checks a controller's [_stateHashCode] to identify if it is
   /// not being shared by another instance of [MultiSplitView].
   void _stateHashCodeValidation() {
-    if (_controller.stateHashCode != null &&
-        _controller.stateHashCode != hashCode) {
+    if (ControllerHelper.getStateHashCode(_controller) != null &&
+        ControllerHelper.getStateHashCode(_controller) != hashCode) {
       throw StateError(
           'It is not allowed to share MultiSplitViewController between MultiSplitView instances.');
     }

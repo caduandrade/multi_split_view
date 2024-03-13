@@ -97,7 +97,7 @@ class Layout {
     }
   }
 
-  double sumFlex(ControllerHelper controllerHelper) {
+  double _sumFlex(ControllerHelper controllerHelper) {
     double sum = 0;
     for (Area area in controllerHelper.areas) {
       if (area.flex != null) {
@@ -114,7 +114,7 @@ class Layout {
     final double availableFlexSize =
         _calculateAvailableFlexSize(controllerHelper);
 
-    final double pixelPerFlex = availableFlexSize / sumFlex(controllerHelper);
+    final double pixelPerFlex = availableFlexSize / _sumFlex(controllerHelper);
 
     for (int index = 0; index < controllerHelper.areas.length; index++) {
       Area area = controllerHelper.areas[index];
@@ -224,7 +224,7 @@ class Layout {
     // amount of flex for each pixel
     final double flexPerPixel = availableFlexSize == 0
         ? 0
-        : sumFlex(controllerHelper) / availableFlexSize;
+        : _sumFlex(controllerHelper) / availableFlexSize;
 
     Area area1 = controllerHelper.areas[dividerIndex];
     if (area1.flex != null) {
