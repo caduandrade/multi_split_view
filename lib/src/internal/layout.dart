@@ -122,7 +122,7 @@ class Layout {
       AreaInterval areaInterval = AreaInterval();
       areaIntervals.add(areaInterval);
 
-      areaInterval.start = start;
+      areaInterval.startPos = start;
       if (area.flex != null) {
         if (area.min != null) {
           areaInterval.minSize = area.min! * pixelPerFlex;
@@ -184,36 +184,37 @@ class Layout {
     AreaInterval area1Intervals = areaIntervals[dividerIndex];
     AreaInterval area2Intervals = areaIntervals[dividerIndex + 1];
 
-    double movedPixels = pixels;
+    double movedPixels = pixels.abs();
 
     if (pixels < 0) {
-      // negative: area1 shrinking
-      final double candidateArea1Size = area1Intervals.size + movedPixels;
-      final double limit = area1Intervals.minSize ?? 0;
-      if (candidateArea1Size < limit) {
-        // shrinking over limit, removing excess
-        final double excess = limit - candidateArea1Size;
-        movedPixels += excess;
-        exceeded = true;
+      movedPixels = math.min(area1Intervals.availableSizeToShrink, movedPixels);
+      if (area2Intervals.maxSize != null) {
+        movedPixels = math.min(area2Intervals.availableSizeToGrow, movedPixels);
       }
+
+      area1Intervals.size = area1Intervals.size - movedPixels;
+      area2Intervals.size = area2Intervals.size + movedPixels;
+
+      exceeded = pixels.abs() > movedPixels;
     } else {
-      // positive: area2 shrinking
-      final double candidateArea2Size = area2Intervals.size - movedPixels;
-      final double limit = area2Intervals.minSize ?? 0;
-      if (candidateArea2Size < limit) {
-        // shrinking over limit, removing excess
-        final double excess = limit - candidateArea2Size;
-        movedPixels -= excess;
-        exceeded = true;
+      if (area1Intervals.maxSize != null) {
+        movedPixels = math.min(area1Intervals.availableSizeToGrow, movedPixels);
       }
+      movedPixels = math.min(area2Intervals.availableSizeToShrink, movedPixels);
+
+      area1Intervals.size = area1Intervals.size + movedPixels;
+      area2Intervals.size = area2Intervals.size - movedPixels;
+
+      exceeded = pixels.abs() > movedPixels;
     }
 
-    area1Intervals.size = area1Intervals.size + movedPixels;
-    area2Intervals.size = area2Intervals.size - movedPixels;
+    if (pixels < 0) {
+      movedPixels = movedPixels * -1;
+    }
 
     double start = 0;
     for (AreaInterval areaInterval in areaIntervals) {
-      areaInterval.start = start;
+      areaInterval.startPos = start;
       start += areaInterval.size + dividerThickness;
     }
 

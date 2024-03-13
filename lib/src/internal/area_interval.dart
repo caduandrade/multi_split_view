@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 /// All information are in pixels.
 @internal
 class AreaInterval {
-  double start = 0;
+  double startPos = 0;
 
   double _size = 0;
 
@@ -25,11 +25,16 @@ class AreaInterval {
   double? minSize;
   double? maxSize;
 
-  double get end => start + size;
+  double get endPos => startPos + size;
+
+  double get availableSizeToShrink =>
+      endPos - startPos - (minSize != null ? minSize! : 0);
+
+  double get availableSizeToGrow => math.max(maxSize! - (endPos - startPos), 0);
 
   AreaInterval clone() {
     AreaInterval clone = AreaInterval();
-    clone.start = start;
+    clone.startPos = startPos;
     clone._size = _size;
     clone.minSize = minSize;
     clone.maxSize = maxSize;
@@ -37,7 +42,7 @@ class AreaInterval {
   }
 
   void copyTo(AreaInterval other) {
-    other.start = start;
+    other.startPos = startPos;
     other._size = _size;
     other.minSize = minSize;
     other.maxSize = maxSize;

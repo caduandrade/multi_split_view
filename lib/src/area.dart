@@ -112,12 +112,16 @@ class AreaHelper {
   static void setFlex({required Area area, required double? flex}) {
     if (flex != null) {
       flex = math.max(0, flex);
+      if (area.min != null) {
+        flex = math.max(flex, area.min!);
+      }
     }
     area._flex = flex;
   }
 
   static void setSize({required Area area, required double? size}) {
     area._size = size;
+    //TODO checks
   }
 
   static void setMin({required Area area, required double? min}) {

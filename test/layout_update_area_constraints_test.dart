@@ -13,12 +13,12 @@ void main() {
       layout.updateAreaIntervals(controllerHelper: controllerHelper);
 
       expect(layout.areaIntervals.length, 2);
-      expect(layout.areaIntervals[0].start, 0);
+      expect(layout.areaIntervals[0].startPos, 0);
       expect(layout.areaIntervals[0].size, 45);
-      expect(layout.areaIntervals[0].end, 45);
-      expect(layout.areaIntervals[1].start, 55);
+      expect(layout.areaIntervals[0].endPos, 45);
+      expect(layout.areaIntervals[1].startPos, 55);
       expect(layout.areaIntervals[1].size, 45);
-      expect(layout.areaIntervals[1].end, 100);
+      expect(layout.areaIntervals[1].endPos, 100);
     });
   });
 }

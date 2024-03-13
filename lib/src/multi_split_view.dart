@@ -377,11 +377,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         pixels: delta)) {
       _initialDragPos = position;
     } else if (delta < 0) {
-      _initialDragPos = _layout.areaIntervals[index].start +
-          _layout.areaIntervals[index].size;
+      _initialDragPos = _layout.areaIntervals[index].startPos +
+          _layout.areaIntervals[index].size +
+          _layout.dividerThickness;
     } else if (delta > 0) {
       _initialDragPos =
-          _layout.areaIntervals[index + 1].start - _layout.dividerThickness;
+          _layout.areaIntervals[index + 1].startPos - _layout.dividerThickness;
     }
     controllerHelper.notifyListeners();
     if (widget.onDividerDragUpdate != null) {

@@ -31,8 +31,8 @@ class MultiSplitViewExample extends StatefulWidget {
 class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final List<Color> _colors = [];
 
-  final MultiSplitViewController _controller =
-      MultiSplitViewController(areas: [Area(size: 100, min: 50)]);
+  final MultiSplitViewController _controller = MultiSplitViewController(
+      areas: [Area(size: 200, min: 100), Area(flex: 1, max: 1.5)]);
 
   @override
   void initState() {
@@ -203,6 +203,9 @@ class ColorWidget extends StatelessWidget {
           }
           if (area.min != null) {
             children.add(Text('min: ${area.min!}', style: textStyle));
+          }
+          if (area.max != null) {
+            children.add(Text('max: ${area.max!}', style: textStyle));
           }
           return Center(
               child: Container(

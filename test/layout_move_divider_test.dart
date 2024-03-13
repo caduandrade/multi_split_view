@@ -21,25 +21,25 @@ void main() {
 
       ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: -1);
-      expect(ret, true);
+      expect(ret, false);
       expect(controllerHelper.areas[0].flex, 0.98);
       expect(controllerHelper.areas[1].flex, 1.02);
 
       ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: 2);
-      expect(ret, true);
+      expect(ret, false);
       expect(controllerHelper.areas[0].flex, 1.02);
       expect(controllerHelper.areas[1].flex, 0.98);
 
       ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: 200);
-      expect(ret, false);
+      expect(ret, true);
       expect(controllerHelper.areas[0].flex, 2);
       expect(controllerHelper.areas[1].flex, 0);
 
       ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: -200);
-      expect(ret, false);
+      expect(ret, true);
       expect(controllerHelper.areas[0].flex, 0);
       expect(controllerHelper.areas[1].flex, 2);
     });
@@ -56,7 +56,7 @@ void main() {
 
       bool ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: -100);
-      expect(ret, true);
+      expect(ret, false);
 
       expect(controllerHelper.areas[0].size, 100);
       expect(controllerHelper.areas[0].flex, null);
@@ -78,7 +78,7 @@ void main() {
 
       bool ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: 5);
-      expect(ret, true);
+      expect(ret, false);
       expect(controllerHelper.areas[0].size, 105);
       expect(controllerHelper.areas[0].flex, null);
       expect(controllerHelper.areas[1].size, null);
@@ -88,7 +88,7 @@ void main() {
 
       ret = layout.moveDivider(
           controllerHelper: controllerHelper, dividerIndex: 0, pixels: 150);
-      expect(ret, false);
+      expect(ret, true);
       expect(controllerHelper.areas[0].size, 200);
       expect(controllerHelper.areas[0].flex, null);
       expect(controllerHelper.areas[1].size, null);
