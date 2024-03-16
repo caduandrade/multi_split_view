@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:meta/meta.dart';
 
 @internal
@@ -38,7 +39,7 @@ class NumUtil {
   }
 
   static double round(double value) {
-    int places = 5;
+    int places = 4;
     num mod = math.pow(10.0, places);
     return ((value * mod).round().toDouble() / mod);
   }

@@ -120,5 +120,31 @@ void main() {
       expect(controllerHelper.areas[2].size, null);
       expect(controllerHelper.areas[2].flex, 1);
     });
+
+
+    test('all flex 0 with 1 size', () {
+      MultiSplitViewController controller = MultiSplitViewController(
+          areas: [Area(data: 'a', flex: 0), Area(data: 'b', flex: 0), Area(data: 'c', size: 100)]);
+      Layout layout = Layout(childrenCount: 3, containerSize: 310, dividerThickness: 5);
+      ControllerHelper controllerHelper = ControllerHelper(controller);
+      layout.adjustAreas(controllerHelper: controllerHelper);
+      layout.updateAreaIntervals(controllerHelper: controllerHelper);
+
+      expect(controllerHelper.areas.length, 3);
+
+      double rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 1,
+          pixels: 50,
+          pushDividers: false);
+      expect(rest, 0);
+      expect(controllerHelper.areas[0].size, null);
+      expect(controllerHelper.areas[0].flex, 0);
+      expect(controllerHelper.areas[1].size, null);
+      expect(controllerHelper.areas[1].flex, 1);
+      expect(controllerHelper.areas[2].size, 50);
+      expect(controllerHelper.areas[2].flex, null);
+
+    });
   });
 }

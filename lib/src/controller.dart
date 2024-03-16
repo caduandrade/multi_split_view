@@ -57,6 +57,16 @@ class ControllerHelper {
 
   Object get areasUpdateHash => controller._areasUpdateHash;
 
+  double flexSum() {
+    double sum = 0;
+    for (Area area in areas) {
+      if (area.flex != null) {
+        sum += AreaHelper.getInitialFlex(area: area)!;
+      }
+    }
+    return sum;
+  }
+
   void notifyListeners() => controller._forceNotifyListeners();
 
   static int? getStateHashCode(MultiSplitViewController controller) {

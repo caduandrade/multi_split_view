@@ -78,7 +78,7 @@ void main() {
 
     test('all flex 0', () {
       MultiSplitViewController controller =
-          MultiSplitViewController(areas: [Area(data: 'a', flex: 0)]);
+      MultiSplitViewController(areas: [Area(data: 'a', flex: 0)]);
       Layout(childrenCount: 1, containerSize: 100, dividerThickness: 5)
           .adjustAreas(controllerHelper: ControllerHelper(controller));
       expect(controller.areas.length, 1);

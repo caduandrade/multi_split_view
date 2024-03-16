@@ -84,7 +84,8 @@ class Layout {
       for (Area area in controllerHelper.areas) {
         AreaHelper.setFlex(
             area: area,
-            flex: lowestSize > 0 ? area.size! / lowestSize : area.size);
+            flex: lowestSize > 0 ? area.size! / lowestSize : area.size,
+            initialFlex: true);
         AreaHelper.setSize(area: area, size: null);
         AreaHelper.setMin(area: area, min: null);
         AreaHelper.setMax(area: area, max: null);
@@ -92,19 +93,9 @@ class Layout {
     } else if (flexCount == controllerHelper.areas.length && sumFlex == 0) {
       // Change flex value to 1 if all areas are flex 0.
       for (Area area in controllerHelper.areas) {
-        AreaHelper.setFlex(area: area, flex: 1);
+        AreaHelper.setFlex(area: area, flex: 1, initialFlex: true);
       }
     }
-  }
-
-  double _sumFlex(ControllerHelper controllerHelper) {
-    double sum = 0;
-    for (Area area in controllerHelper.areas) {
-      if (area.flex != null) {
-        sum += area.flex!;
-      }
-    }
-    return sum;
   }
 
   void updateAreaIntervals({required ControllerHelper controllerHelper}) {
@@ -114,12 +105,9 @@ class Layout {
     final double availableFlexSize =
         _calculateAvailableFlexSize(controllerHelper);
 
-    final double sumFlex = _sumFlex(controllerHelper);
-    if (sumFlex == 0) {
-      throw StateError('sum flex cannot be zero');
-    }
+    final double flexSum = controllerHelper.flexSum();
 
-    final double pixelPerFlex = availableFlexSize / sumFlex;
+    final double pixelPerFlex = flexSum == 0 ? 0 : availableFlexSize / flexSum;
 
     for (int index = 0; index < controllerHelper.areas.length; index++) {
       Area area = controllerHelper.areas[index];
@@ -185,8 +173,9 @@ class Layout {
       return 0;
     }
 
+    double rest;
     if (pixels < 0) {
-      return _resizeAreas(
+      rest = _resizeAreas(
               pixelsToMove: pixels.abs(),
               direction: -1,
               controllerHelper: controllerHelper,
@@ -194,14 +183,17 @@ class Layout {
               growAreaIndex: dividerIndex + 1,
               pushDividers: pushDividers) *
           -1;
+    } else {
+      rest = _resizeAreas(
+          pixelsToMove: pixels,
+          direction: 1,
+          controllerHelper: controllerHelper,
+          shrinkAreaIndex: dividerIndex + 1,
+          growAreaIndex: dividerIndex,
+          pushDividers: pushDividers);
     }
-    return _resizeAreas(
-        pixelsToMove: pixels,
-        direction: 1,
-        controllerHelper: controllerHelper,
-        shrinkAreaIndex: dividerIndex + 1,
-        growAreaIndex: dividerIndex,
-        pushDividers: pushDividers);
+    _updateAreas(controllerHelper: controllerHelper);
+    return rest;
   }
 
   double _resizeAreas(
@@ -235,31 +227,6 @@ class Layout {
       start += areaInterval.size + dividerThickness;
     }
 
-    final double availableFlexSize =
-        _calculateAvailableFlexSize(controllerHelper);
-
-    // amount of flex for each pixel
-    final double flexPerPixel = availableFlexSize == 0
-        ? 0
-        : _sumFlex(controllerHelper) / availableFlexSize;
-
-    Area shrinkArea = controllerHelper.areas[shrinkAreaIndex];
-    if (shrinkArea.flex != null) {
-      AreaHelper.setFlex(
-          area: shrinkArea,
-          flex: shrinkArea.flex! - movedPixels * flexPerPixel);
-    } else {
-      AreaHelper.setSize(
-          area: shrinkArea, size: shrinkArea.size! - movedPixels);
-    }
-    Area growArea = controllerHelper.areas[growAreaIndex];
-    if (growArea.flex != null) {
-      AreaHelper.setFlex(
-          area: growArea, flex: growArea.flex! + movedPixels * flexPerPixel);
-    } else {
-      AreaHelper.setSize(area: growArea, size: growArea.size! + movedPixels);
-    }
-
     shrinkAreaIndex += direction;
     if (pushDividers &&
         shrinkAreaIndex >= 0 &&
@@ -273,6 +240,32 @@ class Layout {
           pushDividers: pushDividers);
     }
     return rest;
+  }
+
+  void _updateAreas({required ControllerHelper controllerHelper}) {
+    for (int index = 0; index < areaIntervals.length; index++) {
+      AreaInterval areaInterval = areaIntervals[index];
+      Area area = controllerHelper.areas[index];
+      if (area.size != null) {
+        AreaHelper.setSize(area: area, size: areaInterval.size);
+      }
+    }
+
+    final double availableFlexSize =
+        _calculateAvailableFlexSize(controllerHelper);
+
+    // amount of flex for each pixel
+    final double flexPerPixel = availableFlexSize == 0
+        ? 0
+        : controllerHelper.flexSum() / availableFlexSize;
+
+    for (int index = 0; index < areaIntervals.length; index++) {
+      AreaInterval areaInterval = areaIntervals[index];
+      Area area = controllerHelper.areas[index];
+      if (area.flex != null) {
+        AreaHelper.setFlex(area: area, flex: areaInterval.size * flexPerPixel);
+      }
+    }
   }
 }
 

@@ -51,6 +51,7 @@ class Area {
         _size = math.min(_size!, max);
       }
     }
+    _initialFlex = _flex;
   }
 
   //TODO remove
@@ -78,6 +79,8 @@ class Area {
   double? get size => _size;
 
   double? _flex;
+
+  double? _initialFlex;
 
   double? get flex => _flex;
 
@@ -109,7 +112,12 @@ class Area {
 
 @internal
 class AreaHelper {
-  static void setFlex({required Area area, required double? flex}) {
+  static double? getInitialFlex({required Area area}) {
+    return area._initialFlex;
+  }
+
+  static void setFlex(
+      {required Area area, required double? flex, bool initialFlex = false}) {
     if (flex != null) {
       flex = NumUtil.fix('flex', flex);
       if (area.min != null) {
@@ -117,6 +125,9 @@ class AreaHelper {
       }
     }
     area._flex = flex;
+    if (initialFlex) {
+      area._initialFlex = flex;
+    }
   }
 
   static void setSize({required Area area, required double? size}) {
