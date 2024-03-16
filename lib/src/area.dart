@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
-import 'package:multi_split_view/src/internal/argument_validator.dart';
+import 'package:multi_split_view/src/internal/num_util.dart';
 
 /// Child area in the [MultiSplitView].
 ///
@@ -26,10 +26,10 @@ class Area {
     if (size != null && flex != null) {
       throw ArgumentError('Cannot provide both a size and a flex.');
     }
-    ArgumentValidator.validateDouble('size', size);
-    ArgumentValidator.validateDouble('flex', flex);
-    ArgumentValidator.validateDouble('min', min);
-    ArgumentValidator.validateDouble('max', max);
+    NumUtil.validateDouble('size', size);
+    NumUtil.validateDouble('flex', flex);
+    NumUtil.validateDouble('min', min);
+    NumUtil.validateDouble('max', max);
     if (size == null && flex == null) {
       _flex = 1;
     }
@@ -111,7 +111,7 @@ class Area {
 class AreaHelper {
   static void setFlex({required Area area, required double? flex}) {
     if (flex != null) {
-      flex = math.max(0, flex);
+      flex = NumUtil.fix('flex', flex);
       if (area.min != null) {
         flex = math.max(flex, area.min!);
       }
@@ -120,11 +120,16 @@ class AreaHelper {
   }
 
   static void setSize({required Area area, required double? size}) {
+    if (size != null) {
+      size = NumUtil.fix('size', size);
+    }
     area._size = size;
-    //TODO checks
   }
 
   static void setMin({required Area area, required double? min}) {
+    if (min != null) {
+      min = math.max(0, min);
+    }
     area._min = min;
   }
 

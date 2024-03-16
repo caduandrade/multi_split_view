@@ -15,31 +15,46 @@ void main() {
 
       expect(controllerHelper.areas.length, 2);
 
-      bool ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: 0);
-      expect(ret, false);
+      double rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: 0,
+          pushDividers: false);
+      expect(rest, 0);
 
-      ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: -1);
-      expect(ret, false);
+      rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: -1,
+          pushDividers: false);
+      expect(rest, 0);
       expect(controllerHelper.areas[0].flex, 0.98);
       expect(controllerHelper.areas[1].flex, 1.02);
 
-      ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: 2);
-      expect(ret, false);
+      rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: 2,
+          pushDividers: false);
+      expect(rest, 0);
       expect(controllerHelper.areas[0].flex, 1.02);
       expect(controllerHelper.areas[1].flex, 0.98);
 
-      ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: 200);
-      expect(ret, true);
+      rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: 200,
+          pushDividers: false);
+      expect(rest, 151);
       expect(controllerHelper.areas[0].flex, 2);
       expect(controllerHelper.areas[1].flex, 0);
 
-      ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: -200);
-      expect(ret, true);
+      rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: -200,
+          pushDividers: false);
+      expect(rest, -100);
       expect(controllerHelper.areas[0].flex, 0);
       expect(controllerHelper.areas[1].flex, 2);
     });
@@ -54,9 +69,12 @@ void main() {
 
       expect(controllerHelper.areas.length, 3);
 
-      bool ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: -100);
-      expect(ret, false);
+      double rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: -100,
+          pushDividers: false);
+      expect(rest, 0);
 
       expect(controllerHelper.areas[0].size, 100);
       expect(controllerHelper.areas[0].flex, null);
@@ -76,9 +94,12 @@ void main() {
 
       expect(controllerHelper.areas.length, 3);
 
-      bool ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: 5);
-      expect(ret, false);
+      double rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: 5,
+          pushDividers: false);
+      expect(rest, 0);
       expect(controllerHelper.areas[0].size, 105);
       expect(controllerHelper.areas[0].flex, null);
       expect(controllerHelper.areas[1].size, null);
@@ -86,9 +107,12 @@ void main() {
       expect(controllerHelper.areas[2].size, null);
       expect(controllerHelper.areas[2].flex, 1);
 
-      ret = layout.moveDivider(
-          controllerHelper: controllerHelper, dividerIndex: 0, pixels: 150);
-      expect(ret, true);
+      rest = layout.moveDivider(
+          controllerHelper: controllerHelper,
+          dividerIndex: 0,
+          pixels: 150,
+          pushDividers: false);
+      expect(rest, 55);
       expect(controllerHelper.areas[0].size, 200);
       expect(controllerHelper.areas[0].flex, null);
       expect(controllerHelper.areas[1].size, null);

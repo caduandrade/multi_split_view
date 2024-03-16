@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/internal/area_interval.dart';
-import 'package:multi_split_view/src/internal/argument_validator.dart';
+import 'package:multi_split_view/src/internal/num_util.dart';
 
 @internal
 class Layout {
@@ -12,9 +12,9 @@ class Layout {
       {required final int childrenCount,
       required final double containerSize,
       required final double dividerThickness}) {
-    ArgumentValidator.validateInt('childrenCount', childrenCount);
-    ArgumentValidator.validateDouble('dividerThickness', dividerThickness);
-    ArgumentValidator.validateDouble('containerSize', containerSize);
+    NumUtil.validateInt('childrenCount', childrenCount);
+    NumUtil.validateDouble('dividerThickness', dividerThickness);
+    NumUtil.validateDouble('containerSize', containerSize);
     final double totalDividerSize =
         childrenCount > 1 ? (childrenCount - 1) * dividerThickness : 0;
     final double availableSize = math.max(0, containerSize - totalDividerSize);
@@ -114,7 +114,12 @@ class Layout {
     final double availableFlexSize =
         _calculateAvailableFlexSize(controllerHelper);
 
-    final double pixelPerFlex = availableFlexSize / _sumFlex(controllerHelper);
+    final double sumFlex = _sumFlex(controllerHelper);
+    if (sumFlex == 0) {
+      throw StateError('sum flex cannot be zero');
+    }
+
+    final double pixelPerFlex = availableFlexSize / sumFlex;
 
     for (int index = 0; index < controllerHelper.areas.length; index++) {
       Area area = controllerHelper.areas[index];
@@ -171,46 +176,58 @@ class Layout {
     return math.max(size, 0);
   }
 
-  bool moveDivider(
+  double moveDivider(
       {required ControllerHelper controllerHelper,
       required int dividerIndex,
-      required double pixels}) {
+      required double pixels,
+      required bool pushDividers}) {
     if (pixels == 0) {
-      return false;
-    }
-
-    bool exceeded = false;
-
-    AreaInterval area1Intervals = areaIntervals[dividerIndex];
-    AreaInterval area2Intervals = areaIntervals[dividerIndex + 1];
-
-    double movedPixels = pixels.abs();
-
-    if (pixels < 0) {
-      movedPixels = math.min(area1Intervals.availableSizeToShrink, movedPixels);
-      if (area2Intervals.maxSize != null) {
-        movedPixels = math.min(area2Intervals.availableSizeToGrow, movedPixels);
-      }
-
-      area1Intervals.size = area1Intervals.size - movedPixels;
-      area2Intervals.size = area2Intervals.size + movedPixels;
-
-      exceeded = pixels.abs() > movedPixels;
-    } else {
-      if (area1Intervals.maxSize != null) {
-        movedPixels = math.min(area1Intervals.availableSizeToGrow, movedPixels);
-      }
-      movedPixels = math.min(area2Intervals.availableSizeToShrink, movedPixels);
-
-      area1Intervals.size = area1Intervals.size + movedPixels;
-      area2Intervals.size = area2Intervals.size - movedPixels;
-
-      exceeded = pixels.abs() > movedPixels;
+      return 0;
     }
 
     if (pixels < 0) {
-      movedPixels = movedPixels * -1;
+      return _resizeAreas(
+              pixelsToMove: pixels.abs(),
+              direction: -1,
+              controllerHelper: controllerHelper,
+              shrinkAreaIndex: dividerIndex,
+              growAreaIndex: dividerIndex + 1,
+              pushDividers: pushDividers) *
+          -1;
     }
+    return _resizeAreas(
+        pixelsToMove: pixels,
+        direction: 1,
+        controllerHelper: controllerHelper,
+        shrinkAreaIndex: dividerIndex + 1,
+        growAreaIndex: dividerIndex,
+        pushDividers: pushDividers);
+  }
+
+  double _resizeAreas(
+      {required double pixelsToMove,
+      required int direction,
+      required ControllerHelper controllerHelper,
+      required int shrinkAreaIndex,
+      required int growAreaIndex,
+      required bool pushDividers}) {
+    AreaInterval shrinkAreaIntervals = areaIntervals[shrinkAreaIndex];
+    AreaInterval growAreaIntervals = areaIntervals[growAreaIndex];
+
+    double movedPixels = pixelsToMove;
+
+    movedPixels =
+        math.min(shrinkAreaIntervals.availableSizeToShrink, movedPixels);
+    if (growAreaIntervals.maxSize != null) {
+      movedPixels =
+          math.min(growAreaIntervals.availableSizeToGrow, movedPixels);
+    }
+    movedPixels = NumUtil.fix('movedPixels', movedPixels);
+
+    shrinkAreaIntervals.size = shrinkAreaIntervals.size - movedPixels;
+    growAreaIntervals.size = growAreaIntervals.size + movedPixels;
+
+    double rest = pixelsToMove - movedPixels;
 
     double start = 0;
     for (AreaInterval areaInterval in areaIntervals) {
@@ -226,22 +243,36 @@ class Layout {
         ? 0
         : _sumFlex(controllerHelper) / availableFlexSize;
 
-    Area area1 = controllerHelper.areas[dividerIndex];
-    if (area1.flex != null) {
+    Area shrinkArea = controllerHelper.areas[shrinkAreaIndex];
+    if (shrinkArea.flex != null) {
       AreaHelper.setFlex(
-          area: area1, flex: area1.flex! + movedPixels * flexPerPixel);
+          area: shrinkArea,
+          flex: shrinkArea.flex! - movedPixels * flexPerPixel);
     } else {
-      AreaHelper.setSize(area: area1, size: area1.size! + movedPixels);
+      AreaHelper.setSize(
+          area: shrinkArea, size: shrinkArea.size! - movedPixels);
     }
-    Area area2 = controllerHelper.areas[dividerIndex + 1];
-    if (area2.flex != null) {
+    Area growArea = controllerHelper.areas[growAreaIndex];
+    if (growArea.flex != null) {
       AreaHelper.setFlex(
-          area: area2, flex: area2.flex! - movedPixels * flexPerPixel);
+          area: growArea, flex: growArea.flex! + movedPixels * flexPerPixel);
     } else {
-      AreaHelper.setSize(area: area2, size: area2.size! - movedPixels);
+      AreaHelper.setSize(area: growArea, size: growArea.size! + movedPixels);
     }
 
-    return exceeded;
+    shrinkAreaIndex += direction;
+    if (pushDividers &&
+        shrinkAreaIndex >= 0 &&
+        shrinkAreaIndex < areaIntervals.length) {
+      return _resizeAreas(
+          pixelsToMove: rest,
+          direction: direction,
+          controllerHelper: controllerHelper,
+          shrinkAreaIndex: shrinkAreaIndex,
+          growAreaIndex: growAreaIndex,
+          pushDividers: pushDividers);
+    }
+    return rest;
   }
 }
 

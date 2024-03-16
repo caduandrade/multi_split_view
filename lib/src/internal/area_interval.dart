@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
+import 'package:multi_split_view/src/internal/num_util.dart';
 
 /// Stores information about the position and size of the [Area].
 /// All information are in pixels.
@@ -13,6 +14,7 @@ class AreaInterval {
   double get size => _size;
 
   set size(double value) {
+    value = NumUtil.fix('value', value);
     if (minSize != null) {
       value = math.max(minSize!, value);
     }

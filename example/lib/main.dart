@@ -34,6 +34,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   final MultiSplitViewController _controller = MultiSplitViewController(
       areas: [Area(size: 200, min: 100), Area(flex: 1, max: 1.5)]);
 
+  bool _pushDividers = false;
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +78,13 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
               ElevatedButton(
                   onPressed:
                       _colors.isNotEmpty ? _onSetFirstFlexButtonClick : null,
-                  child: const Text('Change first area flex'))
+                  child: const Text('Change first area flex')),
+              Checkbox(
+                  value: _pushDividers,
+                  onChanged: (newValue) => setState(() {
+                        _pushDividers = newValue!;
+                      })),
+              const Text("Push dividers")
             ]));
 
     Widget? content;
@@ -86,6 +94,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
           onDividerTap: _onDividerTap,
           onDividerDoubleTap: _onDividerDoubleTap,
           controller: _controller,
+          pushDividers: _pushDividers,
           count: _colors.length,
           widgetBuilder: (context, index, area) => ColorWidget(
               index: index,

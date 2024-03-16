@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
@@ -28,6 +29,7 @@ class MultiSplitView extends StatefulWidget {
       DividerTapCallback? onDividerDoubleTap,
       bool resizable = true,
       bool antiAliasingWorkaround = true,
+      bool pushDividers = false,
       List<Area>? initialAreas})
       : this._(
             key: key,
@@ -42,6 +44,7 @@ class MultiSplitView extends StatefulWidget {
             antiAliasingWorkaround: antiAliasingWorkaround,
             count: null,
             widgetBuilder: null,
+            pushDividers: pushDividers,
             initialAreas: initialAreas);
 
   /// Creates an [MultiSplitView].
@@ -59,6 +62,7 @@ class MultiSplitView extends StatefulWidget {
       DividerTapCallback? onDividerDoubleTap,
       bool resizable = true,
       bool antiAliasingWorkaround = true,
+      bool pushDividers = false,
       List<Area>? initialAreas})
       : this._(
             key: key,
@@ -73,7 +77,8 @@ class MultiSplitView extends StatefulWidget {
             antiAliasingWorkaround: antiAliasingWorkaround,
             count: count,
             widgetBuilder: widgetBuilder,
-            initialAreas: initialAreas);
+            initialAreas: initialAreas,
+            pushDividers: pushDividers);
 
   const MultiSplitView._(
       {Key? key,
@@ -88,13 +93,17 @@ class MultiSplitView extends StatefulWidget {
       required this.antiAliasingWorkaround,
       required this.count,
       required this.widgetBuilder,
-      required this.initialAreas})
+      required this.initialAreas,
+      required this.pushDividers})
       : super(key: key);
 
   final Axis axis;
   final List<Widget>? children;
   final MultiSplitViewController? controller;
   final List<Area>? initialAreas;
+
+  /// Indicates whether a divider can push others.
+  final bool pushDividers;
 
   /// Signature for when a divider tap has occurred.
   final DividerTapCallback? onDividerTap;
@@ -366,10 +375,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       return;
     }
 
-    if (!_layout.moveDivider(
+    double rest = _layout.moveDivider(
         controllerHelper: controllerHelper,
         dividerIndex: index,
-        pixels: delta)) {
+        pixels: delta,
+        pushDividers: widget.pushDividers);
+
+    if (rest == 0) {
       _initialDragPos = position;
     } else if (delta < 0) {
       _initialDragPos = _layout.areaIntervals[index].startPos +
@@ -379,6 +391,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       _initialDragPos =
           _layout.areaIntervals[index + 1].startPos - _layout.dividerThickness;
     }
+
     controllerHelper.notifyListeners();
     if (widget.onDividerDragUpdate != null) {
       Future.delayed(Duration.zero, () => widget.onDividerDragUpdate!(index));
