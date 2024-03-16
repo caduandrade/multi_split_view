@@ -57,6 +57,7 @@ class ControllerHelper {
 
   Object get areasUpdateHash => controller._areasUpdateHash;
 
+  /// The sum of all flex values.
   double flexSum() {
     double sum = 0;
     for (Area area in areas) {

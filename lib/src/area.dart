@@ -54,18 +54,6 @@ class Area {
     _initialFlex = _flex;
   }
 
-  //TODO remove
-  @deprecated
-  double? get minimalWeight => null;
-
-  //TODO remove
-  @deprecated
-  double? get minimalSize => null;
-
-  //TODO remove
-  @deprecated
-  bool get hasMinimal => minimalSize != null || minimalWeight != null;
-
   double? _min;
 
   double? get min => _min;
@@ -87,25 +75,15 @@ class Area {
   /// Any data associated with the area.
   final dynamic data;
 
-  @internal
-  void updateWeight(double value) {
-    _size = null;
-    _flex = value;
-  }
-
-  //TODO remove
-  @deprecated
   static List<Area> sizes(List<double> sizes) {
     List<Area> list = [];
     sizes.forEach((size) => list.add(Area(size: size)));
     return list;
   }
 
-  //TODO remove
-  @deprecated
-  static List<Area> weights(List<double> weights) {
+  static List<Area> flexes(List<double> flexes) {
     List<Area> list = [];
-    weights.forEach((weight) => list.add(Area(flex: weight)));
+    flexes.forEach((flex) => list.add(Area(flex: flex)));
     return list;
   }
 }
