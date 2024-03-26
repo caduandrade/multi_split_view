@@ -2,4 +2,6 @@
 /// a container.
 enum SizeOverflowPolicy { shrinkFirst, shrinkLast }
 
-enum GrowPolicy { first, last, all }
+/// Represents the policy for handling cases where the total size of
+/// non-flexible areas within a container is smaller than the available space.
+enum SizeUnderflowPolicy { stretchFirst, stretchLast, stretchAll }

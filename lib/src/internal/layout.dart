@@ -57,8 +57,6 @@ class Layout {
   /// The size of the container minus the size of the dividers.
   final double availableSpace;
 
-  final GrowPolicy growPolicy = GrowPolicy.last;
-
   /// Applies the following adjustments:
   ///
   /// * Removes unused areas.
@@ -69,7 +67,8 @@ class Layout {
   /// available space and there are no flex areas to fill the available space.
   void adjustAreas(
       {required ControllerHelper controllerHelper,
-      required SizeOverflowPolicy sizeOverflowPolicy}) {
+      required SizeOverflowPolicy sizeOverflowPolicy,
+      required SizeUnderflowPolicy sizeUnderflowPolicy}) {
     // Removes unused areas.
     if (controllerHelper.areas.length > childrenCount) {
       controllerHelper.areas
@@ -118,22 +117,20 @@ class Layout {
       // The total size of the areas is smaller than the available space and
       // there are no flex areas to fill the available space.
       // Need to grow.
-      if (growPolicy == GrowPolicy.first) {
+      if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchFirst) {
+        Area area = controllerHelper.areas.first;
+        AreaHelper.setSize(
+            area: area, size: area.size! + availableSpace - sumSize);
+      } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchLast) {
         Area area = controllerHelper.areas.last;
         AreaHelper.setSize(
             area: area, size: area.size! + availableSpace - sumSize);
-      } else if (growPolicy == GrowPolicy.last) {
-        Area area = controllerHelper.areas.last;
-        AreaHelper.setSize(
-            area: area, size: area.size! + availableSpace - sumSize);
-      } else if (growPolicy == GrowPolicy.all) {
+      } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchAll) {
         double extraSize =
             (availableSpace - sumSize) / controllerHelper.areas.length;
         for (Area area in controllerHelper.areas) {
-          AreaHelper.setSize(area: area, size: extraSize);
+          AreaHelper.setSize(area: area, size: area.size! + extraSize);
         }
-      } else {
-        StateError('Unknown GrowPolicy: $growPolicy');
       }
     }
   }

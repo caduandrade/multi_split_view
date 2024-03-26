@@ -10,7 +10,9 @@ class TestHelper {
       {required List<Area> areas,
       required double containerSize,
       required double dividerThickness,
-      SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast}) {
+      SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast,
+      SizeUnderflowPolicy sizeUnderflowPolicy =
+          SizeUnderflowPolicy.stretchLast}) {
     MultiSplitViewController controller =
         MultiSplitViewController(areas: areas);
     Layout layout = Layout(
@@ -20,7 +22,8 @@ class TestHelper {
     ControllerHelper controllerHelper = ControllerHelper(controller);
     layout.adjustAreas(
         controllerHelper: controllerHelper,
-        sizeOverflowPolicy: sizeOverflowPolicy);
+        sizeOverflowPolicy: sizeOverflowPolicy,
+        sizeUnderflowPolicy: sizeUnderflowPolicy);
     layout.updateScreenConstraints(controllerHelper: controllerHelper);
 
     expect(controller.areasCount, areas.length);
