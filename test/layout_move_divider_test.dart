@@ -1,150 +1,281 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_split_view/multi_split_view.dart';
-import 'package:multi_split_view/src/controller.dart';
-import 'package:multi_split_view/src/internal/layout.dart';
+
+import 'test_helper.dart';
 
 void main() {
-  group('Layout - Move divider', () {
-    test('1', () {
-      MultiSplitViewController controller = MultiSplitViewController();
-      Layout layout =
-          Layout(childrenCount: 2, containerSize: 110, dividerThickness: 10);
-      ControllerHelper controllerHelper = ControllerHelper(controller);
-      layout.adjustAreas(controllerHelper: controllerHelper);
-      layout.updateAreaIntervals(controllerHelper: controllerHelper);
+  group('Layout', () {
+    group('Move divider', () {
+      group('2 areas', () {
+        group('SF', () {
+          test('-100 pixels', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', size: 200), Area(data: 'b', flex: 1)],
+                containerSize: 310,
+                dividerThickness: 10);
 
-      expect(controllerHelper.areas.length, 2);
+            helper.testConstraintsSize(0,
+                size: 200, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 100, minSize: null, maxSize: null);
 
-      double rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: 0,
-          pushDividers: false);
-      expect(rest, 0);
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -100, pushDividers: false, rest: 0);
 
-      rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: -1,
-          pushDividers: false);
-      expect(rest, 0);
-      expect(controllerHelper.areas[0].flex, 0.98);
-      expect(controllerHelper.areas[1].flex, 1.02);
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 200, minSize: null, maxSize: null);
 
-      rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: 2,
-          pushDividers: false);
-      expect(rest, 0);
-      expect(controllerHelper.areas[0].flex, 1.02);
-      expect(controllerHelper.areas[1].flex, 0.98);
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 100);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1, size: null);
+          });
+          test('1o S +200 pixels over screen limit', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', size: 50), Area(data: 'b', flex: 1)],
+                containerSize: 105,
+                dividerThickness: 5);
 
-      rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: 200,
-          pushDividers: false);
-      expect(rest, 151);
-      expect(controllerHelper.areas[0].flex, 2);
-      expect(controllerHelper.areas[1].flex, 0);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
 
-      rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: -200,
-          pushDividers: false);
-      expect(rest, -100);
-      expect(controllerHelper.areas[0].flex, 0);
-      expect(controllerHelper.areas[1].flex, 2);
-    });
-    test('Pixel and Flex', () {
-      MultiSplitViewController controller =
-          MultiSplitViewController(areas: [Area(size: 200), Area(flex: 0)]);
-      Layout layout =
-          Layout(childrenCount: 3, containerSize: 320, dividerThickness: 10);
-      ControllerHelper controllerHelper = ControllerHelper(controller);
-      layout.adjustAreas(controllerHelper: controllerHelper);
-      layout.updateAreaIntervals(controllerHelper: controllerHelper);
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 200, pushDividers: false, rest: 0);
 
-      expect(controllerHelper.areas.length, 3);
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 0, minSize: null, maxSize: null);
 
-      double rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: -100,
-          pushDividers: false);
-      expect(rest, 0);
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 100);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1, size: null);
+          });
+        });
+        group('FF', () {
+          test('0 pixel', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 1)],
+                containerSize: 110,
+                dividerThickness: 10);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
 
-      expect(controllerHelper.areas[0].size, 100);
-      expect(controllerHelper.areas[0].flex, null);
-      expect(controllerHelper.areas[1].size, null);
-      expect(controllerHelper.areas[1].flex, 1);
-      expect(controllerHelper.areas[2].size, null);
-      expect(controllerHelper.areas[2].flex, 1);
-    });
-    test('Pixel and Flex - 2', () {
-      MultiSplitViewController controller =
-          MultiSplitViewController(areas: [Area(size: 100)]);
-      Layout layout =
-          Layout(childrenCount: 3, containerSize: 320, dividerThickness: 10);
-      ControllerHelper controllerHelper = ControllerHelper(controller);
-      layout.adjustAreas(controllerHelper: controllerHelper);
-      layout.updateAreaIntervals(controllerHelper: controllerHelper);
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 0, pushDividers: false, rest: 0);
 
-      expect(controllerHelper.areas.length, 3);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
 
-      double rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: 5,
-          pushDividers: false);
-      expect(rest, 0);
-      expect(controllerHelper.areas[0].size, 105);
-      expect(controllerHelper.areas[0].flex, null);
-      expect(controllerHelper.areas[1].size, null);
-      expect(controllerHelper.areas[1].flex, 0.95);
-      expect(controllerHelper.areas[2].size, null);
-      expect(controllerHelper.areas[2].flex, 1);
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 1, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1, size: null);
+          });
+          test('-1 pixel', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 1)],
+                containerSize: 110,
+                dividerThickness: 10);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
 
-      rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 0,
-          pixels: 150,
-          pushDividers: false);
-      expect(rest, 55);
-      expect(controllerHelper.areas[0].size, 200);
-      expect(controllerHelper.areas[0].flex, null);
-      expect(controllerHelper.areas[1].size, null);
-      expect(controllerHelper.areas[1].flex, 0);
-      expect(controllerHelper.areas[2].size, null);
-      expect(controllerHelper.areas[2].flex, 1);
-    });
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -1, pushDividers: false, rest: 0);
 
+            helper.testConstraintsSize(0,
+                size: 49, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 51, minSize: null, maxSize: null);
 
-    test('all flex 0 with 1 size', () {
-      MultiSplitViewController controller = MultiSplitViewController(
-          areas: [Area(data: 'a', flex: 0), Area(data: 'b', flex: 0), Area(data: 'c', size: 100)]);
-      Layout layout = Layout(childrenCount: 3, containerSize: 310, dividerThickness: 5);
-      ControllerHelper controllerHelper = ControllerHelper(controller);
-      layout.adjustAreas(controllerHelper: controllerHelper);
-      layout.updateAreaIntervals(controllerHelper: controllerHelper);
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 0.98, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1.02, size: null);
+          });
+          test('1 pixel', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 1)],
+                containerSize: 110,
+                dividerThickness: 10);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
 
-      expect(controllerHelper.areas.length, 3);
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 1, pushDividers: false, rest: 0);
 
-      double rest = layout.moveDivider(
-          controllerHelper: controllerHelper,
-          dividerIndex: 1,
-          pixels: 50,
-          pushDividers: false);
-      expect(rest, 0);
-      expect(controllerHelper.areas[0].size, null);
-      expect(controllerHelper.areas[0].flex, 0);
-      expect(controllerHelper.areas[1].size, null);
-      expect(controllerHelper.areas[1].flex, 1);
-      expect(controllerHelper.areas[2].size, 50);
-      expect(controllerHelper.areas[2].flex, null);
+            helper.testConstraintsSize(0,
+                size: 51, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 49, minSize: null, maxSize: null);
 
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 1.02, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 0.98, size: null);
+          });
+          test('-200 pixels with rest', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 1)],
+                containerSize: 110,
+                dividerThickness: 10);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -200, pushDividers: false, rest: -150);
+
+            helper.testConstraintsSize(0,
+                size: 0, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 100, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 0, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 2, size: null);
+          });
+          test('200 pixels with rest', () {
+            TestHelper helper = TestHelper(
+                areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 1)],
+                containerSize: 110,
+                dividerThickness: 10);
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 200, pushDividers: false, rest: 150);
+
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 0, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 2, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 0, size: null);
+          });
+        });
+      });
+      group('3 areas', () {
+        group('SFF', () {
+          test('-20 pixels', () {
+            TestHelper helper = TestHelper(areas: [
+              Area(data: 'a', size: 100),
+              Area(data: 'b', flex: 1),
+              Area(data: 'c', flex: 3)
+            ], containerSize: 510, dividerThickness: 5);
+
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 300, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 80, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 105, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 315, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 80);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1, size: null);
+            helper.testArea(2,
+                data: 'c', min: null, max: null, flex: 3, size: null);
+          });
+        });
+        group('FSF', () {
+          test('-20 pixels', () {
+            TestHelper helper = TestHelper(areas: [
+              Area(data: 'a', flex: 1),
+              Area(data: 'b', size: 100),
+              Area(data: 'c', flex: 3)
+            ], containerSize: 510, dividerThickness: 5);
+
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 300, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 95, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 120, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 285, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: 1, size: null);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: null, size: 120);
+            helper.testArea(2,
+                data: 'c', min: null, max: null, flex: 3, size: null);
+          });
+        });
+        group('SSF', () {
+          test('1o S -20 pixels, F collapsed', () {
+            TestHelper helper = TestHelper(areas: [
+              Area(data: 'a', size: 50),
+              Area(data: 'b', size: 50),
+              Area(data: 'c', flex: 1)
+            ], containerSize: 110, dividerThickness: 5);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 0, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 30, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 70, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 0, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 30);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: null, size: 70);
+            helper.testArea(2,
+                data: 'c', min: null, max: null, flex: 1, size: null);
+          });
+        });
+      });
     });
   });
 }
