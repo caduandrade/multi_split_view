@@ -12,26 +12,60 @@ import 'package:multi_split_view/src/area.dart';
 class MultiSplitViewController extends ChangeNotifier {
   /// Creates an [MultiSplitViewController].
   ///
-  /// The sum of the [weights] cannot exceed 1.
-  factory MultiSplitViewController({List<Area>? areas}) {
-    return MultiSplitViewController._(areas != null ? List.from(areas) : []);
+  /// Changes the flex to 1 if the total flex of the areas is 0.
+  MultiSplitViewController({List<Area>? areas}) {
+    if (areas != null) {
+      _updateAreas(areas);
+    }
   }
 
-  MultiSplitViewController._(this._areas);
-
-  List<Area> _areas;
+  List<Area> _areas = [];
 
   UnmodifiableListView<Area> get areas => UnmodifiableListView(_areas);
 
   Object _areasUpdateHash = Object();
 
-  set areas(List<Area> areas) {
+  double _flexCount = 0;
+  double get flexCount => _flexCount;
+
+  double _totalFlex = 0;
+  double get totalFlex => _totalFlex;
+
+  /// Updates the areas.
+  /// Changes the flex to 1 if the total flex of the areas is 0.
+  void _updateAreas(List<Area> areas) {
     _areas = List.from(areas);
     _areasUpdateHash = Object();
+
+    _totalFlex = 0;
+    _flexCount = 0;
+    for (Area area in _areas) {
+      if (area.flex != null) {
+        _totalFlex += area.flex!;
+        _flexCount++;
+      }
+    }
+
+    if (_flexCount > 0 && _totalFlex == 0) {
+      for (Area area in _areas) {
+        if (area.flex != null) {
+          AreaHelper.setFlex(area: area, flex: 1);
+          AreaHelper.setMax(area: area, max: null);
+          AreaHelper.setMin(area: area, min: null);
+        }
+      }
+      _totalFlex = _flexCount;
+    }
+  }
+
+  /// Set the areas.
+  /// Changes the flex to 1 if the total flex of the areas is 0.
+  set areas(List<Area> areas) {
+    _updateAreas(areas);
     notifyListeners();
   }
 
-  int get areasLength => _areas.length;
+  int get areasCount => _areas.length;
 
   /// Gets the area of a given widget index.
   Area getArea(int index) {
@@ -58,12 +92,18 @@ class ControllerHelper {
   Object get areasUpdateHash => controller._areasUpdateHash;
 
   /// The sum of all flex values.
-  double flexSum() {
+  double totalFlex() {
     double sum = 0;
+    double count = 0;
     for (Area area in areas) {
       if (area.flex != null) {
-        sum += AreaHelper.getInitialFlex(area: area)!;
+        sum += area.flex!;
+        count++;
       }
+    }
+    if (count > 0 && sum == 0) {
+      // return count;
+      throw StateError('Sum of flex must be positive.');
     }
     return sum;
   }

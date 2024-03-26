@@ -5,6 +5,7 @@ import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_tap_typedefs.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
+import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/layout.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
@@ -232,7 +233,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
           _layout.adjustAreas(controllerHelper: controllerHelper);
-          _layout.updateAreaIntervals(controllerHelper: controllerHelper);
+          _layout.updateScreenConstraints(controllerHelper: controllerHelper);
         }
 
         List<Widget> children = [];
@@ -384,12 +385,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (rest == 0) {
       _initialDragPos = position;
     } else if (delta < 0) {
-      _initialDragPos = _layout.areaIntervals[index].startPos +
-          _layout.areaIntervals[index].size +
-          _layout.dividerThickness;
-    } else if (delta > 0) {
+      Area area = _controller.getArea(index);
+      AreaScreenConstraints constraints = AreaHelper.screenConstraintsOf(area);
       _initialDragPos =
-          _layout.areaIntervals[index + 1].startPos - _layout.dividerThickness;
+          constraints.startPos + constraints.size + _layout.dividerThickness;
+    } else if (delta > 0) {
+      Area area = _controller.getArea(index + 1);
+      AreaScreenConstraints constraints = AreaHelper.screenConstraintsOf(area);
+      _initialDragPos = constraints.startPos - _layout.dividerThickness;
     }
 
     controllerHelper.notifyListeners();

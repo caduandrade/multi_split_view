@@ -3,8 +3,9 @@ import 'dart:math' as math;
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
-import 'package:multi_split_view/src/internal/area_interval.dart';
+import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
+import 'package:multi_split_view/src/policies.dart';
 
 @internal
 class Layout {
@@ -17,13 +18,13 @@ class Layout {
     NumUtil.validateDouble('containerSize', containerSize);
     final double totalDividerSize =
         childrenCount > 1 ? (childrenCount - 1) * dividerThickness : 0;
-    final double availableSize = math.max(0, containerSize - totalDividerSize);
+    final double availableSpace = math.max(0, containerSize - totalDividerSize);
     return Layout._(
         childrenCount: childrenCount,
         containerSize: containerSize,
         dividerThickness: dividerThickness,
         totalDividerSize: totalDividerSize,
-        availableSize: availableSize);
+        availableSpace: availableSpace);
   }
 
   Layout._(
@@ -31,28 +32,32 @@ class Layout {
       required double containerSize,
       required double dividerThickness,
       required double totalDividerSize,
-      required double availableSize})
+      required double availableSpace})
       : childrenCount = childrenCount,
         containerSize = containerSize,
         dividerThickness = dividerThickness,
         totalDividerSize = totalDividerSize,
-        availableSize = availableSize;
+        availableSpace = availableSpace;
 
   final int childrenCount;
   final double containerSize;
   final double dividerThickness;
   final double totalDividerSize;
-  final double availableSize;
 
-  final List<AreaInterval> areaIntervals = [];
+  /// Container size without dividers.
+  final double availableSpace;
+
+  final ShrinkPolicy shrinkPolicy = ShrinkPolicy.right;
+  final GrowPolicy growPolicy = GrowPolicy.last;
 
   /// Applies the following adjustments:
   ///
-  /// * Creates new areas to accommodate all child widgets.
   /// * Removes unused areas.
-  /// * Transforms all areas into flex if they are all size valued.
-  /// Nullifies min and max.
-  /// * Change flex value to 1 if all areas are flex 0.
+  /// * Creates new areas to accommodate all child widgets.
+  /// * Shrinks size when the total size of the areas is greater than
+  /// the available space.
+  /// * Grows size when the total size of the areas is smaller than the
+  /// available space and there are no flex areas to fill the available space.
   void adjustAreas({required ControllerHelper controllerHelper}) {
     // Removes unused areas.
     if (controllerHelper.areas.length > childrenCount) {
@@ -65,72 +70,94 @@ class Layout {
       controllerHelper.areas.add(Area());
     }
 
-    int sizedCount = 0;
     int flexCount = 0;
     double sumFlex = 0;
+    double sumSize = 0;
     double lowestSize = double.maxFinite;
     for (Area area in controllerHelper.areas) {
       if (area.size != null) {
-        sizedCount++;
+        sumSize += area.size!;
         lowestSize = math.min(lowestSize, area.size!);
       } else {
         flexCount++;
         sumFlex += area.flex!;
       }
     }
-    if (sizedCount == controllerHelper.areas.length) {
-      // Transforms all areas into flex if they are all size valued.
-      // Nullifies min and max.
-      for (Area area in controllerHelper.areas) {
-        AreaHelper.setFlex(
-            area: area,
-            flex: lowestSize > 0 ? area.size! / lowestSize : area.size,
-            initialFlex: true);
-        AreaHelper.setSize(area: area, size: null);
-        AreaHelper.setMin(area: area, min: null);
-        AreaHelper.setMax(area: area, max: null);
+    double availableSpace = this.availableSpace;
+
+    if (sumSize > availableSpace) {
+      //TODO min e max?
+      // The total size of the areas is greater than the available space.
+      // Need to shrink.
+      Iterable<Area> it = shrinkPolicy == ShrinkPolicy.left
+          ? controllerHelper.areas
+          : controllerHelper.areas.reversed;
+      for (Area area in it) {
+        if (sumSize <= availableSpace) {
+          break;
+        } else if (area.size != null) {
+          double excessToRemove =
+              math.min(area.size!, sumSize - availableSpace);
+          AreaHelper.setSize(area: area, size: area.size! - excessToRemove);
+          sumSize -= excessToRemove;
+        }
       }
-    } else if (flexCount == controllerHelper.areas.length && sumFlex == 0) {
-      // Change flex value to 1 if all areas are flex 0.
-      for (Area area in controllerHelper.areas) {
-        AreaHelper.setFlex(area: area, flex: 1, initialFlex: true);
+    } else if (sumSize < availableSpace && flexCount == 0) {
+      //TODO min e max?
+      // The total size of the areas is smaller than the available space and
+      // there are no flex areas to fill the available space.
+      // Need to grow.
+      if (growPolicy == GrowPolicy.first) {
+        Area area = controllerHelper.areas.last;
+        AreaHelper.setSize(
+            area: area, size: area.size! + availableSpace - sumSize);
+      } else if (growPolicy == GrowPolicy.last) {
+        Area area = controllerHelper.areas.last;
+        AreaHelper.setSize(
+            area: area, size: area.size! + availableSpace - sumSize);
+      } else if (growPolicy == GrowPolicy.all) {
+        double extraSize =
+            (availableSpace - sumSize) / controllerHelper.areas.length;
+        for (Area area in controllerHelper.areas) {
+          AreaHelper.setSize(area: area, size: extraSize);
+        }
+      } else {
+        StateError('Unknown GrowPolicy: $growPolicy');
       }
     }
   }
 
-  void updateAreaIntervals({required ControllerHelper controllerHelper}) {
-    areaIntervals.clear();
+  void updateScreenConstraints({required ControllerHelper controllerHelper}) {
     double start = 0;
 
-    final double availableFlexSize =
-        _calculateAvailableFlexSize(controllerHelper);
-
-    final double flexSum = controllerHelper.flexSum();
-
-    final double pixelPerFlex = flexSum == 0 ? 0 : availableFlexSize / flexSum;
+    final double availableSizeForFlexAreas =
+        _calculateAvailableSizeForFlexAreas(controllerHelper);
+    final double totalFlex = controllerHelper.totalFlex();
+    final double pixelPerFlex = availableSizeForFlexAreas / totalFlex;
 
     for (int index = 0; index < controllerHelper.areas.length; index++) {
       Area area = controllerHelper.areas[index];
 
-      AreaInterval areaInterval = AreaInterval();
-      areaIntervals.add(areaInterval);
+      final AreaScreenConstraints screenConstraints =
+          AreaHelper.screenConstraintsOf(area);
+      screenConstraints.reset();
 
-      areaInterval.startPos = start;
+      screenConstraints.startPos = start;
       if (area.flex != null) {
         if (area.min != null) {
-          areaInterval.minSize = area.min! * pixelPerFlex;
+          screenConstraints.minSize = area.min! * pixelPerFlex;
         }
         if (area.max != null) {
-          areaInterval.maxSize = area.max! * pixelPerFlex;
+          screenConstraints.maxSize = area.max! * pixelPerFlex;
         }
-        areaInterval.size = area.flex! * pixelPerFlex;
+        screenConstraints.size = area.flex! * pixelPerFlex;
       } else {
-        areaInterval.minSize = area.min;
-        areaInterval.maxSize = area.max;
-        areaInterval.size = area.size!;
+        screenConstraints.minSize = area.min;
+        screenConstraints.maxSize = area.max;
+        screenConstraints.size = area.size!;
       }
 
-      start += areaInterval.size + dividerThickness;
+      start += screenConstraints.size + dividerThickness;
     }
   }
 
@@ -140,11 +167,13 @@ class Layout {
       required IteratorBuilder divider}) {
     double childStart = 0, childEnd = 0, dividerStart = 0, dividerEnd = 0;
     for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
-      final AreaInterval interval = areaIntervals[childIndex];
-      childEnd = containerSize - interval.size - childStart;
+      final Area area = controller.getArea(childIndex);
+      final AreaScreenConstraints screenConstraints =
+          AreaHelper.screenConstraintsOf(area);
+      childEnd = containerSize - screenConstraints.size - childStart;
       child(childIndex, childStart, childEnd);
       if (childIndex < childrenCount - 1) {
-        dividerStart = childStart + interval.size;
+        dividerStart = childStart + screenConstraints.size;
         if (dividerThickness > 0) {
           dividerEnd = childEnd - dividerThickness;
           divider(childIndex, dividerStart, dividerEnd);
@@ -154,8 +183,9 @@ class Layout {
     }
   }
 
-  double _calculateAvailableFlexSize(ControllerHelper controllerHelper) {
-    double size = availableSize;
+  double _calculateAvailableSizeForFlexAreas(
+      ControllerHelper controllerHelper) {
+    double size = availableSpace;
     for (Area area in controllerHelper.areas) {
       if (area.size != null) {
         size -= area.size!;
@@ -192,7 +222,7 @@ class Layout {
           growAreaIndex: dividerIndex,
           pushDividers: pushDividers);
     }
-    _updateAreas(controllerHelper: controllerHelper);
+    //_updateAreas(controllerHelper: controllerHelper);
     return rest;
   }
 
@@ -203,34 +233,83 @@ class Layout {
       required int shrinkAreaIndex,
       required int growAreaIndex,
       required bool pushDividers}) {
-    AreaInterval shrinkAreaIntervals = areaIntervals[shrinkAreaIndex];
-    AreaInterval growAreaIntervals = areaIntervals[growAreaIndex];
+    Area shrinkArea = controllerHelper.areas[shrinkAreaIndex];
+    AreaScreenConstraints shrinkAreaConstraints =
+        AreaHelper.screenConstraintsOf(shrinkArea);
+
+    Area growArea = controllerHelper.areas[growAreaIndex];
+    AreaScreenConstraints growAreaConstraints =
+        AreaHelper.screenConstraintsOf(growArea);
+
+    final double availableSizeForFlexAreas =
+        _calculateAvailableSizeForFlexAreas(controllerHelper);
+    final double totalFlex = controllerHelper.totalFlex();
+    final double pixelPerFlex = availableSizeForFlexAreas / totalFlex;
+    final double flexPerPixels = availableSizeForFlexAreas == 0
+        ? 0
+        : totalFlex / availableSizeForFlexAreas;
 
     double movedPixels = pixelsToMove;
 
-    movedPixels =
-        math.min(shrinkAreaIntervals.availableSizeToShrink, movedPixels);
-    if (growAreaIntervals.maxSize != null) {
+    final bool bothFlex = shrinkArea.flex != null && growArea.flex != null;
+
+    if (bothFlex) {
+      // both flex
       movedPixels =
-          math.min(growAreaIntervals.availableSizeToGrow, movedPixels);
+          math.min(shrinkAreaConstraints.availableSizeToShrink, movedPixels);
+      final double? availablePixelsToMax =
+          growAreaConstraints.availableSizeToMax;
+      if (availablePixelsToMax != null) {
+        movedPixels = math.min(availablePixelsToMax, movedPixels);
+      }
+    } else {
+      if (shrinkArea.size != null) {
+        movedPixels =
+            math.min(shrinkAreaConstraints.availableSizeToShrink, movedPixels);
+      }
+      if (growArea.size != null) {
+        final double? availablePixelsToMax =
+            growAreaConstraints.availableSizeToMax;
+
+        if (availablePixelsToMax != null) {
+          movedPixels = math.min(availablePixelsToMax, movedPixels);
+        }
+
+        if (totalFlex > 0) {
+          // avoid grow more then container
+          movedPixels = math.min(shrinkAreaConstraints.size, movedPixels);
+        }
+      }
     }
+
     movedPixels = NumUtil.fix('movedPixels', movedPixels);
 
-    shrinkAreaIntervals.size = shrinkAreaIntervals.size - movedPixels;
-    growAreaIntervals.size = growAreaIntervals.size + movedPixels;
+    if (shrinkArea.size != null) {
+      AreaHelper.setSize(
+          area: shrinkArea, size: shrinkArea.size! - movedPixels);
+    }
+    if (growArea.size != null) {
+      AreaHelper.setSize(area: growArea, size: growArea.size! + movedPixels);
+    }
+    if (bothFlex && shrinkArea.flex != null) {
+      //TODO max 0?
+      AreaHelper.setFlex(
+          area: shrinkArea,
+          flex: shrinkArea.flex! - (movedPixels * flexPerPixels));
+    }
+    if (bothFlex && growArea.flex != null) {
+      AreaHelper.setFlex(
+          area: growArea, flex: growArea.flex! + (movedPixels * flexPerPixels));
+    }
 
     double rest = pixelsToMove - movedPixels;
 
-    double start = 0;
-    for (AreaInterval areaInterval in areaIntervals) {
-      areaInterval.startPos = start;
-      start += areaInterval.size + dividerThickness;
-    }
+    updateScreenConstraints(controllerHelper: controllerHelper);
 
     shrinkAreaIndex += direction;
     if (pushDividers &&
         shrinkAreaIndex >= 0 &&
-        shrinkAreaIndex < areaIntervals.length) {
+        shrinkAreaIndex < controllerHelper.areas.length) {
       return _resizeAreas(
           pixelsToMove: rest,
           direction: direction,
@@ -240,32 +319,6 @@ class Layout {
           pushDividers: pushDividers);
     }
     return rest;
-  }
-
-  void _updateAreas({required ControllerHelper controllerHelper}) {
-    for (int index = 0; index < areaIntervals.length; index++) {
-      AreaInterval areaInterval = areaIntervals[index];
-      Area area = controllerHelper.areas[index];
-      if (area.size != null) {
-        AreaHelper.setSize(area: area, size: areaInterval.size);
-      }
-    }
-
-    final double availableFlexSize =
-        _calculateAvailableFlexSize(controllerHelper);
-
-    // amount of flex for each pixel
-    final double flexPerPixel = availableFlexSize == 0
-        ? 0
-        : controllerHelper.flexSum() / availableFlexSize;
-
-    for (int index = 0; index < areaIntervals.length; index++) {
-      AreaInterval areaInterval = areaIntervals[index];
-      Area area = controllerHelper.areas[index];
-      if (area.flex != null) {
-        AreaHelper.setFlex(area: area, flex: areaInterval.size * flexPerPixel);
-      }
-    }
   }
 }
 
