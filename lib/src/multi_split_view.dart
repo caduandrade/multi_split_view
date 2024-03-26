@@ -7,6 +7,7 @@ import 'package:multi_split_view/src/divider_tap_typedefs.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
 import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/layout.dart';
+import 'package:multi_split_view/src/policies.dart';
 import 'package:multi_split_view/src/theme_data.dart';
 import 'package:multi_split_view/src/theme_widget.dart';
 import 'package:multi_split_view/src/typedefs.dart';
@@ -31,7 +32,8 @@ class MultiSplitView extends StatefulWidget {
       bool resizable = true,
       bool antiAliasingWorkaround = true,
       bool pushDividers = false,
-      List<Area>? initialAreas})
+      List<Area>? initialAreas,
+      SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast})
       : this._(
             key: key,
             axis: axis,
@@ -46,7 +48,8 @@ class MultiSplitView extends StatefulWidget {
             count: null,
             widgetBuilder: null,
             pushDividers: pushDividers,
-            initialAreas: initialAreas);
+            initialAreas: initialAreas,
+            sizeOverflowPolicy: sizeOverflowPolicy);
 
   /// Creates an [MultiSplitView].
   ///
@@ -64,7 +67,8 @@ class MultiSplitView extends StatefulWidget {
       bool resizable = true,
       bool antiAliasingWorkaround = true,
       bool pushDividers = false,
-      List<Area>? initialAreas})
+      List<Area>? initialAreas,
+      SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast})
       : this._(
             key: key,
             axis: axis,
@@ -79,7 +83,8 @@ class MultiSplitView extends StatefulWidget {
             count: count,
             widgetBuilder: widgetBuilder,
             initialAreas: initialAreas,
-            pushDividers: pushDividers);
+            pushDividers: pushDividers,
+            sizeOverflowPolicy: sizeOverflowPolicy);
 
   const MultiSplitView._(
       {Key? key,
@@ -95,7 +100,8 @@ class MultiSplitView extends StatefulWidget {
       required this.count,
       required this.widgetBuilder,
       required this.initialAreas,
-      required this.pushDividers})
+      required this.pushDividers,
+      required this.sizeOverflowPolicy})
       : super(key: key);
 
   final Axis axis;
@@ -125,6 +131,11 @@ class MultiSplitView extends StatefulWidget {
   final int? count;
 
   final AreaWidgetBuilder? widgetBuilder;
+
+  /// Represents the order in which areas should shrink in case of overflow,
+  /// with values [shrinkFirst] and [shrinkLast] indicating the direction of
+  /// reduction priority.
+  final SizeOverflowPolicy sizeOverflowPolicy;
 
   /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
   final bool antiAliasingWorkaround;
@@ -232,7 +243,9 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               childrenCount: widget._childrenCount,
               containerSize: containerSize,
               dividerThickness: themeData.dividerThickness);
-          _layout.adjustAreas(controllerHelper: controllerHelper);
+          _layout.adjustAreas(
+              controllerHelper: controllerHelper,
+              sizeOverflowPolicy: widget.sizeOverflowPolicy);
           _layout.updateScreenConstraints(controllerHelper: controllerHelper);
         }
 

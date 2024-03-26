@@ -14,14 +14,7 @@ class AreaScreenConstraints {
   double get size => _size;
 
   set size(double value) {
-    value = NumUtil.fix('value', value);
-    if (minSize != null) {
-      value = math.max(minSize!, value);
-    }
-    if (maxSize != null) {
-      value = math.min(maxSize!, value);
-    }
-    _size = value;
+    _size = NumUtil.fix('value', value);
   }
 
   double? minSize;

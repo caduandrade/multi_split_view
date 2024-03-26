@@ -8,6 +8,8 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 import 'package:multi_split_view/src/policies.dart';
 
 @internal
+
+/// Represents the layout algorithm used by the [MultiSplitView].
 class Layout {
   factory Layout(
       {required final int childrenCount,
@@ -39,15 +41,22 @@ class Layout {
         totalDividerSize = totalDividerSize,
         availableSpace = availableSpace;
 
+  /// The count of visible children on the screen may differ from the count
+  /// of areas in the controller.
   final int childrenCount;
+
+  /// The container size.
   final double containerSize;
+
+  /// The divider thickness defined by the theme.
   final double dividerThickness;
+
+  /// The total size of all dividers.
   final double totalDividerSize;
 
-  /// Container size without dividers.
+  /// The size of the container minus the size of the dividers.
   final double availableSpace;
 
-  final ShrinkPolicy shrinkPolicy = ShrinkPolicy.right;
   final GrowPolicy growPolicy = GrowPolicy.last;
 
   /// Applies the following adjustments:
@@ -58,7 +67,9 @@ class Layout {
   /// the available space.
   /// * Grows size when the total size of the areas is smaller than the
   /// available space and there are no flex areas to fill the available space.
-  void adjustAreas({required ControllerHelper controllerHelper}) {
+  void adjustAreas(
+      {required ControllerHelper controllerHelper,
+      required SizeOverflowPolicy sizeOverflowPolicy}) {
     // Removes unused areas.
     if (controllerHelper.areas.length > childrenCount) {
       controllerHelper.areas
@@ -89,7 +100,7 @@ class Layout {
       //TODO min e max?
       // The total size of the areas is greater than the available space.
       // Need to shrink.
-      Iterable<Area> it = shrinkPolicy == ShrinkPolicy.left
+      Iterable<Area> it = sizeOverflowPolicy == SizeOverflowPolicy.shrinkFirst
           ? controllerHelper.areas
           : controllerHelper.areas.reversed;
       for (Area area in it) {

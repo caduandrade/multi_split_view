@@ -3,12 +3,14 @@ import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/layout.dart';
+import 'package:multi_split_view/src/policies.dart';
 
 class TestHelper {
   factory TestHelper(
       {required List<Area> areas,
       required double containerSize,
-      required double dividerThickness}) {
+      required double dividerThickness,
+      SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast}) {
     MultiSplitViewController controller =
         MultiSplitViewController(areas: areas);
     Layout layout = Layout(
@@ -16,7 +18,9 @@ class TestHelper {
         containerSize: containerSize,
         dividerThickness: dividerThickness);
     ControllerHelper controllerHelper = ControllerHelper(controller);
-    layout.adjustAreas(controllerHelper: controllerHelper);
+    layout.adjustAreas(
+        controllerHelper: controllerHelper,
+        sizeOverflowPolicy: sizeOverflowPolicy);
     layout.updateScreenConstraints(controllerHelper: controllerHelper);
 
     expect(controller.areasCount, areas.length);
