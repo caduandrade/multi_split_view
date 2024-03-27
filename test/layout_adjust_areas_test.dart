@@ -61,6 +61,22 @@ void main() {
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 50);
       });
+      test('sizeOverflowPolicy - shrinkLast - min', () {
+        MultiSplitViewController controller = MultiSplitViewController(areas: [
+          Area(data: 'a', size: 100),
+          Area(data: 'b', size: 100, min: 90)
+        ]);
+        Layout(childrenCount: 2, containerSize: 155, dividerThickness: 5)
+            .adjustAreas(
+                controllerHelper: ControllerHelper(controller),
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+        expect(controller.areas.length, 2);
+        AreaHelper.testArea(controller.areas[0],
+            data: 'a', min: null, max: null, flex: null, size: 100);
+        AreaHelper.testArea(controller.areas[1],
+            data: 'b', min: 90, max: null, flex: null, size: 50);
+      });
       test('sizeUnderflowPolicy - stretchFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
@@ -88,6 +104,22 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 100);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 150);
+      });
+      test('sizeUnderflowPolicy - stretchLast - max', () {
+        MultiSplitViewController controller = MultiSplitViewController(areas: [
+          Area(data: 'a', size: 100),
+          Area(data: 'b', size: 100, max: 110)
+        ]);
+        Layout(childrenCount: 2, containerSize: 255, dividerThickness: 5)
+            .adjustAreas(
+                controllerHelper: ControllerHelper(controller),
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+        expect(controller.areas.length, 2);
+        AreaHelper.testArea(controller.areas[0],
+            data: 'a', min: null, max: null, flex: null, size: 100);
+        AreaHelper.testArea(controller.areas[1],
+            data: 'b', min: null, max: 110, flex: null, size: 150);
       });
       test('sizeUnderflowPolicy - stretchAll', () {
         MultiSplitViewController controller = MultiSplitViewController(

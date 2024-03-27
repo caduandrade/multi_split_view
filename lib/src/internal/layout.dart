@@ -7,9 +7,8 @@ import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 import 'package:multi_split_view/src/policies.dart';
 
-@internal
-
 /// Represents the layout algorithm used by the [MultiSplitView].
+@internal
 class Layout {
   factory Layout(
       {required final int childrenCount,
@@ -62,9 +61,10 @@ class Layout {
   /// * Removes unused areas.
   /// * Creates new areas to accommodate all child widgets.
   /// * Shrinks size when the total size of the areas is greater than
-  /// the available space.
+  /// the available space, even if a [min] limit exists.
   /// * Grows size when the total size of the areas is smaller than the
-  /// available space and there are no flex areas to fill the available space.
+  /// available space and there are no flex areas to fill the available
+  /// space, even if a [max] limit exists.
   void adjustAreas(
       {required ControllerHelper controllerHelper,
       required SizeOverflowPolicy sizeOverflowPolicy,
@@ -81,53 +81,49 @@ class Layout {
     }
 
     int flexCount = 0;
-    double sumFlex = 0;
-    double sumSize = 0;
+    double totalSize = 0;
     double lowestSize = double.maxFinite;
     for (Area area in controllerHelper.areas) {
       if (area.size != null) {
-        sumSize += area.size!;
+        totalSize += area.size!;
         lowestSize = math.min(lowestSize, area.size!);
       } else {
         flexCount++;
-        sumFlex += area.flex!;
       }
     }
     double availableSpace = this.availableSpace;
 
-    if (sumSize > availableSpace) {
-      //TODO min e max?
+    if (totalSize > availableSpace) {
       // The total size of the areas is greater than the available space.
       // Need to shrink.
       Iterable<Area> it = sizeOverflowPolicy == SizeOverflowPolicy.shrinkFirst
           ? controllerHelper.areas
           : controllerHelper.areas.reversed;
       for (Area area in it) {
-        if (sumSize <= availableSpace) {
+        if (totalSize <= availableSpace) {
           break;
         } else if (area.size != null) {
           double excessToRemove =
-              math.min(area.size!, sumSize - availableSpace);
+              math.min(area.size!, totalSize - availableSpace);
           AreaHelper.setSize(area: area, size: area.size! - excessToRemove);
-          sumSize -= excessToRemove;
+          totalSize -= excessToRemove;
         }
       }
-    } else if (sumSize < availableSpace && flexCount == 0) {
-      //TODO min e max?
+    } else if (totalSize < availableSpace && flexCount == 0) {
       // The total size of the areas is smaller than the available space and
       // there are no flex areas to fill the available space.
-      // Need to grow.
+      // Need to stretch.
       if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchFirst) {
         Area area = controllerHelper.areas.first;
         AreaHelper.setSize(
-            area: area, size: area.size! + availableSpace - sumSize);
+            area: area, size: area.size! + availableSpace - totalSize);
       } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchLast) {
         Area area = controllerHelper.areas.last;
         AreaHelper.setSize(
-            area: area, size: area.size! + availableSpace - sumSize);
+            area: area, size: area.size! + availableSpace - totalSize);
       } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchAll) {
         double extraSize =
-            (availableSpace - sumSize) / controllerHelper.areas.length;
+            (availableSpace - totalSize) / controllerHelper.areas.length;
         for (Area area in controllerHelper.areas) {
           AreaHelper.setSize(area: area, size: area.size! + extraSize);
         }
@@ -252,7 +248,6 @@ class Layout {
     final double availableSizeForFlexAreas =
         _calculateAvailableSizeForFlexAreas(controllerHelper);
     final double totalFlex = controllerHelper.totalFlex();
-    final double pixelPerFlex = availableSizeForFlexAreas / totalFlex;
     final double flexPerPixels = availableSizeForFlexAreas == 0
         ? 0
         : totalFlex / availableSizeForFlexAreas;
@@ -300,7 +295,6 @@ class Layout {
       AreaHelper.setSize(area: growArea, size: growArea.size! + movedPixels);
     }
     if (bothFlex && shrinkArea.flex != null) {
-      //TODO max 0?
       AreaHelper.setFlex(
           area: shrinkArea,
           flex: shrinkArea.flex! - (movedPixels * flexPerPixels));

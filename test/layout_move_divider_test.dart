@@ -7,6 +7,112 @@ void main() {
   group('Layout', () {
     group('Move divider', () {
       group('2 areas', () {
+        group('SS', () {
+          test('-10 pixels - under overflow - max', () {
+            TestHelper helper = TestHelper(
+                areas: [
+                  Area(data: 'a', size: 50),
+                  Area(data: 'b', size: 10, max: 20)
+                ],
+                containerSize: 110,
+                dividerThickness: 10,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: null, maxSize: 20);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -10, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: null, maxSize: 20);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 50);
+            helper.testArea(1,
+                data: 'b', min: null, max: 20, flex: null, size: 50);
+          });
+          test('10 pixels - under overflow - max', () {
+            TestHelper helper = TestHelper(
+                areas: [
+                  Area(data: 'a', size: 50),
+                  Area(data: 'b', size: 10, max: 20)
+                ],
+                containerSize: 110,
+                dividerThickness: 10,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: null, maxSize: 20);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 10, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 60, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 40, minSize: null, maxSize: 20);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 60);
+            helper.testArea(1,
+                data: 'b', min: null, max: 20, flex: null, size: 40);
+          });
+          test('-10 pixels - shrink overflow - min', () {
+            TestHelper helper = TestHelper(
+                areas: [
+                  Area(data: 'a', size: 50),
+                  Area(data: 'b', size: 100, min: 90)
+                ],
+                containerSize: 110,
+                dividerThickness: 10,
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: 90, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: -10, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 40, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 60, minSize: 90, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 40);
+            helper.testArea(1,
+                data: 'b', min: 90, max: null, flex: null, size: 60);
+          });
+          test('10 pixels - shrink overflow - min', () {
+            TestHelper helper = TestHelper(
+                areas: [
+                  Area(data: 'a', size: 50),
+                  Area(data: 'b', size: 100, min: 90)
+                ],
+                containerSize: 110,
+                dividerThickness: 10,
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: 90, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 0, pixels: 10, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 50, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1, size: 50, minSize: 90, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 50);
+            helper.testArea(1,
+                data: 'b', min: 90, max: null, flex: null, size: 50);
+          });
+        });
         group('SF', () {
           test('-100 pixels', () {
             TestHelper helper = TestHelper(
@@ -177,6 +283,37 @@ void main() {
       });
       group('3 areas', () {
         group('SFF', () {
+          test('20 pixels - last F collapsed', () {
+            TestHelper helper = TestHelper(areas: [
+              Area(data: 'a', size: 100),
+              Area(data: 'b', flex: 1),
+              Area(data: 'c', flex: 1)
+            ], containerSize: 110, dividerThickness: 5);
+
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 0, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 0, minSize: null, maxSize: null);
+
+            helper.moveAndTest(
+                dividerIndex: 1, pixels: 20, pushDividers: false, rest: 0);
+
+            helper.testConstraintsSize(0,
+                size: 100, minSize: null, maxSize: null);
+            helper.testConstraintsSize(1,
+                size: 0, minSize: null, maxSize: null);
+            helper.testConstraintsSize(2,
+                size: 0, minSize: null, maxSize: null);
+
+            helper.testArea(0,
+                data: 'a', min: null, max: null, flex: null, size: 100);
+            helper.testArea(1,
+                data: 'b', min: null, max: null, flex: 1, size: null);
+            helper.testArea(2,
+                data: 'c', min: null, max: null, flex: 1, size: null);
+          });
           test('-20 pixels', () {
             TestHelper helper = TestHelper(areas: [
               Area(data: 'a', size: 100),
