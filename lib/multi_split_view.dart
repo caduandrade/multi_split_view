@@ -10,3 +10,4 @@ export 'src/theme_data.dart';
 export 'src/theme_widget.dart';
 export 'src/typedefs.dart';
 export 'src/policies.dart';
+export 'src/draft_area.dart';
