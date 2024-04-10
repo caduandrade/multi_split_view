@@ -205,7 +205,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   @override
   void didUpdateWidget(MultiSplitView oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (widget.controller != _controller) {
       List<Area> areas = _controller.areas;
       ControllerHelper.setStateHashCode(_controller, null);
@@ -272,14 +271,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
               child = IgnorePointer(
                   child: child, ignoring: _draggingDividerIndex != null);
-              if (_draggingDividerIndex != null) {
-                child = MouseRegion(
-                    cursor: widget.axis == Axis.horizontal
-                        ? SystemMouseCursors.resizeColumn
-                        : SystemMouseCursors.resizeRow,
-                    child: child);
-              }
 
+              MouseCursor cursor = MouseCursor.defer;
+              if (_draggingDividerIndex != null) {
+                cursor = widget.axis == Axis.horizontal
+                    ? SystemMouseCursors.resizeColumn
+                    : SystemMouseCursors.resizeRow;
+              }
+              child = MouseRegion(cursor: cursor, child: child);
               children
                   .add(_buildPositioned(start: start, end: end, child: child));
             },
