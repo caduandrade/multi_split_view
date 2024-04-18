@@ -13,7 +13,9 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Creates an [MultiSplitViewController].
   ///
   /// Changes the flex to 1 if the total flex of the areas is 0.
-  MultiSplitViewController({List<Area>? areas}) {
+  MultiSplitViewController(
+      {List<Area>? areas, AreaDataModifier? areaDataModifier})
+      : _areaDataModifier = areaDataModifier {
     if (areas != null) {
       _updateAreas(areas);
     }
@@ -23,6 +25,16 @@ class MultiSplitViewController extends ChangeNotifier {
 
   UnmodifiableListView<Area> get areas => UnmodifiableListView(_areas);
 
+  /// Allows to automatically set a new value for the data attribute of the [Area].
+  AreaDataModifier? _areaDataModifier;
+  AreaDataModifier? get areaDataModifier => _areaDataModifier;
+  set areaDataModifier(AreaDataModifier? modifier) {
+    if (_areaDataModifier != modifier) {
+      _areaDataModifier = modifier;
+      _applyDataModifier();
+    }
+  }
+
   Object _areasUpdateHash = Object();
 
   double _flexCount = 0;
@@ -30,6 +42,16 @@ class MultiSplitViewController extends ChangeNotifier {
 
   double _totalFlex = 0;
   double get totalFlex => _totalFlex;
+
+  /// Applies the current data modifier.
+  void _applyDataModifier() {
+    if (_areaDataModifier != null) {
+      for (int index = 0; index < _areas.length; index++) {
+        Area area = _areas[index];
+        area.data = _areaDataModifier!(area, index);
+      }
+    }
+  }
 
   /// Updates the areas.
   /// Changes the flex to 1 if the total flex of the areas is 0.
@@ -56,6 +78,7 @@ class MultiSplitViewController extends ChangeNotifier {
       }
       _totalFlex = _flexCount;
     }
+    _applyDataModifier();
   }
 
   /// Set the areas.
@@ -80,6 +103,9 @@ class MultiSplitViewController extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+/// Allows to automatically set a new value for the data attribute of the [Area].
+typedef AreaDataModifier = dynamic Function(Area area, int index);
 
 @internal
 class ControllerHelper {
@@ -109,6 +135,10 @@ class ControllerHelper {
   }
 
   void notifyListeners() => controller._forceNotifyListeners();
+
+  void applyDataModifier() {
+    controller._applyDataModifier();
+  }
 
   static int? getStateHashCode(MultiSplitViewController controller) {
     return controller._stateHashCode;

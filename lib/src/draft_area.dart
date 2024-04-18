@@ -45,6 +45,23 @@ class DraftArea extends StatelessWidget {
         key: key);
   }
 
+  static List<DraftArea> twoChildren() {
+    return [DraftArea.blue('A'), DraftArea.yellow('B')];
+  }
+
+  static List<DraftArea> threeChildren() {
+    return [DraftArea.blue('A'), DraftArea.yellow('B'), DraftArea.green('C')];
+  }
+
+  static List<DraftArea> fourChildren() {
+    return [
+      DraftArea.blue('A'),
+      DraftArea.yellow('B'),
+      DraftArea.green('C'),
+      DraftArea.orange('D')
+    ];
+  }
+
   final String text;
   final Color color;
 

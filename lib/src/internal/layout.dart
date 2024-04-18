@@ -69,15 +69,20 @@ class Layout {
       {required ControllerHelper controllerHelper,
       required SizeOverflowPolicy sizeOverflowPolicy,
       required SizeUnderflowPolicy sizeUnderflowPolicy}) {
+    bool changed = false;
     // Removes unused areas.
     if (controllerHelper.areas.length > childrenCount) {
       controllerHelper.areas
           .removeRange(childrenCount, controllerHelper.areas.length);
+      changed = true;
     }
 
     // Creates new areas to accommodate all child widgets.
+    bool addedArea = false;
     while (controllerHelper.areas.length < childrenCount) {
       controllerHelper.areas.add(Area());
+      changed = true;
+      addedArea = true;
     }
 
     int flexCount = 0;
@@ -109,6 +114,7 @@ class Layout {
           totalSize -= excessToRemove;
         }
       }
+      changed = true;
     } else if (totalSize < availableSpace && flexCount == 0) {
       // The total size of the areas is smaller than the available space and
       // there are no flex areas to fill the available space.
@@ -128,6 +134,13 @@ class Layout {
           AreaHelper.setSize(area: area, size: area.size! + extraSize);
         }
       }
+      changed = true;
+    }
+    if (changed) {
+      if (addedArea) {
+        controllerHelper.applyDataModifier();
+      }
+      Future.microtask(() => controllerHelper.notifyListeners());
     }
   }
 
@@ -226,7 +239,6 @@ class Layout {
           growAreaIndex: dividerIndex,
           pushDividers: pushDividers);
     }
-    //_updateAreas(controllerHelper: controllerHelper);
     return rest;
   }
 

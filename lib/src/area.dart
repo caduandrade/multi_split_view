@@ -72,7 +72,7 @@ class Area {
   double? get flex => _flex;
 
   /// Any data associated with the area.
-  final dynamic data;
+  dynamic data;
 
   AreaScreenConstraints _screenConstraints = AreaScreenConstraints();
 
