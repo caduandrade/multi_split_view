@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
@@ -486,6 +486,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
   /// The problem minimizes by avoiding the use of coordinates with
   /// decimal values.
   double _convert(double value, bool last) {
+    value = math.max(value, 0);
     if (widget.antiAliasingWorkaround && !last) {
       return value.roundToDouble();
     }
