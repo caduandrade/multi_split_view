@@ -316,7 +316,7 @@ class Layout {
           area: growArea, flex: growArea.flex! + (movedPixels * flexPerPixels));
     }
 
-    double rest = pixelsToMove - movedPixels;
+    double rest = (pixelsToMove - movedPixels).roundToDouble();
 
     updateScreenConstraints(controllerHelper: controllerHelper);
 
