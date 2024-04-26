@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
-import 'package:multi_split_view/src/internal/layout.dart';
+import 'package:multi_split_view/src/internal/layout_constraints.dart';
 import 'package:multi_split_view/src/policies.dart';
 
 void main() {
@@ -10,7 +10,8 @@ void main() {
       test('removing unused areas', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', flex: 1), Area(data: 'b', flex: 2)]);
-        Layout(childrenCount: 1, containerSize: 100, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 1, containerSize: 100, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -22,7 +23,8 @@ void main() {
       test('creating new areas to accommodate all child widgets', () {
         MultiSplitViewController controller =
             MultiSplitViewController(areas: [Area(data: 'a', flex: 2)]);
-        Layout(childrenCount: 2, containerSize: 100, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 100, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -36,7 +38,8 @@ void main() {
       test('sizeOverflowPolicy - shrinkFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
-        Layout(childrenCount: 2, containerSize: 155, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 155, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -50,7 +53,8 @@ void main() {
       test('sizeOverflowPolicy - shrinkLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
-        Layout(childrenCount: 2, containerSize: 155, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 155, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -66,7 +70,8 @@ void main() {
           Area(data: 'a', size: 100),
           Area(data: 'b', size: 100, min: 90)
         ]);
-        Layout(childrenCount: 2, containerSize: 155, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 155, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -80,7 +85,8 @@ void main() {
       test('sizeUnderflowPolicy - stretchFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
-        Layout(childrenCount: 2, containerSize: 255, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 255, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -94,7 +100,8 @@ void main() {
       test('sizeUnderflowPolicy - stretchLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
-        Layout(childrenCount: 2, containerSize: 255, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 255, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -110,7 +117,8 @@ void main() {
           Area(data: 'a', size: 100),
           Area(data: 'b', size: 100, max: 110)
         ]);
-        Layout(childrenCount: 2, containerSize: 255, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 255, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -124,7 +132,8 @@ void main() {
       test('sizeUnderflowPolicy - stretchAll', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 50), Area(data: 'b', size: 100)]);
-        Layout(childrenCount: 2, containerSize: 205, dividerThickness: 5)
+        LayoutConstraints(
+                childrenCount: 2, containerSize: 205, dividerThickness: 5)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,

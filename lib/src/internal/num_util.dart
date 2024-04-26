@@ -39,7 +39,7 @@ class NumUtil {
   }
 
   static double round(double value) {
-    int places = 4;
+    int places = 6;
     num mod = math.pow(10.0, places);
     return ((value * mod).round().toDouble() / mod);
   }

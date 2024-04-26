@@ -6,41 +6,76 @@ import 'package:flutter/material.dart';
 /// within a layout. This widget is intended for demonstration purposes
 /// only during development and should not be used in production.
 class DraftArea extends StatelessWidget {
-  const DraftArea(this.text, this.color, {Key? key}) : super(key: key);
+  const DraftArea(
+      {required this.text,
+      required this.color,
+      required this.borderColor,
+      Key? key})
+      : super(key: key);
 
   factory DraftArea.blue(String text, {Key? key}) {
-    return DraftArea(text, Colors.blue[300]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.blue[300]!,
+        borderColor: Colors.blue[600]!,
+        key: key);
   }
 
   factory DraftArea.yellow(String text, {Key? key}) {
-    return DraftArea(text, Colors.yellow[400]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.yellow[400]!,
+        borderColor: Colors.yellow[700]!,
+        key: key);
   }
 
   factory DraftArea.green(String text, {Key? key}) {
-    return DraftArea(text, Colors.green[300]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.green[300]!,
+        borderColor: Colors.green[600]!,
+        key: key);
   }
 
   factory DraftArea.brown(String text, {Key? key}) {
-    return DraftArea(text, Colors.brown, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.brown,
+        borderColor: Colors.brown[700]!,
+        key: key);
   }
 
   factory DraftArea.pink(String text, {Key? key}) {
-    return DraftArea(text, Colors.pink[300]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.pink[300]!,
+        borderColor: Colors.pink[600]!,
+        key: key);
   }
 
   factory DraftArea.orange(String text, {Key? key}) {
-    return DraftArea(text, Colors.orange[300]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.orange[300]!,
+        borderColor: Colors.orange[600]!,
+        key: key);
   }
 
   factory DraftArea.teal(String text, {Key? key}) {
-    return DraftArea(text, Colors.teal[300]!, key: key);
+    return DraftArea(
+        text: text,
+        color: Colors.teal[300]!,
+        borderColor: Colors.teal[600]!,
+        key: key);
   }
 
   factory DraftArea.random(String text, {Key? key}) {
     Random random = Random();
     return DraftArea(
-        text,
-        Color.fromARGB(
+        text: text,
+        color: Color.fromARGB(
+            255, random.nextInt(255), random.nextInt(255), random.nextInt(255)),
+        borderColor: Color.fromARGB(
             255, random.nextInt(255), random.nextInt(255), random.nextInt(255)),
         key: key);
   }
@@ -64,18 +99,17 @@ class DraftArea extends StatelessWidget {
 
   final String text;
   final Color color;
+  final Color borderColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: color,
-        child: Placeholder(
-            color: _invert(color, 20),
-            child: Center(
-                child: Text(text,
-                    style: TextStyle(
-                        color: _invert(color, 255),
-                        fontWeight: FontWeight.bold)))));
+        decoration: BoxDecoration(
+            color: color, border: Border.all(color: borderColor, width: 1)),
+        child: Center(
+            child: Text(text,
+                style: TextStyle(
+                    color: _invert(color, 255), fontWeight: FontWeight.bold))));
   }
 
   Color _invert(Color color, int alpha) {

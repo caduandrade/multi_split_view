@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
-import 'package:multi_split_view/src/internal/area_screen_constraints.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 
 /// Child area in the [MultiSplitView].
@@ -74,8 +73,6 @@ class Area {
   /// Any data associated with the area.
   dynamic data;
 
-  AreaScreenConstraints _screenConstraints = AreaScreenConstraints();
-
   Area clone() {
     return Area(size: size, flex: flex, max: max, min: min, data: data);
   }
@@ -95,9 +92,6 @@ class Area {
 
 @internal
 class AreaHelper {
-  static AreaScreenConstraints screenConstraintsOf(Area area) =>
-      area._screenConstraints;
-
   static void setFlex({required Area area, required double flex}) {
     flex = NumUtil.fix('flex', flex);
     if (area.min != null) {
@@ -135,27 +129,5 @@ class AreaHelper {
     expect(area.max, max, reason: 'max');
     expect(area.flex, flex, reason: 'flex');
     expect(area.size, size, reason: 'size');
-  }
-
-  static void testScreenConstraints(AreaScreenConstraints constraints,
-      {required double startPos,
-      required double endPos,
-      required double size,
-      required double? minSize,
-      required double? maxSize}) {
-    expect(constraints.startPos, startPos, reason: 'startPos');
-    expect(constraints.endPos, endPos, reason: 'endPos');
-    expect(constraints.size, size, reason: 'size');
-    expect(constraints.minSize, minSize, reason: 'minSize');
-    expect(constraints.maxSize, maxSize, reason: 'maxSize');
-  }
-
-  static void testScreenConstraintsSize(AreaScreenConstraints constraints,
-      {required double size,
-      required double? minSize,
-      required double? maxSize}) {
-    expect(constraints.size, size, reason: 'size');
-    expect(constraints.minSize, minSize, reason: 'minSize');
-    expect(constraints.maxSize, maxSize, reason: 'maxSize');
   }
 }

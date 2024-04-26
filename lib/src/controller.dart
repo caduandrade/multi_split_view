@@ -117,23 +117,6 @@ class ControllerHelper {
 
   Object get areasUpdateHash => controller._areasUpdateHash;
 
-  /// The sum of all flex values.
-  double totalFlex() {
-    double sum = 0;
-    double count = 0;
-    for (Area area in areas) {
-      if (area.flex != null) {
-        sum += area.flex!;
-        count++;
-      }
-    }
-    if (count > 0 && sum == 0) {
-      // return count;
-      throw StateError('Sum of flex must be positive.');
-    }
-    return sum;
-  }
-
   void notifyListeners() => controller._forceNotifyListeners();
 
   void applyDataModifier() {

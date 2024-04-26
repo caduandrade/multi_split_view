@@ -19,6 +19,19 @@ void main() {
             data: null, flex: 1, size: null, min: null, max: null);
         AreaHelper.testArea(controller.getArea(1),
             data: null, flex: 1, size: null, min: null, max: null);
+
+        controller = MultiSplitViewController(areas: [
+          Area(size: 100, min: 50),
+          Area(flex: 0, min: 0),
+          Area(flex: 0, max: 2)
+        ]);
+        expect(controller.areasCount, 3);
+        AreaHelper.testArea(controller.getArea(0),
+            data: null, flex: null, size: 100, min: 50, max: null);
+        AreaHelper.testArea(controller.getArea(1),
+            data: null, flex: 1, size: null, min: null, max: null);
+        AreaHelper.testArea(controller.getArea(2),
+            data: null, flex: 1, size: null, min: null, max: null);
       });
     });
   });

@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  multi_split_view:
+  multi_split_view: #^2.4.0
     path: ../
 
 dev_dependencies:

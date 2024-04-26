@@ -39,7 +39,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   @override
   void initState() {
     super.initState();
-    _colors.addAll(List.generate(3, (_) => _randomColor()));
+    _colors.addAll(List.generate(2, (_) => _randomColor()));
     _controller.addListener(_rebuild);
   }
 
@@ -103,10 +103,12 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
               controller: _controller,
               onRemove: _removeColor));
 
-      content = MultiSplitViewTheme(
-          data: MultiSplitViewThemeData(
-              dividerPainter: DividerPainters.grooved2()),
-          child: multiSplitView);
+      content = Padding(
+          padding: const EdgeInsets.all(16),
+          child: MultiSplitViewTheme(
+              data: MultiSplitViewThemeData(
+                  dividerPainter: DividerPainters.grooved2()),
+              child: multiSplitView));
     } else {
       content = const Center(child: Text('Empty'));
     }
@@ -121,7 +123,7 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   Color _randomColor() {
     Random random = Random();
     return Color.fromARGB(
-        255, random.nextInt(200), random.nextInt(200), random.nextInt(200));
+        255, random.nextInt(100), random.nextInt(100), random.nextInt(100));
   }
 
   _onDividerDragUpdate(int index) {
@@ -230,10 +232,10 @@ class ColorWidget extends StatelessWidget {
     return InkWell(
         onTap: () => onRemove(index),
         child: Container(
-            color: color,
+            color: invert(color),
             child: Stack(children: [
               Placeholder(
-                color: invert(color),
+                color: color,
               ),
               info
             ])));
