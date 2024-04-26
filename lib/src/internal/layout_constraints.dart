@@ -77,11 +77,9 @@ class LayoutConstraints {
     }
 
     // Creates new areas to accommodate all child widgets.
-    bool addedArea = false;
     while (controllerHelper.areas.length < childrenCount) {
       controllerHelper.areas.add(Area());
       changed = true;
-      addedArea = true;
     }
 
     int flexCount = 0;
@@ -136,9 +134,7 @@ class LayoutConstraints {
       changed = true;
     }
     if (changed) {
-      if (addedArea) {
-        controllerHelper.applyDataModifier();
-      }
+      controllerHelper.updateAreas();
       Future.microtask(() => controllerHelper.notifyListeners());
     }
   }

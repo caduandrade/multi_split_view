@@ -22,8 +22,8 @@ class LayoutDelegate extends MultiChildLayoutDelegate {
 
     final double availableSizeForFlexAreas =
         layoutConstraints.calculateAvailableSizeForFlexAreas(controller);
-    final double totalFlex = controller.totalFlex;
-    final double pixelPerFlex = availableSizeForFlexAreas / totalFlex;
+    final double pixelPerFlex =
+        availableSizeForFlexAreas / controller.totalFlex;
 
     for (int index = 0; index < controller.areasCount; index++) {
       Area area = controller.getArea(index);
@@ -34,7 +34,6 @@ class LayoutDelegate extends MultiChildLayoutDelegate {
       } else {
         pixels = area.size!;
       }
-
       if (antiAliasingWorkaround) {
         pixels = pixels.roundToDouble();
       }

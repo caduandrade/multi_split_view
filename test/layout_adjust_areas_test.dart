@@ -5,7 +5,7 @@ import 'package:multi_split_view/src/internal/layout_constraints.dart';
 import 'package:multi_split_view/src/policies.dart';
 
 void main() {
-  group('Layout', () {
+  group('LayoutConstraints', () {
     group('Adjust areas', () {
       test('removing unused areas', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -19,6 +19,8 @@ void main() {
         expect(controller.areas.length, 1);
         AreaHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: 1, size: null);
+        expect(controller.flexCount, 1);
+        expect(controller.totalFlex, 1);
       });
       test('creating new areas to accommodate all child widgets', () {
         MultiSplitViewController controller =
@@ -34,6 +36,8 @@ void main() {
             data: 'a', min: null, max: null, flex: 2, size: null);
         AreaHelper.testArea(controller.areas[1],
             data: null, min: null, max: null, flex: 1, size: null);
+        expect(controller.flexCount, 2);
+        expect(controller.totalFlex, 3);
       });
       test('sizeOverflowPolicy - shrinkFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -49,6 +53,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 50);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeOverflowPolicy - shrinkLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -64,6 +70,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 100);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 50);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeOverflowPolicy - shrinkLast - min', () {
         MultiSplitViewController controller = MultiSplitViewController(areas: [
@@ -81,6 +89,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 100);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: 90, max: null, flex: null, size: 50);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeUnderflowPolicy - stretchFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -96,6 +106,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 150);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeUnderflowPolicy - stretchLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -111,6 +123,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 100);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 150);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeUnderflowPolicy - stretchLast - max', () {
         MultiSplitViewController controller = MultiSplitViewController(areas: [
@@ -128,6 +142,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 100);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: 110, flex: null, size: 150);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
       test('sizeUnderflowPolicy - stretchAll', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -143,6 +159,8 @@ void main() {
             data: 'a', min: null, max: null, flex: null, size: 75);
         AreaHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 125);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
       });
     });
   });

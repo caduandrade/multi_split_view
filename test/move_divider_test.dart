@@ -4,7 +4,7 @@ import 'package:multi_split_view/multi_split_view.dart';
 import 'test_helper.dart';
 
 void main() {
-  group('Layout', () {
+  group('DividerUtil', () {
     group('Move divider', () {
       group('2 areas', () {
         group('SS', () {

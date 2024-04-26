@@ -17,7 +17,8 @@ class MultiSplitViewController extends ChangeNotifier {
       {List<Area>? areas, AreaDataModifier? areaDataModifier})
       : _areaDataModifier = areaDataModifier {
     if (areas != null) {
-      _updateAreas(areas);
+      _areas = List.from(areas);
+      _updateAreas();
     }
   }
 
@@ -55,8 +56,7 @@ class MultiSplitViewController extends ChangeNotifier {
 
   /// Updates the areas.
   /// Changes the flex to 1 if the total flex of the areas is 0.
-  void _updateAreas(List<Area> areas) {
-    _areas = List.from(areas);
+  void _updateAreas() {
     _areasUpdateHash = Object();
 
     _totalFlex = 0;
@@ -84,7 +84,8 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Set the areas.
   /// Changes the flex to 1 if the total flex of the areas is 0.
   set areas(List<Area> areas) {
-    _updateAreas(areas);
+    _areas = List.from(areas);
+    _updateAreas();
     notifyListeners();
   }
 
@@ -119,8 +120,8 @@ class ControllerHelper {
 
   void notifyListeners() => controller._forceNotifyListeners();
 
-  void applyDataModifier() {
-    controller._applyDataModifier();
+  void updateAreas() {
+    controller._updateAreas();
   }
 
   static int? getStateHashCode(MultiSplitViewController controller) {
