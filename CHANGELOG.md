@@ -13,6 +13,7 @@
   * The `areasLength` attribute has been renamed to `areasCount`
 * `MultiSplitView`
   * New constructor: `builder`
+  * Width and height configuration to be used in an unbounded situation.
 
 ## 2.4.0
 

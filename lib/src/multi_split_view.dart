@@ -30,12 +30,13 @@ class MultiSplitView extends StatefulWidget {
       DividerTapCallback? onDividerTap,
       DividerTapCallback? onDividerDoubleTap,
       bool resizable = true,
-      bool antiAliasingWorkaround = true,
+      bool antiAliasingWorkaround = false,
       bool pushDividers = false,
       List<Area>? initialAreas,
       SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast,
-      SizeUnderflowPolicy sizeUnderflowPolicy =
-          SizeUnderflowPolicy.stretchLast})
+      SizeUnderflowPolicy sizeUnderflowPolicy = SizeUnderflowPolicy.stretchLast,
+      double fallbackWidth = 500,
+      double fallbackHeight = 500})
       : this._(
             key: key,
             axis: axis,
@@ -52,7 +53,9 @@ class MultiSplitView extends StatefulWidget {
             pushDividers: pushDividers,
             initialAreas: initialAreas,
             sizeOverflowPolicy: sizeOverflowPolicy,
-            sizeUnderflowPolicy: sizeUnderflowPolicy);
+            sizeUnderflowPolicy: sizeUnderflowPolicy,
+            fallbackWidth: fallbackWidth,
+            fallbackHeight: fallbackHeight);
 
   /// Creates an [MultiSplitView].
   ///
@@ -72,8 +75,9 @@ class MultiSplitView extends StatefulWidget {
       bool pushDividers = false,
       List<Area>? initialAreas,
       SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast,
-      SizeUnderflowPolicy sizeUnderflowPolicy =
-          SizeUnderflowPolicy.stretchLast})
+      SizeUnderflowPolicy sizeUnderflowPolicy = SizeUnderflowPolicy.stretchLast,
+      double fallbackWidth = 500,
+      double fallbackHeight = 500})
       : this._(
             key: key,
             axis: axis,
@@ -90,7 +94,9 @@ class MultiSplitView extends StatefulWidget {
             initialAreas: initialAreas,
             pushDividers: pushDividers,
             sizeOverflowPolicy: sizeOverflowPolicy,
-            sizeUnderflowPolicy: sizeUnderflowPolicy);
+            sizeUnderflowPolicy: sizeUnderflowPolicy,
+            fallbackWidth: fallbackWidth,
+            fallbackHeight: fallbackHeight);
 
   const MultiSplitView._(
       {Key? key,
@@ -108,7 +114,9 @@ class MultiSplitView extends StatefulWidget {
       required this.initialAreas,
       required this.pushDividers,
       required this.sizeOverflowPolicy,
-      required this.sizeUnderflowPolicy})
+      required this.sizeUnderflowPolicy,
+      required this.fallbackWidth,
+      required this.fallbackHeight})
       : super(key: key);
 
   final Axis axis;
@@ -152,6 +160,20 @@ class MultiSplitView extends StatefulWidget {
   /// integer values. As a side effect, some areas may stretch or shrink
   /// slightly as the divider is dragged.
   final bool antiAliasingWorkaround;
+
+  /// The width to use when it is in a situation with an unbounded width.
+  ///
+  /// See also:
+  ///
+  ///  * [fallbackHeight], the same but vertically.
+  final double fallbackWidth;
+
+  /// The height to use when it is in a situation with an unbounded height.
+  ///
+  /// See also:
+  ///
+  ///  * [fallbackWidth], the same but horizontally.
+  final double fallbackHeight;
 
   int get _childrenCount {
     if (children != null) {
@@ -347,13 +369,16 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             children.add(LayoutId(id: 'd$index', child: dividerWidget));
           }
         }
-        return CustomMultiChildLayout(
-            children: children,
-            delegate: LayoutDelegate(
-                controller: _controller,
-                axis: widget.axis,
-                layoutConstraints: _layoutConstraints,
-                antiAliasingWorkaround: widget.antiAliasingWorkaround));
+        return LimitedBox(
+            maxWidth: widget.fallbackWidth,
+            maxHeight: widget.fallbackHeight,
+            child: CustomMultiChildLayout(
+                children: children,
+                delegate: LayoutDelegate(
+                    controller: _controller,
+                    axis: widget.axis,
+                    layoutConstraints: _layoutConstraints,
+                    antiAliasingWorkaround: widget.antiAliasingWorkaround)));
       });
     }
     return Container();
