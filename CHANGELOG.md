@@ -1,10 +1,18 @@
 ### 3.0.0
 
-* Changes
-  * `Area`
-    * The algorithm has been changed to use `flex` factor instead of `weight`.
-  * `Theme`
-    * The `dividerThickness` now can be zero.
+* `Area`
+  * The algorithm has been changed to use `flex` factor instead of `weight`.
+  * The `minimalWeight` and `minimalSize` attributes has been replaced by `min`.
+  * The `hasMinimal` attribute has been removed.
+  * The static `weights` method has been changed to `flexes`.
+  * New attribute: `max`.
+* `Theme`
+  * The `dividerThickness` now can be zero.
+* `OnWeightChange` has been replaced by `OnDividerDragUpdate`
+* `MultiSplitViewController`
+  * The `areasLength` attribute has been renamed to `areasCount`
+* `MultiSplitView`
+  * New constructor: `builder`
 
 ## 2.4.0
 
