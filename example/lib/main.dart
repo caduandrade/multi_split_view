@@ -29,17 +29,17 @@ class MultiSplitViewExample extends StatefulWidget {
 }
 
 class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
-  final List<Color> _colors = [];
-
-  final MultiSplitViewController _controller = MultiSplitViewController(
-      areas: [Area(size: 200, min: 100), Area(flex: 1, max: 1.5)]);
+  final MultiSplitViewController _controller = MultiSplitViewController();
 
   bool _pushDividers = false;
 
   @override
   void initState() {
     super.initState();
-    _colors.addAll(List.generate(2, (_) => _randomColor()));
+    _controller.areas = [
+      Area(data: _randomColor()),
+      Area(data: _randomColor())
+    ];
     _controller.addListener(_rebuild);
   }
 
@@ -72,13 +72,10 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
                   onPressed: _onAddSizeButtonClick,
                   child: const Text('Add size')),
               ElevatedButton(
-                  onPressed:
-                      _colors.isNotEmpty ? _onRemoveFirstButtonClick : null,
+                  onPressed: _controller.areasCount != 0
+                      ? _onRemoveFirstButtonClick
+                      : null,
                   child: const Text('Remove first')),
-              ElevatedButton(
-                  onPressed:
-                      _colors.isNotEmpty ? _onSetFirstFlexButtonClick : null,
-                  child: const Text('Change first area flex')),
               Checkbox(
                   value: _pushDividers,
                   onChanged: (newValue) => setState(() {
@@ -88,18 +85,17 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
             ]));
 
     Widget? content;
-    if (_colors.isNotEmpty) {
-      MultiSplitView multiSplitView = MultiSplitView.builder(
+    if (_controller.areasCount != 0) {
+      MultiSplitView multiSplitView = MultiSplitView(
           onDividerDragUpdate: _onDividerDragUpdate,
           onDividerTap: _onDividerTap,
           onDividerDoubleTap: _onDividerDoubleTap,
           controller: _controller,
           pushDividers: _pushDividers,
-          count: _colors.length,
-          widgetBuilder: (context, index, area) => ColorWidget(
+          builder: (BuildContext context, int index, Area area) => ColorWidget(
               index: index,
               area: area,
-              color: _colors[index],
+              color: area.data,
               controller: _controller,
               onRemove: _removeColor));
 
@@ -122,8 +118,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
 
   Color _randomColor() {
     Random random = Random();
-    return Color.fromARGB(
-        255, random.nextInt(100), random.nextInt(100), random.nextInt(100));
+    return Color.fromARGB(255, 155 + random.nextInt(100),
+        155 + random.nextInt(100), 155 + random.nextInt(100));
   }
 
   _onDividerDragUpdate(int index) {
@@ -133,16 +129,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onRemoveFirstButtonClick() {
-    if (_colors.isNotEmpty) {
-      _removeColor(0);
-    }
-  }
-
-  _onSetFirstFlexButtonClick() {
-    if (_controller.areas.isNotEmpty) {
-      List<Area> list = List.from(_controller.areas);
-      list[0] = Area(flex: 3);
-      _controller.areas = list;
+    if (_controller.areasCount != 0) {
+      _controller.removeAreaAt(0);
     }
   }
 
@@ -161,25 +149,15 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   }
 
   _onAddFlexButtonClick() {
-    _add(Area());
+    _controller.addArea(Area(data: _randomColor()));
   }
 
   _onAddSizeButtonClick() {
-    _add(Area(size: 100));
-  }
-
-  _add(Area area) {
-    _colors.add(_randomColor());
-    List<Area> areas = List.from(_controller.areas);
-    areas.add(area);
-    _controller.areas = areas;
+    _controller.addArea(Area(data: _randomColor(), size: 100));
   }
 
   void _removeColor(int index) {
-    _colors.removeAt(index);
-    List<Area> areas = List.from(_controller.areas);
-    areas.removeAt(index);
-    _controller.areas = areas;
+    _controller.removeAreaAt(index);
   }
 }
 
@@ -232,20 +210,8 @@ class ColorWidget extends StatelessWidget {
     return InkWell(
         onTap: () => onRemove(index),
         child: Container(
-            color: invert(color),
-            child: Stack(children: [
-              Placeholder(
-                color: color,
-              ),
-              info
-            ])));
-  }
-
-  Color invert(Color color) {
-    final r = 255 - color.red;
-    final g = 255 - color.green;
-    final b = 255 - color.blue;
-
-    return Color.fromARGB(255, r, g, b);
+            color: color,
+            child: Stack(
+                children: [const Placeholder(color: Colors.black), info])));
   }
 }

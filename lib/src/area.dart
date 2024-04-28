@@ -1,6 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 
@@ -19,7 +20,14 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 ///
 /// * If all areas are using size, they will all be converted to use flex.
 class Area {
-  Area({double? size, double? flex, double? min, double? max, this.data})
+  Area(
+      {double? size,
+      double? flex,
+      double? min,
+      double? max,
+      this.data,
+      this.widget,
+      this.builder})
       : _size = size,
         _flex = flex,
         _min = min,
@@ -73,25 +81,19 @@ class Area {
   /// Any data associated with the area.
   dynamic data;
 
-  Area clone() {
-    return Area(size: size, flex: flex, max: max, min: min, data: data);
-  }
+  UniqueKey _key = UniqueKey();
 
-  static List<Area> sizes(List<double> sizes) {
-    List<Area> list = [];
-    sizes.forEach((size) => list.add(Area(size: size)));
-    return list;
-  }
+  WidgetBuilder? builder;
 
-  static List<Area> flexes(List<double> flexes) {
-    List<Area> list = [];
-    flexes.forEach((flex) => list.add(Area(flex: flex)));
-    return list;
-  }
+  Widget? widget;
 }
 
 @internal
 class AreaHelper {
+  static Key keyFrom({required Area area}) {
+    return area._key;
+  }
+
   static void setFlex({required Area area, required double flex}) {
     flex = NumUtil.fix('flex', flex);
     if (area.min != null) {

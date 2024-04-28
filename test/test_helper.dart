@@ -16,7 +16,7 @@ class TestHelper {
     MultiSplitViewController controller =
         MultiSplitViewController(areas: areas);
     LayoutConstraints layout = LayoutConstraints(
-        childrenCount: areas.length,
+        areasCount: areas.length,
         containerSize: containerSize,
         dividerThickness: dividerThickness);
     ControllerHelper controllerHelper = ControllerHelper(controller);
@@ -28,7 +28,6 @@ class TestHelper {
     expect(controller.areasCount, areas.length);
 
     TestHelper helper = TestHelper._(controller: controller, layout: layout);
-    helper._fetchAreas();
 
     return helper;
   }
@@ -39,17 +38,8 @@ class TestHelper {
       : this._controller = controller,
         this._layout = layout;
 
-  final List<Area> _areas = [];
   final MultiSplitViewController _controller;
   final LayoutConstraints _layout;
-
-  void _fetchAreas() {
-    _areas.clear();
-    for (int index = 0; index < _controller.areasCount; index++) {
-      Area area = _controller.getArea(index);
-      _areas.add(area.clone());
-    }
-  }
 
   void moveAndTest(
       {required int dividerIndex,
@@ -64,8 +54,6 @@ class TestHelper {
         pushDividers: pushDividers);
 
     expect(rest, rest, reason: 'rest');
-
-    _fetchAreas();
   }
 
   void testArea(int index,

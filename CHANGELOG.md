@@ -12,8 +12,10 @@
 * `MultiSplitViewController`
   * The `areasLength` attribute has been renamed to `areasCount`
 * `MultiSplitView`
-  * New constructor: `builder`
   * Width and height configuration to be used in an unbounded situation.
+* Setting the widget directly in the area or through builders.
+* Bug fix
+  * Area using the child widget key.
 
 ## 2.4.0
 

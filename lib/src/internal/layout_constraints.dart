@@ -10,17 +10,17 @@ import 'package:multi_split_view/src/policies.dart';
 @internal
 class LayoutConstraints {
   factory LayoutConstraints(
-      {required final int childrenCount,
+      {required final int areasCount,
       required final double containerSize,
       required final double dividerThickness}) {
-    NumUtil.validateInt('childrenCount', childrenCount);
+    NumUtil.validateInt('childrenCount', areasCount);
     NumUtil.validateDouble('dividerThickness', dividerThickness);
     NumUtil.validateDouble('containerSize', containerSize);
     final double totalDividerSize =
-        childrenCount > 1 ? (childrenCount - 1) * dividerThickness : 0;
+        areasCount > 1 ? (areasCount - 1) * dividerThickness : 0;
     final double availableSpace = math.max(0, containerSize - totalDividerSize);
     return LayoutConstraints._(
-        childrenCount: childrenCount,
+        areasCount: areasCount,
         containerSize: containerSize,
         dividerThickness: dividerThickness,
         totalDividerSize: totalDividerSize,
@@ -28,20 +28,19 @@ class LayoutConstraints {
   }
 
   LayoutConstraints._(
-      {required int childrenCount,
+      {required int areasCount,
       required double containerSize,
       required double dividerThickness,
       required double totalDividerSize,
       required double availableSpace})
-      : childrenCount = childrenCount,
+      : areasCount = areasCount,
         containerSize = containerSize,
         dividerThickness = dividerThickness,
         totalDividerSize = totalDividerSize,
         availableSpace = availableSpace;
 
-  /// The count of visible children on the screen may differ from the count
-  /// of areas in the controller.
-  final int childrenCount;
+  /// The count of visible areas on the screen.
+  final int areasCount;
 
   /// The container size.
   final double containerSize;
@@ -57,8 +56,6 @@ class LayoutConstraints {
 
   /// Applies the following adjustments:
   ///
-  /// * Removes unused areas.
-  /// * Creates new areas to accommodate all child widgets.
   /// * Shrinks size when the total size of the areas is greater than
   /// the available space, even if a [min] limit exists.
   /// * Grows size when the total size of the areas is smaller than the
@@ -69,18 +66,6 @@ class LayoutConstraints {
       required SizeOverflowPolicy sizeOverflowPolicy,
       required SizeUnderflowPolicy sizeUnderflowPolicy}) {
     bool changed = false;
-    // Removes unused areas.
-    if (controllerHelper.areas.length > childrenCount) {
-      controllerHelper.areas
-          .removeRange(childrenCount, controllerHelper.areas.length);
-      changed = true;
-    }
-
-    // Creates new areas to accommodate all child widgets.
-    while (controllerHelper.areas.length < childrenCount) {
-      controllerHelper.areas.add(Area());
-      changed = true;
-    }
 
     int flexCount = 0;
     double totalSize = 0;
