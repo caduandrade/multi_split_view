@@ -9,40 +9,6 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 /// Represents divider util used by the [MultiSplitView].
 @internal
 class DividerUtil {
-  static double position(
-      {required MultiSplitViewController controller,
-      required LayoutConstraints layoutConstraints,
-      required int dividerIndex,
-      required bool antiAliasingWorkaround}) {
-    double start = 0;
-
-    final double availableSizeForFlexAreas =
-        layoutConstraints.calculateAvailableSizeForFlexAreas(controller);
-    final double totalFlex = controller.totalFlex;
-    final double pixelPerFlex = availableSizeForFlexAreas / totalFlex;
-
-    for (int index = 0; index <= dividerIndex; index++) {
-      Area area = controller.getArea(index);
-
-      double pixels;
-      if (area.flex != null) {
-        pixels = area.flex! * pixelPerFlex;
-      } else {
-        pixels = area.size!;
-      }
-
-      if (antiAliasingWorkaround) {
-        pixels = pixels.roundToDouble();
-      }
-
-      start += pixels;
-      if (index < dividerIndex) {
-        start += layoutConstraints.dividerThickness;
-      }
-    }
-    return start;
-  }
-
   static double move(
       {required MultiSplitViewController controller,
       required LayoutConstraints layoutConstraints,

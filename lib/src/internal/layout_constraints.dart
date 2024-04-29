@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
+import 'package:multi_split_view/multi_split_view.dart';
 import 'package:multi_split_view/src/area.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
-import 'package:multi_split_view/src/policies.dart';
 
 /// Represents the layout constraints used by the [MultiSplitView].
 @internal
@@ -135,4 +135,71 @@ class LayoutConstraints {
     }
     return math.max(size, 0);
   }
+
+  double dividerStartOf(
+      {required int index,
+      required MultiSplitViewController controller,
+      required bool antiAliasingWorkaround}) {
+    double dividerStart = double.infinity;
+    var onDividerLayout = (
+        {required int index,
+        required double start,
+        required double thickness}) {
+      dividerStart = start;
+    };
+    performLayout(
+        controller: controller,
+        antiAliasingWorkaround: antiAliasingWorkaround,
+        onDividerLayout: onDividerLayout,
+        onlyOnIndex: index);
+    if (dividerStart == double.infinity) {
+      throw ArgumentError.value(index, 'index', 'Invalid index');
+    }
+    return dividerStart;
+  }
+
+  void performLayout(
+      {required MultiSplitViewController controller,
+      required bool antiAliasingWorkaround,
+      OnLayout? onAreaLayout,
+      OnLayout? onDividerLayout,
+      int? onlyOnIndex}) {
+    double start = 0;
+
+    final double availableSizeForFlexAreas =
+        calculateAvailableSizeForFlexAreas(controller);
+    final double pixelPerFlex =
+        availableSizeForFlexAreas / controller.totalFlex;
+
+    for (int index = 0; index < controller.areasCount; index++) {
+      Area area = controller.getArea(index);
+
+      double thickness;
+      if (area.flex != null) {
+        thickness = area.flex! * pixelPerFlex;
+      } else {
+        thickness = area.size!;
+      }
+      if (antiAliasingWorkaround) {
+        thickness = thickness.roundToDouble();
+      }
+
+      if (onAreaLayout != null &&
+          (onlyOnIndex == null || onlyOnIndex == index)) {
+        onAreaLayout(index: index, start: start, thickness: thickness);
+      }
+      start += thickness;
+      if (index < controller.areasCount - 1) {
+        if (onDividerLayout != null &&
+            (onlyOnIndex == null || onlyOnIndex == index)) {
+          onDividerLayout(
+              index: index, start: start, thickness: dividerThickness);
+        }
+        start += dividerThickness;
+      }
+    }
+  }
 }
+
+typedef OnLayout = void Function(
+    {required int index, required double start, required double thickness});

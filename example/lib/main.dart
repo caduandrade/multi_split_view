@@ -37,8 +37,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
   void initState() {
     super.initState();
     _controller.areas = [
-      Area(data: _randomColor()),
-      Area(data: _randomColor())
+      Area(data: _randomColor(), size: 150),
+      Area(data: _randomColor(), flex: 1)
     ];
     _controller.addListener(_rebuild);
   }

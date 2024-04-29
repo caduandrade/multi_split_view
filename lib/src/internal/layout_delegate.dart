@@ -18,58 +18,39 @@ class LayoutDelegate extends MultiChildLayoutDelegate {
 
   @override
   void performLayout(Size size) {
-    double start = 0;
-
-    final double availableSizeForFlexAreas =
-        layoutConstraints.calculateAvailableSizeForFlexAreas(controller);
-    final double pixelPerFlex =
-        availableSizeForFlexAreas / controller.totalFlex;
-
-    for (int index = 0; index < controller.areasCount; index++) {
-      Area area = controller.getArea(index);
-
-      double pixels;
-      if (area.flex != null) {
-        pixels = area.flex! * pixelPerFlex;
-      } else {
-        pixels = area.size!;
-      }
-      if (antiAliasingWorkaround) {
-        pixels = pixels.roundToDouble();
-      }
-
+    var onAreaLayout = (
+        {required int index,
+        required double start,
+        required double thickness}) {
       if (axis == Axis.horizontal) {
-        Size currentSize = layoutChild(
-            index, BoxConstraints.tightFor(width: pixels, height: size.height));
+        layoutChild(index,
+            BoxConstraints.tightFor(width: thickness, height: size.height));
         positionChild(index, Offset(start, 0));
-        start += currentSize.width;
-
-        if (index < controller.areasCount - 1) {
-          currentSize = layoutChild(
-              'd$index',
-              BoxConstraints.tightFor(
-                  width: layoutConstraints.dividerThickness,
-                  height: size.height));
-          positionChild('d$index', Offset(start, 0));
-          start += currentSize.width;
-        }
       } else {
-        Size currentSize = layoutChild(
-            index, BoxConstraints.tightFor(width: size.width, height: pixels));
+        layoutChild(index,
+            BoxConstraints.tightFor(width: size.width, height: thickness));
         positionChild(index, Offset(0, start));
-        start += currentSize.height;
-
-        if (index < controller.areasCount - 1) {
-          currentSize = layoutChild(
-              'd$index',
-              BoxConstraints.tightFor(
-                  width: size.width,
-                  height: layoutConstraints.dividerThickness));
-          positionChild('d$index', Offset(0, start));
-          start += currentSize.height;
-        }
       }
-    }
+    };
+    var onDividerLayout = (
+        {required int index,
+        required double start,
+        required double thickness}) {
+      if (axis == Axis.horizontal) {
+        layoutChild('d$index',
+            BoxConstraints.tightFor(width: thickness, height: size.height));
+        positionChild('d$index', Offset(start, 0));
+      } else {
+        layoutChild('d$index',
+            BoxConstraints.tightFor(width: size.width, height: thickness));
+        positionChild('d$index', Offset(0, start));
+      }
+    };
+    layoutConstraints.performLayout(
+        controller: controller,
+        antiAliasingWorkaround: antiAliasingWorkaround,
+        onAreaLayout: onAreaLayout,
+        onDividerLayout: onDividerLayout);
   }
 
   @override
