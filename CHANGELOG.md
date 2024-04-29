@@ -1,3 +1,21 @@
+### 3.0.0
+
+* `Area`
+  * The algorithm has been changed to use `flex` factor instead of `weight`.
+  * The `minimalWeight` and `minimalSize` attributes has been replaced by `min`.
+  * The `hasMinimal` attribute has been removed.
+  * New attribute: `max`.
+* `Theme`
+  * The `dividerThickness` now can be zero.
+* `OnWeightChange` has been replaced by `OnDividerDragUpdate`
+* `MultiSplitViewController`
+  * The `areasLength` attribute has been renamed to `areasCount`
+* `MultiSplitView`
+  * Width and height configuration to be used in an unbounded situation.
+* Setting the widget directly in the area or through builders.
+* Bug fix
+  * Area using the child widget key.
+
 ## 2.4.0
 
 * `Area`

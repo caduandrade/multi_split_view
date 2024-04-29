@@ -29,17 +29,30 @@ class MultiSplitViewExample extends StatefulWidget {
 }
 
 class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
-  static const int _max = 40;
-  static const int _initial = 3;
-
-  late final List<RandomColorBox> _boxes;
-
   final MultiSplitViewController _controller = MultiSplitViewController();
+
+  bool _pushDividers = false;
 
   @override
   void initState() {
     super.initState();
-    _boxes = List.generate(_initial, (_) => _createBox());
+    _controller.areas = [
+      Area(data: _randomColor(), size: 150),
+      Area(data: _randomColor(), flex: 1)
+    ];
+    _controller.addListener(_rebuild);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.removeListener(_rebuild);
+  }
+
+  void _rebuild() {
+    setState(() {
+      // rebuild to update empty text and buttons
+    });
   }
 
   @override
@@ -47,56 +60,77 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     Widget buttons = Container(
         color: Colors.white,
         padding: const EdgeInsets.all(8),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text('Horizontal widgets: ${_boxes.length} / $_max'),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onAddButtonClick, child: const Text('Add')),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onRemoveButtonClick, child: const Text('Remove')),
-          const SizedBox(width: 16),
-          ElevatedButton(
-              onPressed: _onSetWeightButtonClick,
-              child: const Text('Change second area weight'))
-        ]));
+        child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              ElevatedButton(
+                  onPressed: _onAddFlexButtonClick,
+                  child: const Text('Add flex')),
+              ElevatedButton(
+                  onPressed: _onAddSizeButtonClick,
+                  child: const Text('Add size')),
+              ElevatedButton(
+                  onPressed: _controller.areasCount != 0
+                      ? _onRemoveFirstButtonClick
+                      : null,
+                  child: const Text('Remove first')),
+              Checkbox(
+                  value: _pushDividers,
+                  onChanged: (newValue) => setState(() {
+                        _pushDividers = newValue!;
+                      })),
+              const Text("Push dividers")
+            ]));
 
-    final List<Widget> children = _boxes;
+    Widget? content;
+    if (_controller.areasCount != 0) {
+      MultiSplitView multiSplitView = MultiSplitView(
+          onDividerDragUpdate: _onDividerDragUpdate,
+          onDividerTap: _onDividerTap,
+          onDividerDoubleTap: _onDividerDoubleTap,
+          controller: _controller,
+          pushDividers: _pushDividers,
+          builder: (BuildContext context, int index, Area area) => ColorWidget(
+              index: index,
+              area: area,
+              color: area.data,
+              controller: _controller,
+              onRemove: _removeColor));
 
-    MultiSplitView multiSplitView = MultiSplitView(
-        onWeightChange: _onWeightChange,
-        onDividerTap: _onDividerTap,
-        onDividerDoubleTap: _onDividerDoubleTap,
-        controller: _controller,
-        children: children);
-
-    MultiSplitViewTheme theme = MultiSplitViewTheme(
-        data:
-            MultiSplitViewThemeData(dividerPainter: DividerPainters.grooved2()),
-        child: multiSplitView);
+      content = Padding(
+          padding: const EdgeInsets.all(16),
+          child: MultiSplitViewTheme(
+              data: MultiSplitViewThemeData(
+                  dividerPainter: DividerPainters.grooved2()),
+              child: multiSplitView));
+    } else {
+      content = const Center(child: Text('Empty'));
+    }
 
     return Scaffold(
         appBar: AppBar(title: const Text('Multi Split View Example')),
-        body: Column(children: [buttons, Expanded(child: theme)])
+        body: Column(children: [buttons, Expanded(child: content)])
         // body: horizontal,
         );
   }
 
-  _onWeightChange() {
+  Color _randomColor() {
+    Random random = Random();
+    return Color.fromARGB(255, 155 + random.nextInt(100),
+        155 + random.nextInt(100), 155 + random.nextInt(100));
+  }
+
+  _onDividerDragUpdate(int index) {
     if (kDebugMode) {
-      print('weight change');
+      // print('drag update: $index');
     }
   }
 
-  _onRemoveButtonClick() {
-    if (_boxes.isNotEmpty) {
-      _removeBox(_boxes.first);
-    }
-  }
-
-  _onSetWeightButtonClick() {
-    if (_controller.areas.length >= 2) {
-      _controller.areas = [Area(), Area(weight: .1)];
+  _onRemoveFirstButtonClick() {
+    if (_controller.areasCount != 0) {
+      _controller.removeAreaAt(0);
     }
   }
 
@@ -114,55 +148,70 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
     ));
   }
 
-  _onAddButtonClick() {
-    _boxes.insert(0, _createBox());
-    List<Area> list = List.from(_controller.areas);
-    list.add(Area());
-    _controller.areas = list;
-
-    //setState(() => _boxes.insert(0, _createBox()));
+  _onAddFlexButtonClick() {
+    _controller.addArea(Area(data: _randomColor()));
   }
 
-  RandomColorBox _createBox() {
-    return RandomColorBox(
-      key: UniqueKey(),
-      onRemove: _removeBox,
-    );
+  _onAddSizeButtonClick() {
+    _controller.addArea(Area(data: _randomColor(), size: 100));
   }
 
-  void _removeBox(RandomColorBox box) {
-    setState(() => _boxes.remove(box));
+  void _removeColor(int index) {
+    _controller.removeAreaAt(index);
   }
 }
 
-class RandomColorBox extends StatefulWidget {
-  const RandomColorBox({
-    required this.onRemove,
-    Key? key,
-  }) : super(key: key);
+class ColorWidget extends StatelessWidget {
+  const ColorWidget(
+      {Key? key,
+      required this.color,
+      required this.index,
+      required this.onRemove,
+      required this.area,
+      required this.controller})
+      : super(key: key);
 
-  final void Function(RandomColorBox box) onRemove;
-
-  @override
-  State<RandomColorBox> createState() => _RandomColorBoxState();
-}
-
-class _RandomColorBoxState extends State<RandomColorBox> {
-  late Color _color;
-
-  @override
-  void initState() {
-    super.initState();
-    _color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-  }
+  final Color color;
+  final int index;
+  final Area area;
+  final void Function(int index) onRemove;
+  final MultiSplitViewController controller;
 
   @override
   Widget build(BuildContext context) {
+    Widget info = ListenableBuilder(
+        listenable: controller,
+        builder: (BuildContext context, Widget? child) {
+          List<Widget> children = [];
+          TextStyle textStyle = const TextStyle(fontSize: 10);
+          if (area.size != null) {
+            children.add(Text('size: ${area.size!}', style: textStyle));
+          }
+          if (area.flex != null) {
+            children.add(Text('flex: ${area.flex!}', style: textStyle));
+          }
+          if (area.min != null) {
+            children.add(Text('min: ${area.min!}', style: textStyle));
+          }
+          if (area.max != null) {
+            children.add(Text('max: ${area.max!}', style: textStyle));
+          }
+          return Center(
+              child: Container(
+                  color: const Color.fromARGB(200, 255, 255, 255),
+                  padding: const EdgeInsets.fromLTRB(3, 2, 3, 2),
+                  child: Wrap(
+                      runSpacing: 5,
+                      spacing: 5,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: children)));
+        });
+
     return InkWell(
-      onTap: () => widget.onRemove(widget),
-      child: ColoredBox(
-        color: _color,
-      ),
-    );
+        onTap: () => onRemove(index),
+        child: Container(
+            color: color,
+            child: Stack(
+                children: [const Placeholder(color: Colors.black), info])));
   }
 }

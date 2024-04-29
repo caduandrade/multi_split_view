@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -11,267 +10,138 @@ import 'package:multi_split_view/src/area.dart';
 /// It is not allowed to share this controller between [MultiSplitView]
 /// instances.
 class MultiSplitViewController extends ChangeNotifier {
-  static const double _higherPrecision = 1.0000000000001;
-
   /// Creates an [MultiSplitViewController].
   ///
-  /// The sum of the [weights] cannot exceed 1.
-  factory MultiSplitViewController({List<Area>? areas}) {
-    return MultiSplitViewController._(areas != null ? List.from(areas) : []);
+  /// Changes the flex to 1 if the total flex of the areas is 0.
+  MultiSplitViewController(
+      {List<Area>? areas, AreaDataModifier? areaDataModifier})
+      : _areaDataModifier = areaDataModifier {
+    if (areas != null) {
+      _areas = List.from(areas);
+      _updateAreas();
+    }
   }
 
-  MultiSplitViewController._(this._areas);
-
-  List<Area> _areas;
+  List<Area> _areas = [];
 
   UnmodifiableListView<Area> get areas => UnmodifiableListView(_areas);
 
+  /// Allows to automatically set a new value for the data attribute of the [Area].
+  AreaDataModifier? _areaDataModifier;
+  AreaDataModifier? get areaDataModifier => _areaDataModifier;
+  set areaDataModifier(AreaDataModifier? modifier) {
+    if (_areaDataModifier != modifier) {
+      _areaDataModifier = modifier;
+      _applyDataModifier();
+    }
+  }
+
   Object _areasUpdateHash = Object();
 
-  /// Hash to identify [areas] setter usage.
-  @internal
-  Object get areasUpdateHash => _areasUpdateHash;
+  double _flexCount = 0;
+  double get flexCount => _flexCount;
 
+  double _totalFlex = 0;
+  double get totalFlex => _totalFlex;
+
+  /// Applies the current data modifier.
+  void _applyDataModifier() {
+    if (_areaDataModifier != null) {
+      for (int index = 0; index < _areas.length; index++) {
+        Area area = _areas[index];
+        area.data = _areaDataModifier!(area, index);
+      }
+    }
+  }
+
+  /// Updates the areas.
+  /// Changes the flex to 1 if the total flex of the areas is 0.
+  void _updateAreas() {
+    _areasUpdateHash = Object();
+
+    _totalFlex = 0;
+    _flexCount = 0;
+    for (Area area in _areas) {
+      if (area.flex != null) {
+        _totalFlex += area.flex!;
+        _flexCount++;
+      }
+    }
+
+    if (_flexCount > 0 && _totalFlex == 0) {
+      for (Area area in _areas) {
+        if (area.flex != null) {
+          AreaHelper.setFlex(area: area, flex: 1);
+          AreaHelper.setMax(area: area, max: null);
+          AreaHelper.setMin(area: area, min: null);
+        }
+      }
+      _totalFlex = _flexCount;
+    }
+    _applyDataModifier();
+  }
+
+  /// Set the areas.
+  /// Changes the flex to 1 if the total flex of the areas is 0.
   set areas(List<Area> areas) {
     _areas = List.from(areas);
-    _areasUpdateHash = Object();
+    _updateAreas();
     notifyListeners();
   }
 
-  int get areasLength => _areas.length;
+  void removeAreaAt(int index) {
+    _areas.removeAt(index);
+    _updateAreas();
+    notifyListeners();
+  }
+
+  void addArea(Area area) {
+    _areas.add(area);
+    _updateAreas();
+    notifyListeners();
+  }
+
+  int get areasCount => _areas.length;
 
   /// Gets the area of a given widget index.
   Area getArea(int index) {
     return _areas[index];
   }
 
-  /// Sum of all weights.
-  double _weightSum() {
-    double sum = 0;
-    _areas.forEach((area) {
-      sum += area.weight ?? 0;
-    });
-    return sum;
-  }
-
-  /// Adjusts the weights according to the number of children.
-  /// New children will receive a percentage of current children.
-  /// Excluded children will distribute their weights to the existing ones.
-  @internal
-  void fixWeights(
-      {required int childrenCount,
-      required double fullSize,
-      required double dividerThickness}) {
-    childrenCount = math.max(childrenCount, 0);
-
-    final double totalDividerSize = (childrenCount - 1) * dividerThickness;
-    final double availableSize = fullSize - totalDividerSize;
-
-    int nullWeightCount = 0;
-    for (int i = 0; i < _areas.length; i++) {
-      final Area area = _areas[i];
-      if (area.size != null) {
-        area.updateWeight(area.size! / availableSize);
-      }
-      if (area.weight == null) {
-        nullWeightCount++;
-      }
-    }
-
-    double weightSum = _weightSum();
-
-    // fill null weights
-    if (nullWeightCount > 0) {
-      double r = 0;
-      if (weightSum < MultiSplitViewController._higherPrecision) {
-        r = (1 - weightSum) / nullWeightCount;
-      }
-      if (r == 0) {
-        // shrinking non nulls
-        double newWeight = 0;
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          if (area.weight != null) {
-            final double r = area.weight! / childrenCount;
-            area.updateWeight(area.weight! - r);
-            newWeight += r / nullWeightCount;
-          }
-        }
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          if (area.weight == null) {
-            area.updateWeight(newWeight);
-          }
-        }
-      } else {
-        // updating the null weights
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          if (area.weight == null) {
-            area.updateWeight(r);
-          }
-        }
-      }
-      weightSum = _weightSum();
-    }
-
-    // removing over weight...
-    if (weightSum > MultiSplitViewController._higherPrecision) {
-      final over = weightSum - 1;
-      double r = over / weightSum;
-      for (int i = 0; i < _areas.length; i++) {
-        final Area area = _areas[i];
-        area.updateWeight(area.weight! - (area.weight! * r));
-      }
-    }
-
-    if (_areas.length == childrenCount) {
-      _fillWeightsEqually(childrenCount, weightSum);
-      _applyMinimal(availableSize: availableSize);
-      return;
-    } else if (_areas.length < childrenCount) {
-      // children has been added.
-      int addedChildrenCount = childrenCount - _areas.length;
-      double newWeight = 0;
-      if (weightSum < 1) {
-        newWeight = (1 - weightSum) / addedChildrenCount;
-      } else {
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          final double r = area.weight! / childrenCount;
-          area.updateWeight(area.weight! - r);
-          newWeight += r / addedChildrenCount;
-        }
-      }
-      for (int i = 0; i < addedChildrenCount; i++) {
-        _areas.add(Area(weight: newWeight));
-      }
-    } else {
-      // children has been removed.
-      double removedWeight = 0;
-      while (_areas.length > childrenCount) {
-        removedWeight += _areas.removeLast().weight!;
-      }
-      if (_areas.isNotEmpty) {
-        double w = removedWeight / _areas.length;
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          area.updateWeight(area.weight! + w);
-        }
-      }
-    }
-    _fillWeightsEqually(childrenCount, _weightSum());
-    _applyMinimal(availableSize: availableSize);
-  }
-
-  /// Fills equally the missing weights
-  void _fillWeightsEqually(int childrenCount, double weightSum) {
-    if (weightSum < 1) {
-      double availableWeight = 1 - weightSum;
-      if (availableWeight > 0) {
-        double w = availableWeight / childrenCount;
-        for (int i = 0; i < _areas.length; i++) {
-          final Area area = _areas[i];
-          area.updateWeight(area.weight! + w);
-        }
-      }
-    }
-  }
-
-  /// Fix the weights to the minimal size/weight.
-  void _applyMinimal({required double availableSize}) {
-    double totalNonMinimalWeight = 0;
-    double totalMinimalWeight = 0;
-    int minimalCount = 0;
-    for (int i = 0; i < _areas.length; i++) {
-      Area area = _areas[i];
-      if (area.minimalSize != null) {
-        double minimalWeight = area.minimalSize! / availableSize;
-        totalMinimalWeight += minimalWeight;
-        minimalCount++;
-      } else if (area.minimalWeight != null) {
-        totalMinimalWeight += area.minimalWeight!;
-        minimalCount++;
-      } else {
-        totalNonMinimalWeight += area.weight!;
-      }
-    }
-    if (totalMinimalWeight > 0) {
-      double reducerMinimalWeight = 0;
-      if (totalMinimalWeight > 1) {
-        reducerMinimalWeight = ((totalMinimalWeight - 1) / minimalCount);
-        totalMinimalWeight = 1;
-      }
-      double totalReducerNonMinimalWeight = 0;
-      if (totalMinimalWeight + totalNonMinimalWeight > 1) {
-        totalReducerNonMinimalWeight =
-            (totalMinimalWeight + totalNonMinimalWeight - 1);
-      }
-      for (int i = 0; i < _areas.length; i++) {
-        final Area area = _areas[i];
-        if (area.minimalSize != null) {
-          double minimalWeight = math.max(
-              0, (area.minimalSize! / availableSize) - reducerMinimalWeight);
-          if (area.weight! < minimalWeight) {
-            area.updateWeight(minimalWeight);
-          }
-        } else if (area.minimalWeight != null) {
-          double minimalWeight =
-              math.max(0, area.minimalWeight! - reducerMinimalWeight);
-          if (area.weight! < minimalWeight) {
-            area.updateWeight(minimalWeight);
-          }
-        } else if (totalReducerNonMinimalWeight > 0) {
-          double reducer = totalReducerNonMinimalWeight *
-              area.weight! /
-              totalNonMinimalWeight;
-          double newWeight = math.max(0, area.weight! - reducer);
-          area.updateWeight(newWeight);
-        }
-      }
-    }
-  }
-
   /// Stores the hashCode of the state to identify if a controller instance
-  /// is being shared by multiple [MultiSplitView]. The application must not
-  /// manipulate this attribute, it is for the internal use of the package.
-  @internal
-  int? stateHashCode;
+  /// is being shared by multiple [MultiSplitView].
+  int? _stateHashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MultiSplitViewController &&
-          runtimeType == other.runtimeType &&
-          _areas == other._areas;
-
-  @override
-  int get hashCode => _areas.hashCode;
-
-  int get weightsHashCode => Object.hashAll(_WeightIterable(areas));
+  void _forceNotifyListeners() {
+    notifyListeners();
+  }
 }
 
-class _WeightIterable extends Iterable<double?> {
-  _WeightIterable(this.areas);
+/// Allows to automatically set a new value for the data attribute of the [Area].
+typedef AreaDataModifier = dynamic Function(Area area, int index);
 
-  final List<Area> areas;
+@internal
+class ControllerHelper {
+  const ControllerHelper(this.controller);
 
-  @override
-  Iterator<double?> get iterator => _WeightIterator(areas);
-}
+  final MultiSplitViewController controller;
 
-class _WeightIterator extends Iterator<double?> {
-  _WeightIterator(this.areas);
+  List<Area> get areas => controller._areas;
 
-  final List<Area> areas;
-  int _index = -1;
+  Object get areasUpdateHash => controller._areasUpdateHash;
 
-  @override
-  double? get current => areas[_index].weight;
+  void notifyListeners() => controller._forceNotifyListeners();
 
-  @override
-  bool moveNext() {
-    _index++;
-    return _index > -1 && _index < areas.length;
+  void updateAreas() {
+    controller._updateAreas();
+  }
+
+  static int? getStateHashCode(MultiSplitViewController controller) {
+    return controller._stateHashCode;
+  }
+
+  static void setStateHashCode(
+      MultiSplitViewController controller, int? value) {
+    controller._stateHashCode = value;
   }
 }
