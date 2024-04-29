@@ -4,11 +4,11 @@ version: 3.0.0
 repository: https://github.com/caduandrade/multi_split_view
 
 screenshots:
-  - description: Horizontal and vertical
+  - description: Horizontal and vertical example
     path: screenshots/horizontal_vertical.png
-  - description: Horizontal
+  - description: Horizontal example
     path: screenshots/horizontal.png
-  - description: Vertical
+  - description: Vertical example
     path: screenshots/vertical.png
 
 topics:
