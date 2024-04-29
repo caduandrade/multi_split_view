@@ -21,9 +21,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -10, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 50);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: 20, flex: null, size: 50);
           });
           test('10 pixels - underflow - max', () {
@@ -39,9 +39,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 10, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 60);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: 20, flex: null, size: 40);
           });
           test('-10 pixels - shrink overflow - min', () {
@@ -57,9 +57,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -10, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 40);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: 90, max: null, flex: null, size: 60);
           });
           test('10 pixels - shrink overflow - min', () {
@@ -75,9 +75,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 10, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 50);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: 90, max: null, flex: null, size: 50);
           });
         });
@@ -91,9 +91,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -100, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 100);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1, size: null);
           });
           test('1o S +200 pixels over screen limit', () {
@@ -105,9 +105,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 200, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 100);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1, size: null);
           });
         });
@@ -121,9 +121,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 0, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 1, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1, size: null);
           });
           test('-1 pixel', () {
@@ -135,9 +135,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -1, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 0.98, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1.02, size: null);
           });
           test('1 pixel', () {
@@ -149,9 +149,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 1, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 1.02, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 0.98, size: null);
           });
           test('-200 pixels with rest', () {
@@ -163,9 +163,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -200, pushDividers: false, rest: -150);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 0, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 2, size: null);
           });
           test('200 pixels with rest', () {
@@ -177,9 +177,9 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: 200, pushDividers: false, rest: 150);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 2, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 0, size: null);
           });
         });
@@ -196,11 +196,11 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 1, pixels: 20, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 100);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1, size: null);
-            helper.testArea(2,
+            helper.testAreaIndex(2,
                 data: 'c', min: null, max: null, flex: 1, size: null);
           });
           test('-20 pixels', () {
@@ -213,11 +213,11 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 80);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: 1, size: null);
-            helper.testArea(2,
+            helper.testAreaIndex(2,
                 data: 'c', min: null, max: null, flex: 3, size: null);
           });
         });
@@ -232,11 +232,11 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: 1, size: null);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: null, size: 120);
-            helper.testArea(2,
+            helper.testAreaIndex(2,
                 data: 'c', min: null, max: null, flex: 3, size: null);
           });
         });
@@ -251,11 +251,11 @@ void main() {
             helper.moveAndTest(
                 dividerIndex: 0, pixels: -20, pushDividers: false, rest: 0);
 
-            helper.testArea(0,
+            helper.testAreaIndex(0,
                 data: 'a', min: null, max: null, flex: null, size: 30);
-            helper.testArea(1,
+            helper.testAreaIndex(1,
                 data: 'b', min: null, max: null, flex: null, size: 70);
-            helper.testArea(2,
+            helper.testAreaIndex(2,
                 data: 'c', min: null, max: null, flex: 1, size: null);
           });
         });

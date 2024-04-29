@@ -56,14 +56,26 @@ class TestHelper {
     expect(rest, rest, reason: 'rest');
   }
 
-  void testArea(int index,
+  void testAreaIndex(int index,
       {required dynamic data,
       required double? flex,
       required double? size,
       required double? min,
       required double? max}) {
     Area area = _controller.getArea(index);
-    AreaHelper.testArea(area,
-        data: data, min: min, max: max, flex: flex, size: size);
+    testArea(area, data: data, min: min, max: max, flex: flex, size: size);
+  }
+
+  static void testArea(Area area,
+      {required dynamic data,
+      required double? flex,
+      required double? size,
+      required double? min,
+      required double? max}) {
+    expect(area.data, data, reason: 'data');
+    expect(area.min, min, reason: 'min');
+    expect(area.max, max, reason: 'max');
+    expect(area.flex, flex, reason: 'flex');
+    expect(area.size, size, reason: 'size');
   }
 }

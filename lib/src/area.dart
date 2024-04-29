@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 
@@ -118,18 +117,5 @@ class AreaHelper {
 
   static void setMax({required Area area, required double? max}) {
     area._max = max;
-  }
-
-  static void testArea(Area area,
-      {required dynamic data,
-      required double? flex,
-      required double? size,
-      required double? min,
-      required double? max}) {
-    expect(area.data, data, reason: 'data');
-    expect(area.min, min, reason: 'min');
-    expect(area.max, max, reason: 'max');
-    expect(area.flex, flex, reason: 'flex');
-    expect(area.size, size, reason: 'size');
   }
 }
