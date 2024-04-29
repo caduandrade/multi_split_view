@@ -1,4 +1,4 @@
-### 3.0.0
+## 3.0.0
 
 * `Area`
   * The algorithm has been changed to use `flex` factor instead of `weight`.
