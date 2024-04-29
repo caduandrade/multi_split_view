@@ -4,7 +4,6 @@
   * The algorithm has been changed to use `flex` factor instead of `weight`.
   * The `minimalWeight` and `minimalSize` attributes has been replaced by `min`.
   * The `hasMinimal` attribute has been removed.
-  * The static `weights` method has been changed to `flexes`.
   * New attribute: `max`.
 * `Theme`
   * The `dividerThickness` now can be zero.
