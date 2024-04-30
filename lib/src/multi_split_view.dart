@@ -218,8 +218,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         child = MouseRegion(cursor: cursor, child: child);
         children.add(LayoutId(
             key: AreaHelper.keyFrom(area: area),
-            id: index,
-            child: ClipRect(child: child)));
+            id: index, child: child));
 
         //divisor widget
         if (index < _controller.areasCount - 1) {
@@ -247,8 +246,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           if (widget.resizable) {
             dividerWidget = GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () => _onDividerTap(index),
-                onDoubleTap: () => _onDividerDoubleTap(index),
+                onTap: widget.onDividerTap != null
+                    ? () => _onDividerTap(index)
+                    : null,
+                onDoubleTap: widget.onDividerDoubleTap != null
+                    ? () => _onDividerDoubleTap(index)
+                    : null,
                 onHorizontalDragDown: widget.axis == Axis.vertical
                     ? null
                     : (detail) => _onDragDown(detail, index),
