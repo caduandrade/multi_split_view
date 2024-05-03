@@ -56,7 +56,7 @@ class DividerUtil {
     Area growArea = controller.getArea(growAreaIndex);
 
     final double availableSizeForFlexAreas =
-        layoutConstraints.calculateAvailableSizeForFlexAreas(controller);
+        layoutConstraints.calculateAvailableSpaceForFlexAreas(controller);
     final double pixelsPerFlex =
         availableSizeForFlexAreas / controller.totalFlex;
 

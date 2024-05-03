@@ -17,7 +17,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 50);
@@ -34,7 +35,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 100);
@@ -53,7 +55,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 100);
@@ -70,7 +73,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchFirst);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchFirst,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 150);
@@ -87,7 +91,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 100);
@@ -106,7 +111,8 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 100);
@@ -123,12 +129,48 @@ void main() {
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
-                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchAll);
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchAll,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 2);
         TestHelper.testArea(controller.areas[0],
             data: 'a', min: null, max: null, flex: null, size: 75);
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 125);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
+      });
+      test('minSizeRecoveryPolicy - firstToLast', () {
+        MultiSplitViewController controller = MultiSplitViewController(areas: [
+          Area(data: 'a', size: 100),
+          Area(data: 'b', size: 100, min: 100)
+        ]);
+        LayoutConstraints(
+                areasCount: 2, containerSize: 150, dividerThickness: 0)
+            .adjustAreas(
+                controllerHelper: ControllerHelper(controller),
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchAll,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
+        expect(controller.areas.length, 2);
+        TestHelper.testArea(controller.areas[0],
+            data: 'a', min: null, max: null, flex: null, size: 100);
+        TestHelper.testArea(controller.areas[1],
+            data: 'b', min: 100, max: null, flex: null, size: 50);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
+
+        LayoutConstraints(
+                areasCount: 2, containerSize: 200, dividerThickness: 0)
+            .adjustAreas(
+                controllerHelper: ControllerHelper(controller),
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchAll,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
+        expect(controller.areas.length, 2);
+        TestHelper.testArea(controller.areas[0],
+            data: 'a', min: null, max: null, flex: null, size: 100);
+        TestHelper.testArea(controller.areas[1],
+            data: 'b', min: 100, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
       });
