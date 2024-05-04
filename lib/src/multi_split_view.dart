@@ -33,6 +33,7 @@ class MultiSplitView extends StatefulWidget {
       this.initialAreas,
       this.sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast,
       this.sizeUnderflowPolicy = SizeUnderflowPolicy.stretchLast,
+      this.minSizeRecoveryPolicy = MinSizeRecoveryPolicy.firstToLast,
       this.fallbackWidth = 500,
       this.fallbackHeight = 500,
       this.builder})
@@ -70,6 +71,9 @@ class MultiSplitView extends StatefulWidget {
   /// Represents the policy for handling cases where the total size of
   /// non-flexible areas within a container is smaller than the available space.
   final SizeUnderflowPolicy sizeUnderflowPolicy;
+
+  /// /// Represents the order in which the minimum size of the areas is recovered.
+  final MinSizeRecoveryPolicy minSizeRecoveryPolicy;
 
   /// Enables a workaround for https://github.com/flutter/flutter/issues/14288
   /// The workaround to minimize the problem is to round the coordinates to
@@ -187,7 +191,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         _layoutConstraints.adjustAreas(
             controllerHelper: controllerHelper,
             sizeOverflowPolicy: widget.sizeOverflowPolicy,
-            sizeUnderflowPolicy: widget.sizeUnderflowPolicy);
+            sizeUnderflowPolicy: widget.sizeUnderflowPolicy,
+            minSizeRecoveryPolicy: widget.minSizeRecoveryPolicy);
       }
 
       List<Widget> children = [];

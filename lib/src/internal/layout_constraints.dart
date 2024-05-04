@@ -18,13 +18,13 @@ class LayoutConstraints {
     NumUtil.validateDouble('containerSize', containerSize);
     final double totalDividerSize =
         areasCount > 1 ? (areasCount - 1) * dividerThickness : 0;
-    final double availableSpace = math.max(0, containerSize - totalDividerSize);
+    final double spaceForAreas = math.max(0, containerSize - totalDividerSize);
     return LayoutConstraints._(
         areasCount: areasCount,
         containerSize: containerSize,
         dividerThickness: dividerThickness,
         totalDividerSize: totalDividerSize,
-        availableSpace: availableSpace);
+        spaceForAreas: spaceForAreas);
   }
 
   LayoutConstraints._(
@@ -32,12 +32,12 @@ class LayoutConstraints {
       required double containerSize,
       required double dividerThickness,
       required double totalDividerSize,
-      required double availableSpace})
+      required double spaceForAreas})
       : areasCount = areasCount,
         containerSize = containerSize,
         dividerThickness = dividerThickness,
         totalDividerSize = totalDividerSize,
-        availableSpace = availableSpace;
+        spaceForAreas = spaceForAreas;
 
   /// The count of visible areas on the screen.
   final int areasCount;
@@ -52,66 +52,86 @@ class LayoutConstraints {
   final double totalDividerSize;
 
   /// The size of the container minus the size of the dividers.
-  final double availableSpace;
+  final double spaceForAreas;
 
   /// Applies the following adjustments:
   ///
   /// * Shrinks size when the total size of the areas is greater than
   /// the available space, even if a [min] limit exists.
+  /// * Grows size to meet the minimum value when space is available.
   /// * Grows size when the total size of the areas is smaller than the
   /// available space and there are no flex areas to fill the available
   /// space, even if a [max] limit exists.
   void adjustAreas(
       {required ControllerHelper controllerHelper,
       required SizeOverflowPolicy sizeOverflowPolicy,
-      required SizeUnderflowPolicy sizeUnderflowPolicy}) {
+      required SizeUnderflowPolicy sizeUnderflowPolicy,
+      required MinSizeRecoveryPolicy minSizeRecoveryPolicy}) {
     bool changed = false;
-
     int flexCount = 0;
     double totalSize = 0;
-    double lowestSize = double.maxFinite;
+    List<Area> minSizeToRecover = [];
     for (Area area in controllerHelper.areas) {
       if (area.size != null) {
         totalSize += area.size!;
-        lowestSize = math.min(lowestSize, area.size!);
+        if (area.min != null && area.size! < area.min!) {
+          minSizeToRecover.add(area);
+        }
       } else {
         flexCount++;
       }
     }
-    double availableSpace = this.availableSpace;
-
-    if (totalSize > availableSpace) {
+    if (totalSize > spaceForAreas) {
       // The total size of the areas is greater than the available space.
       // Need to shrink.
       Iterable<Area> it = sizeOverflowPolicy == SizeOverflowPolicy.shrinkFirst
           ? controllerHelper.areas
           : controllerHelper.areas.reversed;
       for (Area area in it) {
-        if (totalSize <= availableSpace) {
+        if (totalSize <= spaceForAreas) {
           break;
         } else if (area.size != null) {
           double excessToRemove =
-              math.min(area.size!, totalSize - availableSpace);
+              math.min(area.size!, totalSize - spaceForAreas);
           AreaHelper.setSize(area: area, size: area.size! - excessToRemove);
           totalSize -= excessToRemove;
         }
       }
       changed = true;
-    } else if (totalSize < availableSpace && flexCount == 0) {
+    }
+    if (totalSize < spaceForAreas && minSizeToRecover.isNotEmpty) {
+      // Grows size to meet the minimum value when space is available.
+      for (Area area
+          in minSizeRecoveryPolicy == MinSizeRecoveryPolicy.firstToLast
+              ? minSizeToRecover
+              : minSizeToRecover.reversed) {
+        double available = math.max(spaceForAreas - totalSize, 0);
+        if (available == 0) {
+          break;
+        }
+        double sizeToRecover = math.min(area.min! - area.size!, available);
+
+        totalSize += sizeToRecover;
+        AreaHelper.setSize(
+            area: area, size: math.min(area.size! + sizeToRecover, area.min!));
+        changed = true;
+      }
+    }
+    if (totalSize < spaceForAreas && flexCount == 0) {
       // The total size of the areas is smaller than the available space and
       // there are no flex areas to fill the available space.
       // Need to stretch.
       if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchFirst) {
         Area area = controllerHelper.areas.first;
         AreaHelper.setSize(
-            area: area, size: area.size! + availableSpace - totalSize);
+            area: area, size: area.size! + spaceForAreas - totalSize);
       } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchLast) {
         Area area = controllerHelper.areas.last;
         AreaHelper.setSize(
-            area: area, size: area.size! + availableSpace - totalSize);
+            area: area, size: area.size! + spaceForAreas - totalSize);
       } else if (sizeUnderflowPolicy == SizeUnderflowPolicy.stretchAll) {
         double extraSize =
-            (availableSpace - totalSize) / controllerHelper.areas.length;
+            (spaceForAreas - totalSize) / controllerHelper.areas.length;
         for (Area area in controllerHelper.areas) {
           AreaHelper.setSize(area: area, size: area.size! + extraSize);
         }
@@ -124,16 +144,16 @@ class LayoutConstraints {
     }
   }
 
-  double calculateAvailableSizeForFlexAreas(
+  double calculateAvailableSpaceForFlexAreas(
       MultiSplitViewController controller) {
-    double size = availableSpace;
+    double space = spaceForAreas;
     for (int index = 0; index < controller.areasCount; index++) {
       Area area = controller.getArea(index);
       if (area.size != null) {
-        size -= area.size!;
+        space -= area.size!;
       }
     }
-    return math.max(size, 0);
+    return math.max(space, 0);
   }
 
   double dividerStartOf(
@@ -166,10 +186,11 @@ class LayoutConstraints {
       int? onlyOnIndex}) {
     double start = 0;
 
-    final double availableSizeForFlexAreas =
-        calculateAvailableSizeForFlexAreas(controller);
+    final double availableSpaceForFlexAreas =
+        calculateAvailableSpaceForFlexAreas(controller);
+
     final double pixelPerFlex =
-        availableSizeForFlexAreas / controller.totalFlex;
+        availableSpaceForFlexAreas / controller.totalFlex;
 
     for (int index = 0; index < controller.areasCount; index++) {
       Area area = controller.getArea(index);

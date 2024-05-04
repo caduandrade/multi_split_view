@@ -1,3 +1,7 @@
+## 3.0.1
+
+Bug fix: Stretching to recover the minimum size when space is available.
+
 ## 3.0.0
 
 * `Area`

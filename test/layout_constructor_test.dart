@@ -59,37 +59,37 @@ void main() {
         expect(
             LayoutConstraints(
                     areasCount: 0, containerSize: 100, dividerThickness: 5)
-                .availableSpace,
+                .spaceForAreas,
             100);
         expect(
             LayoutConstraints(
                     areasCount: 1, containerSize: 100, dividerThickness: 5)
-                .availableSpace,
+                .spaceForAreas,
             100);
         expect(
             LayoutConstraints(
                     areasCount: 2, containerSize: 100, dividerThickness: 5)
-                .availableSpace,
+                .spaceForAreas,
             95);
         expect(
             LayoutConstraints(
                     areasCount: 3, containerSize: 100, dividerThickness: 5)
-                .availableSpace,
+                .spaceForAreas,
             90);
         expect(
             LayoutConstraints(
                     areasCount: 10, containerSize: 100, dividerThickness: 0)
-                .availableSpace,
+                .spaceForAreas,
             100);
         expect(
             LayoutConstraints(
                     areasCount: 2, containerSize: 100, dividerThickness: 100)
-                .availableSpace,
+                .spaceForAreas,
             0);
         expect(
             LayoutConstraints(
                     areasCount: 2, containerSize: 100, dividerThickness: 200)
-                .availableSpace,
+                .spaceForAreas,
             0);
       });
     });
