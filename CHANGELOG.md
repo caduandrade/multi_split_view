@@ -1,3 +1,7 @@
+## 3.0.2
+
+Bug fix: Other Widgets visually behind are not receiving mouse events.
+
 ## 3.0.1
 
 Bug fix: Stretching to recover the minimum size when space is available.
