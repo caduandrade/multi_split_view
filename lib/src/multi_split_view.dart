@@ -220,7 +220,13 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               ? SystemMouseCursors.resizeColumn
               : SystemMouseCursors.resizeRow;
         }
-        child = MouseRegion(cursor: cursor, child: child);
+        child = MouseRegion(
+            cursor: cursor,
+            child: child,
+            opaque: _draggingDivider != null,
+            hitTestBehavior: _draggingDivider != null
+                ? HitTestBehavior.opaque
+                : HitTestBehavior.translucent);
         children.add(LayoutId(
             key: AreaHelper.keyFrom(area: area),
             id: index, child: child));
