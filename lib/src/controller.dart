@@ -61,11 +61,14 @@ class MultiSplitViewController extends ChangeNotifier {
 
     _totalFlex = 0;
     _flexCount = 0;
+    int index = 0;
     for (Area area in _areas) {
+      AreaHelper.setIndex(area: area, index: index);
       if (area.flex != null) {
         _totalFlex += area.flex!;
         _flexCount++;
       }
+      index++;
     }
 
     if (_flexCount > 0 && _totalFlex == 0) {
@@ -84,13 +87,17 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Set the areas.
   /// Changes the flex to 1 if the total flex of the areas is 0.
   set areas(List<Area> areas) {
+    for (Area area in _areas) {
+      AreaHelper.setIndex(area: area, index: -1);
+    }
     _areas = List.from(areas);
     _updateAreas();
     notifyListeners();
   }
 
   void removeAreaAt(int index) {
-    _areas.removeAt(index);
+    Area area = _areas.removeAt(index);
+    AreaHelper.setIndex(area: area, index: -1);
     _updateAreas();
     notifyListeners();
   }

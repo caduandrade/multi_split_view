@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
+import 'package:multi_split_view/src/area_widget_builder.dart';
 import 'package:multi_split_view/src/controller.dart';
 import 'package:multi_split_view/src/divider_tap_typedefs.dart';
 import 'package:multi_split_view/src/divider_widget.dart';
@@ -43,6 +44,7 @@ class MultiSplitView extends StatefulWidget {
   final MultiSplitViewController? controller;
   final List<Area>? initialAreas;
 
+  /// The area widget builder.
   final AreaWidgetBuilder? builder;
 
   /// Indicates whether a divider can push others.
@@ -202,12 +204,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
         // area widget
         Widget child;
-        if (area.widget != null) {
-          child = area.widget!;
-        } else if (area.builder != null) {
-          child = area.builder!(context);
+        if (area.builder != null) {
+          child = area.builder!(context, area);
         } else if (widget.builder != null) {
-          child = widget.builder!(context, index, area);
+          child = widget.builder!(context, area);
         } else {
           child = Container();
         }
@@ -430,9 +430,6 @@ class _DraggingDivider {
   final int index;
   final double initialInnerPos;
 }
-
-typedef AreaWidgetBuilder = Widget Function(
-    BuildContext context, int index, Area area);
 
 typedef DividerBuilder = Widget Function(Axis axis, int index, bool resizable,
     bool dragging, bool highlighted, MultiSplitViewThemeData themeData);
