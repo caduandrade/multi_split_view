@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:multi_split_view/src/area_widget_builder.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 
 /// Child area in the [MultiSplitView].
@@ -25,7 +26,6 @@ class Area {
       double? min,
       double? max,
       this.data,
-      this.widget,
       this.builder})
       : _size = size,
         _flex = flex,
@@ -61,16 +61,23 @@ class Area {
     }
   }
 
+  int _index = -1;
+
+  int get index => _index;
+
   double? _min;
 
+  /// The min flex or size.
   double? get min => _min;
 
   double? _max;
 
+  /// The max flex or size.
   double? get max => _max;
 
   double? _size;
 
+  /// Size value in pixels.
   double? get size => _size;
 
   double? _flex;
@@ -82,9 +89,8 @@ class Area {
 
   UniqueKey _key = UniqueKey();
 
-  WidgetBuilder? builder;
-
-  Widget? widget;
+  /// The widget builder.
+  AreaWidgetBuilder? builder;
 }
 
 @internal
@@ -93,6 +99,7 @@ class AreaHelper {
     return area._key;
   }
 
+  /// Sets the area flex value.
   static void setFlex({required Area area, required double flex}) {
     flex = NumUtil.fix('flex', flex);
     if (area.min != null) {
@@ -101,6 +108,7 @@ class AreaHelper {
     area._flex = flex;
   }
 
+  /// Sets the area size value.
   static void setSize({required Area area, required double? size}) {
     if (size != null) {
       size = NumUtil.fix('size', size);
@@ -108,6 +116,7 @@ class AreaHelper {
     area._size = size;
   }
 
+  /// Sets the area min value.
   static void setMin({required Area area, required double? min}) {
     if (min != null) {
       min = math.max(0, min);
@@ -115,7 +124,13 @@ class AreaHelper {
     area._min = min;
   }
 
+  /// Sets the area max value.
   static void setMax({required Area area, required double? max}) {
     area._max = max;
+  }
+
+  /// Sets the area index.
+  static void setIndex({required Area area, required int index}) {
+    area._index = index;
   }
 }

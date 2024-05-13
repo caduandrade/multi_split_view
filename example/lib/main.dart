@@ -94,12 +94,8 @@ class MultiSplitViewExampleState extends State<MultiSplitViewExample> {
           onDividerDoubleTap: _onDividerDoubleTap,
           controller: _controller,
           pushDividers: _pushDividers,
-          builder: (BuildContext context, int index, Area area) => ColorWidget(
-              index: index,
-              area: area,
-              color: area.data,
-              controller: _controller,
-              onRemove: _removeColor));
+          builder: (BuildContext context, Area area) => ColorWidget(
+              area: area, color: area.data, onRemove: _removeColor));
 
       content = Padding(
           padding: const EdgeInsets.all(16),
@@ -167,50 +163,42 @@ class ColorWidget extends StatelessWidget {
   const ColorWidget(
       {Key? key,
       required this.color,
-      required this.index,
       required this.onRemove,
-      required this.area,
-      required this.controller})
+      required this.area})
       : super(key: key);
 
   final Color color;
-  final int index;
   final Area area;
   final void Function(int index) onRemove;
-  final MultiSplitViewController controller;
 
   @override
   Widget build(BuildContext context) {
-    Widget info = ListenableBuilder(
-        listenable: controller,
-        builder: (BuildContext context, Widget? child) {
-          List<Widget> children = [];
-          TextStyle textStyle = const TextStyle(fontSize: 10);
-          if (area.size != null) {
-            children.add(Text('size: ${area.size!}', style: textStyle));
-          }
-          if (area.flex != null) {
-            children.add(Text('flex: ${area.flex!}', style: textStyle));
-          }
-          if (area.min != null) {
-            children.add(Text('min: ${area.min!}', style: textStyle));
-          }
-          if (area.max != null) {
-            children.add(Text('max: ${area.max!}', style: textStyle));
-          }
-          return Center(
-              child: Container(
-                  color: const Color.fromARGB(200, 255, 255, 255),
-                  padding: const EdgeInsets.fromLTRB(3, 2, 3, 2),
-                  child: Wrap(
-                      runSpacing: 5,
-                      spacing: 5,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: children)));
-        });
+    List<Widget> children = [];
+    TextStyle textStyle = const TextStyle(fontSize: 10);
+    if (area.size != null) {
+      children.add(Text('size: ${area.size!}', style: textStyle));
+    }
+    if (area.flex != null) {
+      children.add(Text('flex: ${area.flex!}', style: textStyle));
+    }
+    if (area.min != null) {
+      children.add(Text('min: ${area.min!}', style: textStyle));
+    }
+    if (area.max != null) {
+      children.add(Text('max: ${area.max!}', style: textStyle));
+    }
+    Widget info = Center(
+        child: Container(
+            color: const Color.fromARGB(200, 255, 255, 255),
+            padding: const EdgeInsets.fromLTRB(3, 2, 3, 2),
+            child: Wrap(
+                runSpacing: 5,
+                spacing: 5,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: children)));
 
     return InkWell(
-        onTap: () => onRemove(index),
+        onTap: () => onRemove(area.index),
         child: Container(
             color: color,
             child: Stack(

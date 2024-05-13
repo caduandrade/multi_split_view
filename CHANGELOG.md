@@ -1,3 +1,12 @@
+## 3.1.0
+
+* `Area`
+  * The `widget` attribute has been removed. Developers may have encountered unintended behavior when using `widget` as it retained the last context, resulting in unexpected fixed states. Going forward, only the `builder` attribute will be available, ensuring dynamic updates based on the current context.
+  * The `builder` function was replaced by `AreaWidgetBuilder`, thus receiving the area as an extra argument. 
+  * New attribute: `index`
+* `AreaWidgetBuilder`
+  * The argument `index` has been removed.
+
 ## 3.0.2
 
 Bug fix: Other Widgets visually behind are not receiving mouse events.
