@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area.dart';
 
 /// Controller for [MultiSplitView].
@@ -13,9 +12,7 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Creates an [MultiSplitViewController].
   ///
   /// Changes the flex to 1 if the total flex of the areas is 0.
-  MultiSplitViewController(
-      {List<Area>? areas, AreaDataModifier? areaDataModifier})
-      : _areaDataModifier = areaDataModifier {
+  MultiSplitViewController({List<Area>? areas, AreaDataModifier? areaDataModifier}) : _areaDataModifier = areaDataModifier {
     if (areas != null) {
       _areas = List.from(areas);
       _updateAreas();
@@ -119,7 +116,7 @@ class MultiSplitViewController extends ChangeNotifier {
   /// is being shared by multiple [MultiSplitView].
   int? _stateHashCode;
 
-  void _forceNotifyListeners() {
+  void forceNotifyListeners() {
     notifyListeners();
   }
 }
@@ -127,7 +124,6 @@ class MultiSplitViewController extends ChangeNotifier {
 /// Allows to automatically set a new value for the data attribute of the [Area].
 typedef AreaDataModifier = dynamic Function(Area area, int index);
 
-@internal
 class ControllerHelper {
   const ControllerHelper(this.controller);
 
@@ -137,7 +133,7 @@ class ControllerHelper {
 
   Object get areasUpdateHash => controller._areasUpdateHash;
 
-  void notifyListeners() => controller._forceNotifyListeners();
+  void notifyListeners() => controller.forceNotifyListeners();
 
   void updateAreas() {
     controller._updateAreas();
@@ -147,8 +143,7 @@ class ControllerHelper {
     return controller._stateHashCode;
   }
 
-  static void setStateHashCode(
-      MultiSplitViewController controller, int? value) {
+  static void setStateHashCode(MultiSplitViewController controller, int? value) {
     controller._stateHashCode = value;
   }
 }
