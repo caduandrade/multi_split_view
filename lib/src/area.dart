@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area_widget_builder.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
 
@@ -20,16 +19,11 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 ///
 /// * If all areas are using size, they will all be converted to use flex.
 class Area {
-  Area(
-      {double? size,
-      double? flex,
-      double? min,
-      double? max,
-      this.data,
-      this.builder})
+  Area({double? size, double? flex, double? min, double? max, Key? key, this.data, this.builder})
       : _size = size,
         _flex = flex,
         _min = min,
+        _key = key ?? UniqueKey(),
         _max = max {
     if (size != null && flex != null) {
       throw ArgumentError('Cannot provide both a size and a flex.');
@@ -87,13 +81,12 @@ class Area {
   /// Any data associated with the area.
   dynamic data;
 
-  UniqueKey _key = UniqueKey();
+  Key _key;
 
   /// The widget builder.
   AreaWidgetBuilder? builder;
 }
 
-@internal
 class AreaHelper {
   static Key keyFrom({required Area area}) {
     return area._key;
