@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_split_view/src/area.dart';
@@ -107,7 +108,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   _DraggingDivider? _draggingDivider;
 
-  int? _hoverDividerIndex;
+  ValueNotifier<int?> _hoverDividerIndex = ValueNotifier<int?>(null);
 
   Object? _lastAreasUpdateHash;
 
@@ -232,67 +233,75 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
         //divisor widget
         if (index < _controller.areasCount - 1) {
-          bool highlighted = (_draggingDivider?.index == index ||
-              (_draggingDivider == null && _hoverDividerIndex == index));
-          Widget dividerWidget = widget.dividerBuilder != null
-              ? widget.dividerBuilder!(
-                  widget.axis == Axis.horizontal
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  index,
-                  widget.resizable,
-                  _draggingDivider?.index == index,
-                  highlighted,
-                  themeData)
-              : DividerWidget(
-                  axis: widget.axis == Axis.horizontal
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  index: index,
-                  themeData: themeData,
-                  highlighted: highlighted,
-                  resizable: widget.resizable,
-                  dragging: _draggingDivider?.index == index);
-          if (widget.resizable) {
-            dividerWidget = GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () => _onDividerTap(index),
-                onDoubleTap: () => _onDividerDoubleTap(index),
-                onHorizontalDragDown: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) => _onDragDown(detail, index),
-                onHorizontalDragCancel:
-                    widget.axis == Axis.vertical ? null : () => _onDragCancel(),
-                onHorizontalDragEnd: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) => _onDragEnd(),
-                onHorizontalDragUpdate: widget.axis == Axis.vertical
-                    ? null
-                    : (detail) =>
-                        _onDragUpdate(detail, index, controllerHelper),
-                onVerticalDragDown: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) => _onDragDown(detail, index),
-                onVerticalDragCancel: widget.axis == Axis.horizontal
-                    ? null
-                    : () => _onDragCancel(),
-                onVerticalDragEnd: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) => _onDragEnd(),
-                onVerticalDragUpdate: widget.axis == Axis.horizontal
-                    ? null
-                    : (detail) =>
-                        _onDragUpdate(detail, index, controllerHelper),
-                child: dividerWidget);
-            dividerWidget = _mouseRegion(
-                index: index,
-                axis: widget.axis == Axis.horizontal
-                    ? Axis.vertical
-                    : Axis.horizontal,
-                dividerWidget: dividerWidget,
-                themeData: themeData);
-          }
-          children.add(LayoutId(id: 'd$index', child: dividerWidget));
+          children.add(LayoutId(
+              id: 'd$index',
+              child: ValueListenableBuilder(
+                  valueListenable: _hoverDividerIndex,
+                  builder: (context, indexHouver, child) {
+                    bool highlighted = (_draggingDivider?.index == index ||
+                        (_draggingDivider == null &&
+                            _hoverDividerIndex.value == index));
+                    Widget dividerWidget = widget.dividerBuilder != null
+                        ? widget.dividerBuilder!(
+                            widget.axis == Axis.horizontal
+                                ? Axis.vertical
+                                : Axis.horizontal,
+                            index,
+                            widget.resizable,
+                            _draggingDivider?.index == index,
+                            highlighted,
+                            themeData)
+                        : DividerWidget(
+                            axis: widget.axis == Axis.horizontal
+                                ? Axis.vertical
+                                : Axis.horizontal,
+                            index: index,
+                            themeData: themeData,
+                            highlighted: highlighted,
+                            resizable: widget.resizable,
+                            dragging: _draggingDivider?.index == index);
+                    if (widget.resizable) {
+                      dividerWidget = GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () => _onDividerTap(index),
+                          onDoubleTap: () => _onDividerDoubleTap(index),
+                          onHorizontalDragDown: widget.axis == Axis.vertical
+                              ? null
+                              : (detail) => _onDragDown(detail, index),
+                          onHorizontalDragCancel: widget.axis == Axis.vertical
+                              ? null
+                              : () => _onDragCancel(),
+                          onHorizontalDragEnd: widget.axis == Axis.vertical
+                              ? null
+                              : (detail) => _onDragEnd(),
+                          onHorizontalDragUpdate: widget.axis == Axis.vertical
+                              ? null
+                              : (detail) => _onDragUpdate(
+                                  detail, index, controllerHelper),
+                          onVerticalDragDown: widget.axis == Axis.horizontal
+                              ? null
+                              : (detail) => _onDragDown(detail, index),
+                          onVerticalDragCancel: widget.axis == Axis.horizontal
+                              ? null
+                              : () => _onDragCancel(),
+                          onVerticalDragEnd: widget.axis == Axis.horizontal
+                              ? null
+                              : (detail) => _onDragEnd(),
+                          onVerticalDragUpdate: widget.axis == Axis.horizontal
+                              ? null
+                              : (detail) => _onDragUpdate(
+                                  detail, index, controllerHelper),
+                          child: dividerWidget);
+                      dividerWidget = _mouseRegion(
+                          index: index,
+                          axis: widget.axis == Axis.horizontal
+                              ? Axis.vertical
+                              : Axis.horizontal,
+                          dividerWidget: dividerWidget,
+                          themeData: themeData);
+                    }
+                    return dividerWidget;
+                  })));
         }
       }
       return LimitedBox(
@@ -313,9 +322,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
       {int? index, required MultiSplitViewThemeData themeData}) {
     if (_hoverDividerIndex != index &&
         (themeData.dividerPainter != null || widget.dividerBuilder != null)) {
-      setState(() {
-        _hoverDividerIndex = index;
-      });
+      _hoverDividerIndex.value = index;
     }
   }
 
