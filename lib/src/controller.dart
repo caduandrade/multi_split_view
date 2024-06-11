@@ -28,7 +28,9 @@ class MultiSplitViewController extends ChangeNotifier {
 
   /// Allows to automatically set a new value for the data attribute of the [Area].
   AreaDataModifier? _areaDataModifier;
+
   AreaDataModifier? get areaDataModifier => _areaDataModifier;
+
   set areaDataModifier(AreaDataModifier? modifier) {
     if (_areaDataModifier != modifier) {
       _areaDataModifier = modifier;
@@ -39,9 +41,11 @@ class MultiSplitViewController extends ChangeNotifier {
   Object _areasUpdateHash = Object();
 
   double _flexCount = 0;
+
   double get flexCount => _flexCount;
 
   double _totalFlex = 0;
+
   double get totalFlex => _totalFlex;
 
   /// Applies the current data modifier.
@@ -57,12 +61,17 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Updates the areas.
   /// Changes the flex to 1 if the total flex of the areas is 0.
   void _updateAreas() {
+    Set<dynamic> ids = {};
+
     _areasUpdateHash = Object();
 
     _totalFlex = 0;
     _flexCount = 0;
     int index = 0;
     for (Area area in _areas) {
+      if (!ids.add(area.id)) {
+        throw StateError('Area with duplicate id.');
+      }
       AreaHelper.setIndex(area: area, index: index);
       if (area.flex != null) {
         _totalFlex += area.flex!;

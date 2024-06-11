@@ -228,9 +228,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                 ? HitTestBehavior.opaque
                 : HitTestBehavior.translucent);
         children.add(LayoutId(
-            key: AreaHelper.keyFrom(area: area),
-            id: index,
-            child: ClipRect(child: child)));
+            key: ValueKey(area.id), id: index, child: ClipRect(child: child)));
 
         //divisor widget
         if (index < _controller.areasCount - 1) {
