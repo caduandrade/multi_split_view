@@ -70,7 +70,7 @@ class MultiSplitViewController extends ChangeNotifier {
     int index = 0;
     for (Area area in _areas) {
       if (!ids.add(area.id)) {
-        throw StateError('Area with duplicate id.');
+        throw StateError('Duplicate area id.');
       }
       AreaHelper.setIndex(area: area, index: index);
       if (area.flex != null) {

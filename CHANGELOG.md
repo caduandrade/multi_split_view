@@ -1,7 +1,8 @@
 ## 3.2.0
 
 * `Area`
-  * Adding `id` to be used as an internal Key and facilitating reconfiguration of the layout while maintaining the state of the widgets. 
+  * Adding `id` to be used as an internal Key and facilitating reconfiguration of the layout while maintaining the state of the widgets.
+* Avoiding rebuilding areas when hovering over the divider.
 
 ## 3.1.0
 
