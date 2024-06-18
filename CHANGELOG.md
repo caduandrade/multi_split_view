@@ -1,3 +1,7 @@
+## 3.2.1
+
+* Bugfix: `MultiSplitViewController` throwing error when being built or modified to have no areas.
+
 ## 3.2.0
 
 * `Area`
