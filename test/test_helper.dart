@@ -17,7 +17,7 @@ class TestHelper {
     MultiSplitViewController controller =
         MultiSplitViewController(areas: areas);
     LayoutConstraints layout = LayoutConstraints(
-        areasCount: areas.length,
+        controller: controller,
         containerSize: containerSize,
         dividerThickness: dividerThickness);
     ControllerHelper controllerHelper = ControllerHelper(controller);

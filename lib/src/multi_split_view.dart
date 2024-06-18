@@ -111,8 +111,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   Object? _lastAreasUpdateHash;
 
-  LayoutConstraints _layoutConstraints =
-      LayoutConstraints(areasCount: 0, containerSize: 0, dividerThickness: 0);
+  LayoutConstraints? _layoutConstraints;
 
   @override
   void initState() {
@@ -180,17 +179,17 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           : constraints.maxHeight;
 
       if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash ||
-          _layoutConstraints.containerSize != containerSize ||
-          _layoutConstraints.areasCount != _controller.areasCount ||
-          _layoutConstraints.dividerThickness != themeData.dividerThickness) {
+          _layoutConstraints == null ||
+          _layoutConstraints!.containerSize != containerSize ||
+          _layoutConstraints!.dividerThickness != themeData.dividerThickness) {
         _draggingDivider = null;
         _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
 
         _layoutConstraints = LayoutConstraints(
-            areasCount: _controller.areasCount,
+            controller: _controller,
             containerSize: containerSize,
             dividerThickness: themeData.dividerThickness);
-        _layoutConstraints.adjustAreas(
+        _layoutConstraints!.adjustAreas(
             controllerHelper: controllerHelper,
             sizeOverflowPolicy: widget.sizeOverflowPolicy,
             sizeUnderflowPolicy: widget.sizeUnderflowPolicy,
@@ -311,7 +310,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
               delegate: LayoutDelegate(
                   controller: _controller,
                   axis: widget.axis,
-                  layoutConstraints: _layoutConstraints,
+                  layoutConstraints: _layoutConstraints!,
                   antiAliasingWorkaround: widget.antiAliasingWorkaround)));
     });
   }
@@ -368,14 +367,14 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     }
 
     final double newDividerStart = position - _draggingDivider!.initialInnerPos;
-    final double lastDividerStart = _layoutConstraints.dividerStartOf(
+    final double lastDividerStart = _layoutConstraints!.dividerStartOf(
         index: index,
         controller: _controller,
         antiAliasingWorkaround: widget.antiAliasingWorkaround);
 
     DividerUtil.move(
         controller: _controller,
-        layoutConstraints: _layoutConstraints,
+        layoutConstraints: _layoutConstraints!,
         dividerIndex: index,
         pixels: newDividerStart - lastDividerStart,
         pushDividers: widget.pushDividers);

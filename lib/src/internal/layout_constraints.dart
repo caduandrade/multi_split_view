@@ -10,17 +10,16 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 @internal
 class LayoutConstraints {
   factory LayoutConstraints(
-      {required final int areasCount,
+      {required final MultiSplitViewController controller,
       required final double containerSize,
       required final double dividerThickness}) {
-    NumUtil.validateInt('childrenCount', areasCount);
     NumUtil.validateDouble('dividerThickness', dividerThickness);
     NumUtil.validateDouble('containerSize', containerSize);
-    final double totalDividerSize =
-        areasCount > 1 ? (areasCount - 1) * dividerThickness : 0;
+    final double totalDividerSize = controller.areasCount > 1
+        ? (controller.areasCount - 1) * dividerThickness
+        : 0;
     final double spaceForAreas = math.max(0, containerSize - totalDividerSize);
     return LayoutConstraints._(
-        areasCount: areasCount,
         containerSize: containerSize,
         dividerThickness: dividerThickness,
         totalDividerSize: totalDividerSize,
@@ -28,19 +27,14 @@ class LayoutConstraints {
   }
 
   LayoutConstraints._(
-      {required int areasCount,
-      required double containerSize,
+      {required double containerSize,
       required double dividerThickness,
       required double totalDividerSize,
       required double spaceForAreas})
-      : areasCount = areasCount,
-        containerSize = containerSize,
+      : containerSize = containerSize,
         dividerThickness = dividerThickness,
         totalDividerSize = totalDividerSize,
         spaceForAreas = spaceForAreas;
-
-  /// The count of visible areas on the screen.
-  final int areasCount;
 
   /// The container size.
   final double containerSize;
@@ -67,6 +61,9 @@ class LayoutConstraints {
       required SizeOverflowPolicy sizeOverflowPolicy,
       required SizeUnderflowPolicy sizeUnderflowPolicy,
       required MinSizeRecoveryPolicy minSizeRecoveryPolicy}) {
+    if (controllerHelper.areas.isEmpty) {
+      return;
+    }
     bool changed = false;
     int flexCount = 0;
     double totalSize = 0;
