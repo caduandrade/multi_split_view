@@ -9,6 +9,20 @@ import 'test_helper.dart';
 void main() {
   group('LayoutConstraints', () {
     group('Adjust areas', () {
+      test('empty', () {
+        MultiSplitViewController controller =
+            MultiSplitViewController(areas: []);
+        LayoutConstraints(
+                areasCount: 0, containerSize: 155, dividerThickness: 5)
+            .adjustAreas(
+                controllerHelper: ControllerHelper(controller),
+                sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
+                sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
+                minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
+        expect(controller.areas.length, 0);
+        expect(controller.flexCount, 0);
+        expect(controller.totalFlex, 0);
+      });
       test('sizeOverflowPolicy - shrinkFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
