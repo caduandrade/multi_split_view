@@ -23,7 +23,7 @@ class LayoutConstraints {
         containerSize: containerSize,
         dividerThickness: dividerThickness,
         totalDividerSize: totalDividerSize,
-        spaceForAreas: spaceForAreas);
+        spaceForAreas: NumUtil.fix('spaceForAreas', spaceForAreas));
   }
 
   LayoutConstraints._(
@@ -94,6 +94,7 @@ class LayoutConstraints {
           totalSize -= excessToRemove;
         }
       }
+
       changed = true;
     }
     if (totalSize < spaceForAreas && minSizeToRecover.isNotEmpty) {

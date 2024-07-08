@@ -1,3 +1,7 @@
+## 3.2.2
+
+* Bugfix: The divider does not move when the widget's size includes a tiny fractional value.
+
 ## 3.2.1
 
 * Bugfix: `MultiSplitViewController` throwing error when being built or modified to have no areas.
