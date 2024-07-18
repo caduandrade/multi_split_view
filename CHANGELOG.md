@@ -1,3 +1,8 @@
+## 3.2.3
+
+* `MultiSplitView`
+  * Added `clipBehavior` parameter to control children's clip.
+
 ## 3.2.2
 
 * Bugfix: The divider does not move when the widget's size includes a tiny fractional value.
