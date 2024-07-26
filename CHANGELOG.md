@@ -1,9 +1,12 @@
 ## 3.3.0
 
-* Area
+* `Area`
   * Added `copyWith` method.
-* MultiSplitView
+* `MultiSplitView`
   * Added `onDividerDragStart` and `onDividerDragEnd` callbacks.
+* `MultiSplitViewThemeData`
+  * Allows divider without thickness.
+  * Allows increasing the handle area around the divider.
 
 ## 3.2.2
 

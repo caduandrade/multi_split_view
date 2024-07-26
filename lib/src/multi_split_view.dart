@@ -196,7 +196,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
         _layoutConstraints = LayoutConstraints(
             controller: _controller,
             containerSize: containerSize,
-            dividerThickness: themeData.dividerThickness);
+            dividerThickness: themeData.dividerThickness,
+            dividerHandleBuffer: themeData.dividerHandleBuffer);
         _layoutConstraints!.adjustAreas(
             controllerHelper: controllerHelper,
             sizeOverflowPolicy: widget.sizeOverflowPolicy,
@@ -234,16 +235,22 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             hitTestBehavior: _draggingDivider != null
                 ? HitTestBehavior.opaque
                 : HitTestBehavior.translucent);
-        children.add(LayoutId(
-            key: ValueKey(area.id), id: index, child: ClipRect(child: child)));
+        children.insert(
+            0,
+            LayoutId(
+                key: ValueKey(area.id),
+                id: index,
+                child: ClipRect(child: child)));
 
-        //divisor widget
+        // divisor widget
+        // added last to ensure they are painted over ensuring the handle
+        // buffer is not below the area.
         if (index < _controller.areasCount - 1) {
           children.add(LayoutId(
               id: 'd$index',
               child: ValueListenableBuilder(
                   valueListenable: _hoverDividerIndex,
-                  builder: (context, indexHouver, child) {
+                  builder: (context, indexHover, child) {
                     bool highlighted = (_draggingDivider?.index == index ||
                         (_draggingDivider == null &&
                             _hoverDividerIndex.value == index));
@@ -267,6 +274,18 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                             resizable: widget.resizable,
                             dragging: _draggingDivider?.index == index);
                     if (widget.resizable) {
+                      if (themeData.dividerHandleBuffer > 0) {
+                        // handle buffer around the divider
+                        double lr = widget.axis == Axis.vertical
+                            ? 0
+                            : themeData.dividerHandleBuffer;
+                        double tb = widget.axis == Axis.horizontal
+                            ? 0
+                            : themeData.dividerHandleBuffer;
+                        dividerWidget = Padding(
+                            padding: EdgeInsets.fromLTRB(lr, tb, lr, tb),
+                            child: dividerWidget);
+                      }
                       dividerWidget = GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () => _onDividerTap(index),

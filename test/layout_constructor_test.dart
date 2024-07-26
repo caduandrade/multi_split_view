@@ -10,17 +10,34 @@ void main() {
       test('negative dividerThickness', () {
         expect(() {
           LayoutConstraints(
-              controller: controller, containerSize: 100, dividerThickness: -5);
+              controller: controller,
+              containerSize: 100,
+              dividerThickness: -5,
+              dividerHandleBuffer: 0);
         },
             throwsA(isA<ArgumentError>()
                 .having((e) => e.name, '', 'dividerThickness')));
+      });
+      test('negative dividerHandleBuffer', () {
+        expect(() {
+          LayoutConstraints(
+              controller: controller,
+              containerSize: 100,
+              dividerThickness: 0,
+              dividerHandleBuffer: -5);
+        },
+            throwsA(isA<ArgumentError>()
+                .having((e) => e.name, '', 'dividerHandleBuffer')));
       });
       test('negative containerSize', () {
         expect(() {
           MultiSplitViewController controller =
               MultiSplitViewController(areas: [Area()]);
           LayoutConstraints(
-              controller: controller, containerSize: -10, dividerThickness: 5);
+              controller: controller,
+              containerSize: -10,
+              dividerThickness: 5,
+              dividerHandleBuffer: 0);
         },
             throwsA(isA<ArgumentError>()
                 .having((e) => e.name, '', 'containerSize')));
@@ -32,7 +49,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .totalDividerSize,
             0);
         controller = MultiSplitViewController(areas: [Area()]);
@@ -40,7 +58,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .totalDividerSize,
             0);
         controller = MultiSplitViewController(areas: [Area(), Area()]);
@@ -48,7 +67,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .totalDividerSize,
             5);
         controller = MultiSplitViewController(areas: [Area(), Area(), Area()]);
@@ -56,7 +76,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .totalDividerSize,
             10);
         controller = MultiSplitViewController(areas: [
@@ -75,7 +96,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 0)
+                    dividerThickness: 0,
+                    dividerHandleBuffer: 0)
                 .totalDividerSize,
             0);
       });
@@ -86,7 +108,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             100);
         controller = MultiSplitViewController(areas: [Area()]);
@@ -94,7 +117,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             100);
         controller = MultiSplitViewController(areas: [Area(), Area()]);
@@ -102,7 +126,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             95);
         controller = MultiSplitViewController(areas: [Area(), Area(), Area()]);
@@ -110,7 +135,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 5)
+                    dividerThickness: 5,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             90);
         controller = MultiSplitViewController(areas: [
@@ -129,7 +155,8 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 0)
+                    dividerThickness: 0,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             100);
         controller = MultiSplitViewController(areas: [Area(), Area()]);
@@ -137,14 +164,16 @@ void main() {
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 100)
+                    dividerThickness: 100,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             0);
         expect(
             LayoutConstraints(
                     controller: controller,
                     containerSize: 100,
-                    dividerThickness: 200)
+                    dividerThickness: 200,
+                    dividerHandleBuffer: 0)
                 .spaceForAreas,
             0);
       });

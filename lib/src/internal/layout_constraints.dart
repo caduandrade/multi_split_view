@@ -12,8 +12,10 @@ class LayoutConstraints {
   factory LayoutConstraints(
       {required final MultiSplitViewController controller,
       required final double containerSize,
-      required final double dividerThickness}) {
+      required final double dividerThickness,
+      required final double dividerHandleBuffer}) {
     NumUtil.validateDouble('dividerThickness', dividerThickness);
+    NumUtil.validateDouble('dividerHandleBuffer', dividerHandleBuffer);
     NumUtil.validateDouble('containerSize', containerSize);
     final double totalDividerSize = controller.areasCount > 1
         ? (controller.areasCount - 1) * dividerThickness
@@ -22,6 +24,7 @@ class LayoutConstraints {
     return LayoutConstraints._(
         containerSize: containerSize,
         dividerThickness: dividerThickness,
+        dividerHandleBuffer: dividerHandleBuffer,
         totalDividerSize: totalDividerSize,
         spaceForAreas: NumUtil.fix('spaceForAreas', spaceForAreas));
   }
@@ -29,10 +32,12 @@ class LayoutConstraints {
   LayoutConstraints._(
       {required double containerSize,
       required double dividerThickness,
+      required double dividerHandleBuffer,
       required double totalDividerSize,
       required double spaceForAreas})
       : containerSize = containerSize,
         dividerThickness = dividerThickness,
+        dividerHandleBuffer = dividerHandleBuffer,
         totalDividerSize = totalDividerSize,
         spaceForAreas = spaceForAreas;
 
@@ -41,6 +46,9 @@ class LayoutConstraints {
 
   /// The divider thickness defined by the theme.
   final double dividerThickness;
+
+  /// The additional clickable area around the divider defined by the theme.
+  final double dividerHandleBuffer;
 
   /// The total size of all dividers.
   final double totalDividerSize;
@@ -212,7 +220,9 @@ class LayoutConstraints {
         if (onDividerLayout != null &&
             (onlyOnIndex == null || onlyOnIndex == index)) {
           onDividerLayout(
-              index: index, start: start, thickness: dividerThickness);
+              index: index,
+              start: start - dividerHandleBuffer,
+              thickness: dividerThickness + (2 * dividerHandleBuffer));
         }
         start += dividerThickness;
       }

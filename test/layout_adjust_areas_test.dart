@@ -13,7 +13,10 @@ void main() {
         MultiSplitViewController controller =
             MultiSplitViewController(areas: []);
         LayoutConstraints(
-                controller: controller, containerSize: 155, dividerThickness: 5)
+                controller: controller,
+                containerSize: 155,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -29,7 +32,10 @@ void main() {
         ControllerHelper controllerHelper = ControllerHelper(controller);
         Object oldAreasHash = controllerHelper.areasUpdateHash;
         LayoutConstraints(
-                controller: controller, containerSize: 205, dividerThickness: 5)
+                controller: controller,
+                containerSize: 205,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: controllerHelper,
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -52,7 +58,8 @@ void main() {
         LayoutConstraints(
                 controller: controller,
                 containerSize: 204.999999999,
-                dividerThickness: 5)
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: controllerHelper,
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -75,7 +82,8 @@ void main() {
         LayoutConstraints(
                 controller: controller,
                 containerSize: 204.5,
-                dividerThickness: 5)
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: controllerHelper,
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -98,7 +106,8 @@ void main() {
         LayoutConstraints(
                 controller: controller,
                 containerSize: 205.000000001,
-                dividerThickness: 5)
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: controllerHelper,
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -121,7 +130,8 @@ void main() {
         LayoutConstraints(
                 controller: controller,
                 containerSize: 205.5,
-                dividerThickness: 5)
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: controllerHelper,
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -140,7 +150,10 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         LayoutConstraints(
-                controller: controller, containerSize: 155, dividerThickness: 5)
+                controller: controller,
+                containerSize: 155,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
@@ -158,7 +171,10 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         LayoutConstraints(
-                controller: controller, containerSize: 155, dividerThickness: 5)
+                controller: controller,
+                containerSize: 155,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -178,7 +194,10 @@ void main() {
           Area(data: 'b', size: 100, min: 90)
         ]);
         LayoutConstraints(
-                controller: controller, containerSize: 155, dividerThickness: 5)
+                controller: controller,
+                containerSize: 155,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -196,7 +215,10 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         LayoutConstraints(
-                controller: controller, containerSize: 255, dividerThickness: 5)
+                controller: controller,
+                containerSize: 255,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -214,7 +236,10 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         LayoutConstraints(
-                controller: controller, containerSize: 255, dividerThickness: 5)
+                controller: controller,
+                containerSize: 255,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -234,7 +259,10 @@ void main() {
           Area(data: 'b', size: 100, max: 110)
         ]);
         LayoutConstraints(
-                controller: controller, containerSize: 255, dividerThickness: 5)
+                controller: controller,
+                containerSize: 255,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -252,7 +280,10 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 50), Area(data: 'b', size: 100)]);
         LayoutConstraints(
-                controller: controller, containerSize: 205, dividerThickness: 5)
+                controller: controller,
+                containerSize: 205,
+                dividerThickness: 5,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -272,7 +303,10 @@ void main() {
           Area(data: 'b', size: 100, min: 100)
         ]);
         LayoutConstraints(
-                controller: controller, containerSize: 150, dividerThickness: 0)
+                controller: controller,
+                containerSize: 150,
+                dividerThickness: 0,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,
@@ -287,7 +321,10 @@ void main() {
         expect(controller.totalFlex, 0);
 
         LayoutConstraints(
-                controller: controller, containerSize: 200, dividerThickness: 0)
+                controller: controller,
+                containerSize: 200,
+                dividerThickness: 0,
+                dividerHandleBuffer: 0)
             .adjustAreas(
                 controllerHelper: ControllerHelper(controller),
                 sizeOverflowPolicy: SizeOverflowPolicy.shrinkLast,

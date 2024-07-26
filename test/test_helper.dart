@@ -10,6 +10,7 @@ class TestHelper {
       {required List<Area> areas,
       required double containerSize,
       required double dividerThickness,
+      required double dividerHandleBuffer,
       SizeOverflowPolicy sizeOverflowPolicy = SizeOverflowPolicy.shrinkLast,
       SizeUnderflowPolicy sizeUnderflowPolicy = SizeUnderflowPolicy.stretchLast,
       MinSizeRecoveryPolicy minSizeRecoveryPolicy =
@@ -19,7 +20,8 @@ class TestHelper {
     LayoutConstraints layout = LayoutConstraints(
         controller: controller,
         containerSize: containerSize,
-        dividerThickness: dividerThickness);
+        dividerThickness: dividerThickness,
+        dividerHandleBuffer: dividerHandleBuffer);
     ControllerHelper controllerHelper = ControllerHelper(controller);
     layout.adjustAreas(
         controllerHelper: controllerHelper,
