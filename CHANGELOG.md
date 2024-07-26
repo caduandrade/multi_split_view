@@ -1,3 +1,8 @@
+## 3.3.0
+
+* Area
+  * Added `copyWith` method.
+
 ## 3.2.2
 
 * Bugfix: The divider does not move when the widget's size includes a tiny fractional value.

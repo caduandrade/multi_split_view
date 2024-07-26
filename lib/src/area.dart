@@ -95,6 +95,27 @@ class Area {
 
   /// The widget builder.
   AreaWidgetBuilder? builder;
+
+  /// Creates a copy of this [Area] with the given fields replaced with their.
+  Area copyWith({
+    dynamic id,
+    double? size,
+    double? flex,
+    double? min,
+    double? max,
+    dynamic data,
+    AreaWidgetBuilder? builder,
+  }) {
+    return Area(
+      id: id ?? this.id,
+      size: size == null && flex == null ? this.size : size,
+      flex: size == null && flex == null ? this.flex : flex,
+      min: min ?? this.min,
+      max: max ?? this.max,
+      data: data ?? this.data,
+      builder: builder ?? this.builder,
+    );
+  }
 }
 
 @internal
