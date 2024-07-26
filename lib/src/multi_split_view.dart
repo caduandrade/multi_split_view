@@ -25,7 +25,9 @@ class MultiSplitView extends StatefulWidget {
       this.axis = MultiSplitView.defaultAxis,
       this.controller,
       this.dividerBuilder,
+      this.onDividerDragStart,
       this.onDividerDragUpdate,
+      this.onDividerDragEnd,
       this.onDividerTap,
       this.onDividerDoubleTap,
       this.resizable = true,
@@ -63,8 +65,14 @@ class MultiSplitView extends StatefulWidget {
   /// Indicates whether it is resizable. The default value is [TRUE].
   final bool resizable;
 
-  /// Function to listen divider dragging.
-  final OnDividerDragUpdate? onDividerDragUpdate;
+  /// Function to listen to divider dragging start.
+  final OnDividerDragEvent? onDividerDragStart;
+
+  /// Function to listen to divider dragging update.
+  final OnDividerDragEvent? onDividerDragUpdate;
+
+  /// Function to listen to divider dragging end.
+  final OnDividerDragEvent? onDividerDragEnd;
 
   /// Represents the policy for handling overflow of non-flexible areas within
   /// a container.
@@ -266,12 +274,15 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                           onHorizontalDragDown: widget.axis == Axis.vertical
                               ? null
                               : (detail) => _onDragDown(detail, index),
+                          onHorizontalDragStart: widget.axis == Axis.vertical
+                              ? null
+                              : (detail) => _onDragStart(index),
                           onHorizontalDragCancel: widget.axis == Axis.vertical
                               ? null
                               : () => _onDragCancel(),
                           onHorizontalDragEnd: widget.axis == Axis.vertical
                               ? null
-                              : (detail) => _onDragEnd(),
+                              : (detail) => _onDragEnd(index),
                           onHorizontalDragUpdate: widget.axis == Axis.vertical
                               ? null
                               : (detail) => _onDragUpdate(
@@ -279,12 +290,15 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                           onVerticalDragDown: widget.axis == Axis.horizontal
                               ? null
                               : (detail) => _onDragDown(detail, index),
+                          onVerticalDragStart: widget.axis == Axis.horizontal
+                              ? null
+                              : (detail) => _onDragStart(index),
                           onVerticalDragCancel: widget.axis == Axis.horizontal
                               ? null
                               : () => _onDragCancel(),
                           onVerticalDragEnd: widget.axis == Axis.horizontal
                               ? null
-                              : (detail) => _onDragEnd(),
+                              : (detail) => _onDragEnd(index),
                           onVerticalDragUpdate: widget.axis == Axis.horizontal
                               ? null
                               : (detail) => _onDragUpdate(
@@ -394,13 +408,25 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     });
   }
 
-  void _onDragEnd() {
+  void _onDragStart(int index) {
+    if (_draggingDivider == null) {
+      return;
+    }
+    if (widget.onDividerDragStart != null) {
+      Future.delayed(Duration.zero, () => widget.onDividerDragStart!(index));
+    }
+  }
+
+  void _onDragEnd(int index) {
     if (_draggingDivider == null) {
       return;
     }
     setState(() {
       _draggingDivider = null;
     });
+    if (widget.onDividerDragEnd != null) {
+      Future.delayed(Duration.zero, () => widget.onDividerDragEnd!(index));
+    }
   }
 
   /// Wraps the divider widget with a [MouseRegion].
@@ -437,4 +463,4 @@ class _DraggingDivider {
 typedef DividerBuilder = Widget Function(Axis axis, int index, bool resizable,
     bool dragging, bool highlighted, MultiSplitViewThemeData themeData);
 
-typedef OnDividerDragUpdate = void Function(int index);
+typedef OnDividerDragEvent = void Function(int index);
