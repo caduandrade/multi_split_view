@@ -1,3 +1,8 @@
+## 3.4.0
+
+* `MultiSplitView`
+  * Added `areaClipBehavior` to control area clipping.
+
 ## 3.3.0
 
 * `Area`

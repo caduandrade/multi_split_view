@@ -39,7 +39,8 @@ class MultiSplitView extends StatefulWidget {
       this.minSizeRecoveryPolicy = MinSizeRecoveryPolicy.firstToLast,
       this.fallbackWidth = 500,
       this.fallbackHeight = 500,
-      this.builder})
+      this.builder,
+      this.areaClipBehavior = Clip.hardEdge})
       : super(key: key);
 
   final Axis axis;
@@ -104,6 +105,11 @@ class MultiSplitView extends StatefulWidget {
   ///
   ///  * [fallbackWidth], the same but horizontally.
   final double fallbackHeight;
+
+  /// Controls how to clip each area.
+  ///
+  /// Defaults to [Clip.hardEdge].
+  final Clip areaClipBehavior;
 
   @override
   State createState() => _MultiSplitViewState();
@@ -240,7 +246,8 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             LayoutId(
                 key: ValueKey(area.id),
                 id: index,
-                child: ClipRect(child: child)));
+                child: ClipRect(
+                    clipBehavior: widget.areaClipBehavior, child: child)));
 
         // divisor widget
         // added last to ensure they are painted over ensuring the handle
