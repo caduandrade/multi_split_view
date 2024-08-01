@@ -295,8 +295,12 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                       }
                       dividerWidget = GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () => _onDividerTap(index),
-                          onDoubleTap: () => _onDividerDoubleTap(index),
+                          onTap: widget.onDividerTap != null
+                              ? () => _onDividerTap(index)
+                              : null,
+                          onDoubleTap: widget.onDividerDoubleTap != null
+                              ? () => _onDividerDoubleTap(index)
+                              : null,
                           onHorizontalDragDown: widget.axis == Axis.vertical
                               ? null
                               : (detail) => _onDragDown(detail, index),
