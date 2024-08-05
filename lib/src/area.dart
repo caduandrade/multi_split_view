@@ -98,22 +98,29 @@ class Area {
 
   /// Creates a copy of this [Area] with the given fields replaced with their.
   Area copyWith({
-    dynamic id,
-    double? size,
-    double? flex,
-    double? min,
-    double? max,
-    dynamic data,
-    AreaWidgetBuilder? builder,
+    dynamic Function()? id,
+    double? Function()? size,
+    double? Function()? flex,
+    double? Function()? min,
+    double? Function()? max,
+    dynamic Function()? data,
+    AreaWidgetBuilder? Function()? builder,
   }) {
+    final hasPassedSize = size != null;
+    final hasPassedFlex = flex != null;
+
+    if (hasPassedSize && hasPassedFlex) {
+      throw ArgumentError('Cannot provide both a size and a flex.');
+    }
+
     return Area(
-      id: id ?? this.id,
-      size: size == null && flex == null ? this.size : size,
-      flex: size == null && flex == null ? this.flex : flex,
-      min: min ?? this.min,
-      max: max ?? this.max,
-      data: data ?? this.data,
-      builder: builder ?? this.builder,
+      id: id == null ? this.id : id(),
+      size: hasPassedFlex ? null : (hasPassedSize ? size!() : this.size),
+      flex: hasPassedSize ? null : (hasPassedFlex ? flex!() : this.flex),
+      min: min == null ? this.min : min(),
+      max: max == null ? this.max : max(),
+      data: data == null ? this.data : data(),
+      builder: builder == null ? this.builder : builder(),
     );
   }
 }
