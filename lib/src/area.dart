@@ -19,14 +19,7 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 ///
 /// * If all areas are using size, they will all be converted to use flex.
 class Area {
-  Area(
-      {double? size,
-      double? flex,
-      double? min,
-      double? max,
-      dynamic id,
-      this.data,
-      this.builder})
+  Area({double? size, double? flex, double? min, double? max, dynamic id, this.data, this.builder})
       : this.id = id != null ? id : _AreaId(),
         _size = size,
         _flex = flex,
@@ -98,22 +91,29 @@ class Area {
 
   /// Creates a copy of this [Area] with the given fields replaced with their.
   Area copyWith({
-    dynamic id,
-    double? size,
-    double? flex,
-    double? min,
-    double? max,
-    dynamic data,
-    AreaWidgetBuilder? builder,
+    dynamic Function()? id,
+    double? Function()? size,
+    double? Function()? flex,
+    double? Function()? min,
+    double? Function()? max,
+    dynamic Function()? data,
+    AreaWidgetBuilder? Function()? builder,
   }) {
+    final hasPassedSize = size != null;
+    final hasPassedFlex = flex != null;
+
+    if (hasPassedSize && hasPassedFlex) {
+      throw ArgumentError('Cannot provide both a size and a flex.');
+    }
+
     return Area(
-      id: id ?? this.id,
-      size: size == null && flex == null ? this.size : size,
-      flex: size == null && flex == null ? this.flex : flex,
-      min: min ?? this.min,
-      max: max ?? this.max,
-      data: data ?? this.data,
-      builder: builder ?? this.builder,
+      id: id == null ? this.id : id(),
+      size: hasPassedFlex ? null : (hasPassedSize ? size!() : this.size),
+      flex: hasPassedSize ? null : (hasPassedFlex ? flex!() : this.flex),
+      min: min == null ? this.min : min(),
+      max: max == null ? this.max : max(),
+      data: data == null ? this.data : data(),
+      builder: builder == null ? this.builder : builder(),
     );
   }
 }
