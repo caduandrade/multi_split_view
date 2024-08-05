@@ -8,7 +8,9 @@ void main() {
         Area area = Area(size: 2);
         expect(() {
           area.copyWith(size: () => 1, flex: () => 2);
-        }, throwsA(isA<ArgumentError>().having((e) => e.message, '', 'Cannot provide both a size and a flex.')));
+        },
+            throwsA(isA<ArgumentError>().having((e) => e.message, '',
+                'Cannot provide both a size and a flex.')));
       });
       test('negative size', () {
         Area area = Area(size: 2);
