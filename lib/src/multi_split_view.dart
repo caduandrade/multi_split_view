@@ -296,10 +296,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
                       dividerWidget = GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: widget.onDividerTap != null
-                              ? () => _onDividerTap(index)
+                              ? () => widget.onDividerTap!(index)
                               : null,
                           onDoubleTap: widget.onDividerDoubleTap != null
-                              ? () => _onDividerDoubleTap(index)
+                              ? () => widget.onDividerDoubleTap!(index)
                               : null,
                           onHorizontalDragDown: widget.axis == Axis.vertical
                               ? null
@@ -365,18 +365,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (_hoverDividerIndex.value != index &&
         (themeData.dividerPainter != null || widget.dividerBuilder != null)) {
       _hoverDividerIndex.value = index;
-    }
-  }
-
-  void _onDividerTap(int index) {
-    if (widget.onDividerTap != null) {
-      widget.onDividerTap!(index);
-    }
-  }
-
-  void _onDividerDoubleTap(int index) {
-    if (widget.onDividerDoubleTap != null) {
-      widget.onDividerDoubleTap!(index);
     }
   }
 
