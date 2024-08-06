@@ -20,7 +20,14 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 ///
 /// * If all areas are using size, they will all be converted to use flex.
 class Area {
-  Area({double? size, double? flex, double? min, double? max, dynamic id, this.data, this.builder})
+  Area(
+      {double? size,
+      double? flex,
+      double? min,
+      double? max,
+      dynamic id,
+      this.data,
+      this.builder})
       : this.id = id != null ? id : _AreaId(),
         _size = size,
         _flex = flex,
