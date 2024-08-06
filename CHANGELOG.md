@@ -1,3 +1,8 @@
+## 3.5.0
+
+* Bugfix
+  * The `Area.copyWith` method does not allow nulling values. The API has been changed to support this.
+
 ## 3.4.0
 
 * `MultiSplitView`
