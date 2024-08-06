@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area_widget_builder.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
@@ -157,9 +158,36 @@ class AreaHelper {
 }
 
 /// Default area id object
-class _AreaId {
+class _AreaId implements Comparable<String> {
+  _AreaId({String? id}) : id = id ?? UniqueKey().hashCode.toString();
+
+  final String id;
+
   @override
   String toString() {
-    return 'area id: $hashCode';
+    return 'area id: $id';
   }
+
+  _AreaId fromJson(Map<String, dynamic> json) {
+    return _AreaId(
+      id: json['id'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _AreaId && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  int compareTo(String other) => id.compareTo(other);
 }
