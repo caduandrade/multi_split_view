@@ -106,17 +106,10 @@ class Area {
     dynamic Function()? data,
     AreaWidgetBuilder? Function()? builder,
   }) {
-    final hasPassedSize = size != null;
-    final hasPassedFlex = flex != null;
-
-    if (hasPassedSize && hasPassedFlex) {
-      throw ArgumentError('Cannot provide both a size and a flex.');
-    }
-
     return Area(
       id: id == null ? this.id : id(),
-      size: hasPassedFlex ? null : (hasPassedSize ? size!() : this.size),
-      flex: hasPassedSize ? null : (hasPassedFlex ? flex!() : this.flex),
+      size: size == null ? this.size : size(),
+      flex: flex == null ? this.flex : flex(),
       min: min == null ? this.min : min(),
       max: max == null ? this.max : max(),
       data: data == null ? this.data : data(),
