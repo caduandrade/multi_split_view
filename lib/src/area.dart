@@ -28,34 +28,17 @@ class Area extends ChangeNotifier {
       dynamic id,
       this.data,
       this.builder})
-      : this.id = id != null ? id : _AreaId(),
-        _size = size,
-        _flex = flex {
+      : this.id = id != null ? id : _AreaId() {
     if (size != null && flex != null) {
       throw ArgumentError('Cannot provide both a size and a flex.');
     }
-    NumUtil.validateDouble('size', size);
-    NumUtil.validateDouble('flex', flex);
     if (size == null && flex == null) {
-      _flex = 1;
+      flex = 1;
     }
     _setMinWithoutNotify(min);
     _setMaxWithoutNotify(max);
-    if (_flex != null) {
-      if (min != null) {
-        _flex = math.max(_flex!, min);
-      }
-      if (max != null) {
-        _flex = math.min(_flex!, max);
-      }
-    } else if (_size != null) {
-      if (min != null) {
-        _size = math.max(_size!, min);
-      }
-      if (max != null) {
-        _size = math.min(_size!, max);
-      }
-    }
+    _setFlexWithoutNotify(value: flex, useMin: true, useMax: true);
+    _setSizeWithoutNotify(value: size, useMin: true, useMax: true);
   }
 
   void _checkMinMax() {
@@ -121,9 +104,74 @@ class Area extends ChangeNotifier {
   /// Size value in pixels.
   double? get size => _size;
 
+  /// Sets the area size value and notify listeners.
+  void set size(double? value) {
+    if (_flex != null) {
+      throw ArgumentError('Cannot provide both a size and a flex.');
+    }
+    _setSizeWithoutNotify(value: value, useMin: true, useMax: true);
+    notifyListeners();
+  }
+
+  /// Sets the area size value without notify listeners.
+  void _setSizeWithoutNotify(
+      {required double? value, required bool useMin, required bool useMax}) {
+    NumUtil.validateDouble('size', value);
+    if (value != null) {
+      value = NumUtil.fix('size', value);
+    }
+    if (_size != value) {
+      _size = value;
+      if (_size != null) {
+        if (useMin && min != null) {
+          _size = math.max(_size!, min!);
+        }
+        if (useMax && max != null) {
+          _size = math.min(_size!, max!);
+        }
+      }
+      if (_hashChanger != null) {
+        _hashChanger!();
+      }
+    }
+  }
+
+  /// The flex value
   double? _flex;
 
   double? get flex => _flex;
+
+  /// Sets the area flex value and notify listeners.
+  void set flex(double? value) {
+    if (_size != null) {
+      throw ArgumentError('Cannot provide both a size and a flex.');
+    }
+    _setFlexWithoutNotify(value: value, useMin: true, useMax: true);
+    notifyListeners();
+  }
+
+  /// Sets the area flex value without notify listeners.
+  void _setFlexWithoutNotify(
+      {required double? value, required bool useMin, required bool useMax}) {
+    NumUtil.validateDouble('flex', value);
+    if (value != null) {
+      value = NumUtil.fix('flex', value);
+    }
+    if (_flex != value) {
+      _flex = value;
+      if (_flex != null) {
+        if (useMin && min != null) {
+          _flex = math.max(_flex!, min!);
+        }
+        if (useMax && max != null) {
+          _flex = math.min(_flex!, max!);
+        }
+      }
+      if (_hashChanger != null) {
+        _hashChanger!();
+      }
+    }
+  }
 
   /// Any data associated with the area.
   dynamic data;
@@ -162,19 +210,13 @@ class Area extends ChangeNotifier {
 class AreaHelper {
   /// Sets the area flex value without notify listeners.
   static void setFlex({required Area area, required double flex}) {
-    flex = NumUtil.fix('flex', flex);
-    if (area.min != null) {
-      flex = math.max(flex, area.min!);
-    }
-    area._flex = flex;
+    flex = math.max(0, flex);
+    area._setFlexWithoutNotify(value: flex, useMin: true, useMax: false);
   }
 
   /// Sets the area size value without notify listeners.
   static void setSize({required Area area, required double? size}) {
-    if (size != null) {
-      size = NumUtil.fix('size', size);
-    }
-    area._size = size;
+    area._setSizeWithoutNotify(value: size, useMin: false, useMax: false);
   }
 
   /// Sets the area min value without notify listeners.

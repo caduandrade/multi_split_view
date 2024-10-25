@@ -196,7 +196,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           _layoutConstraints == null ||
           _layoutConstraints!.containerSize != containerSize ||
           _layoutConstraints!.dividerThickness != themeData.dividerThickness) {
-        _draggingDivider = null;
         _layoutConstraints = LayoutConstraints(
             controller: _controller,
             containerSize: containerSize,
@@ -382,7 +381,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (_draggingDivider == null) {
       return;
     }
-
     final Offset offset = _offset(context, detail.globalPosition);
     final double position;
     if (widget.axis == Axis.horizontal) {

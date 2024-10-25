@@ -154,7 +154,7 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(layoutConstraints.flexCount, 0);
         expect(layoutConstraints.flexSum, 0);
-        expect(oldAreasHash, equals(controllerHelper.areasHash));
+        expect(oldAreasHash, isNot(equals(controllerHelper.areasHash)));
       });
       test('containerSize - decimal value - 3', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -202,7 +202,7 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100.5);
         expect(layoutConstraints.flexCount, 0);
         expect(layoutConstraints.flexSum, 0);
-        expect(oldAreasHash, equals((controllerHelper.areasHash)));
+        expect(oldAreasHash, isNot(equals((controllerHelper.areasHash))));
       });
       test('sizeOverflowPolicy - shrinkFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
