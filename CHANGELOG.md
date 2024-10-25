@@ -1,3 +1,8 @@
+## 3.6.0
+
+* `Area`
+  * Allow changing size, flex, min and max values.
+
 ## 3.5.0
 
 * Bugfix

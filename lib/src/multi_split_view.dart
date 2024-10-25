@@ -123,7 +123,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
 
   ValueNotifier<int?> _hoverDividerIndex = ValueNotifier<int?>(null);
 
-  Object? _lastAreasUpdateHash;
+  Object? _lastAreasHash;
 
   LayoutConstraints? _layoutConstraints;
 
@@ -192,13 +192,10 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           ? constraints.maxWidth
           : constraints.maxHeight;
 
-      if (_lastAreasUpdateHash != controllerHelper.areasUpdateHash ||
+      if (_lastAreasHash != controllerHelper.areasHash ||
           _layoutConstraints == null ||
           _layoutConstraints!.containerSize != containerSize ||
           _layoutConstraints!.dividerThickness != themeData.dividerThickness) {
-        _draggingDivider = null;
-        _lastAreasUpdateHash = controllerHelper.areasUpdateHash;
-
         _layoutConstraints = LayoutConstraints(
             controller: _controller,
             containerSize: containerSize,
@@ -209,6 +206,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             sizeOverflowPolicy: widget.sizeOverflowPolicy,
             sizeUnderflowPolicy: widget.sizeUnderflowPolicy,
             minSizeRecoveryPolicy: widget.minSizeRecoveryPolicy);
+        _lastAreasHash = controllerHelper.areasHash;
       }
 
       List<Widget> children = [];
@@ -383,7 +381,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
     if (_draggingDivider == null) {
       return;
     }
-
     final Offset offset = _offset(context, detail.globalPosition);
     final double position;
     if (widget.axis == Axis.horizontal) {
