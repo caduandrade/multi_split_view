@@ -56,8 +56,19 @@ class LayoutConstraints {
   /// The size of the container minus the size of the dividers.
   final double spaceForAreas;
 
+  /// The count of areas configured as flex.
+  double _flexCount = 0;
+
+  double get flexCount => _flexCount;
+
+  /// Represents the total, cumulative value of all individual flex factors.
+  double _flexSum = 0;
+
+  double get flexSum => _flexSum;
+
   /// Applies the following adjustments:
   ///
+  /// * Changes the flex to 1 if the total flex of the areas is 0.
   /// * Shrinks size when the total size of the areas is greater than
   /// the available space, even if a [min] limit exists.
   /// * Grows size to meet the minimum value when space is available.
@@ -72,8 +83,11 @@ class LayoutConstraints {
     if (controllerHelper.areas.isEmpty) {
       return;
     }
+
+    _flexSum = 0;
+    _flexCount = 0;
+
     bool changed = false;
-    int flexCount = 0;
     double totalSize = 0;
     List<Area> minSizeToRecover = [];
     for (Area area in controllerHelper.areas) {
@@ -83,8 +97,19 @@ class LayoutConstraints {
           minSizeToRecover.add(area);
         }
       } else {
-        flexCount++;
+        _flexSum += area.flex!;
+        _flexCount++;
       }
+    }
+    if (_flexCount > 0 && _flexSum == 0) {
+      for (Area area in controllerHelper.areas) {
+        if (area.flex != null) {
+          AreaHelper.setFlex(area: area, flex: 1);
+          AreaHelper.setMax(area: area, max: null);
+          AreaHelper.setMin(area: area, min: null);
+        }
+      }
+      _flexSum = _flexCount;
     }
     if (totalSize > spaceForAreas) {
       // The total size of the areas is greater than the available space.
@@ -145,7 +170,6 @@ class LayoutConstraints {
       changed = true;
     }
     if (changed) {
-      controllerHelper.updateAreas();
       Future.microtask(() => controllerHelper.notifyListeners());
     }
   }
@@ -195,7 +219,7 @@ class LayoutConstraints {
     final double availableSpaceForFlexAreas =
         calculateAvailableSpaceForFlexAreas(controller);
 
-    final double pixelPerFlex = availableSpaceForFlexAreas / controller.flexSum;
+    final double pixelPerFlex = availableSpaceForFlexAreas / flexSum;
 
     for (int index = 0; index < controller.areasCount; index++) {
       Area area = controller.getArea(index);

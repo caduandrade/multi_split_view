@@ -41,16 +41,6 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Object to indicate that some area has been changed programmatically.
   Object _areasHash = Object();
 
-  /// The count of areas configured as flex.
-  double _flexCount = 0;
-
-  double get flexCount => _flexCount;
-
-  /// Represents the total, cumulative value of all individual flex factors.
-  double _flexSum = 0;
-
-  double get flexSum => _flexSum;
-
   /// Applies the current data modifier.
   void _applyDataModifier() {
     if (_areaDataModifier != null) {
@@ -62,38 +52,21 @@ class MultiSplitViewController extends ChangeNotifier {
   }
 
   /// Updates the areas.
-  /// Changes the flex to 1 if the total flex of the areas is 0.
   void _updateAreas() {
     Set<dynamic> ids = {};
 
-    _areasHash = Object();
-
-    _flexSum = 0;
-    _flexCount = 0;
     int index = 0;
     for (Area area in _areas) {
       if (!ids.add(area.id)) {
         throw StateError('Duplicate area id.');
       }
       AreaHelper.setIndex(area: area, index: index);
-      if (area.flex != null) {
-        _flexSum += area.flex!;
-        _flexCount++;
-      }
       index++;
     }
 
-    if (_flexCount > 0 && _flexSum == 0) {
-      for (Area area in _areas) {
-        if (area.flex != null) {
-          AreaHelper.setFlex(area: area, flex: 1);
-          AreaHelper.setMax(area: area, max: null);
-          AreaHelper.setMin(area: area, min: null);
-        }
-      }
-      _flexSum = _flexCount;
-    }
     _applyDataModifier();
+
+    _areasHash = Object();
   }
 
   /// Set the areas.
@@ -150,10 +123,6 @@ class ControllerHelper {
   Object get areasHash => controller._areasHash;
 
   void notifyListeners() => controller._forceNotifyListeners();
-
-  void updateAreas() {
-    controller._updateAreas();
-  }
 
   static int? getStateHashCode(MultiSplitViewController controller) {
     return controller._stateHashCode;
