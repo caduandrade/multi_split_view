@@ -18,6 +18,10 @@ class MultiSplitViewController extends ChangeNotifier {
       : _areaDataModifier = areaDataModifier {
     if (areas != null) {
       _areas = List.from(areas);
+      for (Area area in _areas) {
+        AreaHelper.setHashChanger(area: area, function: _newAreasHash);
+        area.addListener(notifyListeners);
+      }
       _updateAreas();
     }
   }
@@ -39,7 +43,11 @@ class MultiSplitViewController extends ChangeNotifier {
   }
 
   /// Object to indicate that some area has been changed programmatically.
-  Object _areasHash = Object();
+  _AreasHash _areasHash = _AreasHash();
+
+  void _newAreasHash() {
+    _areasHash = _AreasHash();
+  }
 
   /// Applies the current data modifier.
   void _applyDataModifier() {
@@ -66,7 +74,7 @@ class MultiSplitViewController extends ChangeNotifier {
 
     _applyDataModifier();
 
-    _areasHash = Object();
+    _areasHash = _AreasHash();
   }
 
   /// Set the areas.
@@ -74,8 +82,14 @@ class MultiSplitViewController extends ChangeNotifier {
   set areas(List<Area> areas) {
     for (Area area in _areas) {
       AreaHelper.setIndex(area: area, index: -1);
+      AreaHelper.setHashChanger(area: area, function: null);
+      area.removeListener(notifyListeners);
     }
     _areas = List.from(areas);
+    for (Area area in _areas) {
+      AreaHelper.setHashChanger(area: area, function: _newAreasHash);
+      area.addListener(notifyListeners);
+    }
     _updateAreas();
     notifyListeners();
   }
@@ -83,12 +97,16 @@ class MultiSplitViewController extends ChangeNotifier {
   void removeAreaAt(int index) {
     Area area = _areas.removeAt(index);
     AreaHelper.setIndex(area: area, index: -1);
+    AreaHelper.setHashChanger(area: area, function: null);
+    area.removeListener(notifyListeners);
     _updateAreas();
     notifyListeners();
   }
 
   void addArea(Area area) {
     _areas.add(area);
+    AreaHelper.setHashChanger(area: area, function: _newAreasHash);
+    area.addListener(notifyListeners);
     _updateAreas();
     notifyListeners();
   }
@@ -120,7 +138,7 @@ class ControllerHelper {
 
   List<Area> get areas => controller._areas;
 
-  Object get areasHash => controller._areasHash;
+  _AreasHash get areasHash => controller._areasHash;
 
   void notifyListeners() => controller._forceNotifyListeners();
 
@@ -131,5 +149,12 @@ class ControllerHelper {
   static void setStateHashCode(
       MultiSplitViewController controller, int? value) {
     controller._stateHashCode = value;
+  }
+}
+
+class _AreasHash {
+  @override
+  String toString() {
+    return hashCode.toString();
   }
 }

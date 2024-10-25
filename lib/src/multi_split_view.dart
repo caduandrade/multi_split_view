@@ -197,8 +197,6 @@ class _MultiSplitViewState extends State<MultiSplitView> {
           _layoutConstraints!.containerSize != containerSize ||
           _layoutConstraints!.dividerThickness != themeData.dividerThickness) {
         _draggingDivider = null;
-        _lastAreasHash = controllerHelper.areasHash;
-
         _layoutConstraints = LayoutConstraints(
             controller: _controller,
             containerSize: containerSize,
@@ -209,6 +207,7 @@ class _MultiSplitViewState extends State<MultiSplitView> {
             sizeOverflowPolicy: widget.sizeOverflowPolicy,
             sizeUnderflowPolicy: widget.sizeUnderflowPolicy,
             minSizeRecoveryPolicy: widget.minSizeRecoveryPolicy);
+        _lastAreasHash = controllerHelper.areasHash;
       }
 
       List<Widget> children = [];

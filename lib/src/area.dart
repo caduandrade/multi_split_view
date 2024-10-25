@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:multi_split_view/src/area_widget_builder.dart';
 import 'package:multi_split_view/src/internal/num_util.dart';
@@ -18,7 +19,7 @@ import 'package:multi_split_view/src/internal/num_util.dart';
 /// to resolve the following inconsistencies:
 ///
 /// * If all areas are using size, they will all be converted to use flex.
-class Area {
+class Area extends ChangeNotifier {
   Area(
       {double? size,
       double? flex,
@@ -29,22 +30,17 @@ class Area {
       this.builder})
       : this.id = id != null ? id : _AreaId(),
         _size = size,
-        _flex = flex,
-        _min = min,
-        _max = max {
+        _flex = flex {
     if (size != null && flex != null) {
       throw ArgumentError('Cannot provide both a size and a flex.');
     }
     NumUtil.validateDouble('size', size);
     NumUtil.validateDouble('flex', flex);
-    NumUtil.validateDouble('min', min);
-    NumUtil.validateDouble('max', max);
     if (size == null && flex == null) {
       _flex = 1;
     }
-    if (min != null && max != null && max < min) {
-      throw ArgumentError('The max needs to be greater than min.');
-    }
+    _setMinWithoutNotify(min);
+    _setMaxWithoutNotify(max);
     if (_flex != null) {
       if (min != null) {
         _flex = math.max(_flex!, min);
@@ -62,19 +58,63 @@ class Area {
     }
   }
 
+  void _checkMinMax() {
+    if (_min != null && _max != null && _max! < _min!) {
+      throw ArgumentError(
+          'The max($_max) needs to be greater than min($_min).');
+    }
+  }
+
+  /// Function used to change the hash in the controller
+  Function? _hashChanger;
+
   int _index = -1;
 
   int get index => _index;
 
-  double? _min;
-
   /// The min flex or size.
   double? get min => _min;
+  double? _min;
 
-  double? _max;
+  /// Sets the area min value and notify listeners.
+  void set min(double? value) {
+    _setMinWithoutNotify(value);
+    notifyListeners();
+  }
+
+  /// Sets the area min value without notify listeners.
+  void _setMinWithoutNotify(double? value) {
+    NumUtil.validateDouble('min', value);
+    if (_min != value) {
+      _min = value;
+      _checkMinMax();
+      if (_hashChanger != null) {
+        _hashChanger!();
+      }
+    }
+  }
 
   /// The max flex or size.
   double? get max => _max;
+  double? _max;
+
+  /// Sets the area max value and notify listeners.
+  void set max(double? value) {
+    _setMaxWithoutNotify(value);
+    notifyListeners();
+  }
+
+  /// Sets the area max value without notify listeners.
+  void _setMaxWithoutNotify(double? value) {
+    NumUtil.validateDouble('max', value);
+    if (_max != value) {
+      _max = value;
+      _checkMinMax();
+      if (_hashChanger != null) {
+        _hashChanger!();
+      }
+    }
+  }
 
   double? _size;
 
@@ -120,7 +160,7 @@ class Area {
 
 @internal
 class AreaHelper {
-  /// Sets the area flex value.
+  /// Sets the area flex value without notify listeners.
   static void setFlex({required Area area, required double flex}) {
     flex = NumUtil.fix('flex', flex);
     if (area.min != null) {
@@ -129,7 +169,7 @@ class AreaHelper {
     area._flex = flex;
   }
 
-  /// Sets the area size value.
+  /// Sets the area size value without notify listeners.
   static void setSize({required Area area, required double? size}) {
     if (size != null) {
       size = NumUtil.fix('size', size);
@@ -137,22 +177,24 @@ class AreaHelper {
     area._size = size;
   }
 
-  /// Sets the area min value.
-  static void setMin({required Area area, required double? min}) {
-    if (min != null) {
-      min = math.max(0, min);
-    }
-    area._min = min;
+  /// Sets the area min value without notify listeners.
+  static void setMinWithoutNotify({required Area area, required double? min}) {
+    area._setMinWithoutNotify(min);
   }
 
-  /// Sets the area max value.
-  static void setMax({required Area area, required double? max}) {
-    area._max = max;
+  /// Sets the area max value without notify listeners.
+  static void setMaxWithoutNotify({required Area area, required double? max}) {
+    area._setMaxWithoutNotify(max);
   }
 
   /// Sets the area index.
   static void setIndex({required Area area, required int index}) {
     area._index = index;
+  }
+
+  static void setHashChanger(
+      {required Area area, required Function? function}) {
+    area._hashChanger = function;
   }
 }
 

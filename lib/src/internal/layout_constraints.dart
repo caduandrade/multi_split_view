@@ -104,9 +104,9 @@ class LayoutConstraints {
     if (_flexCount > 0 && _flexSum == 0) {
       for (Area area in controllerHelper.areas) {
         if (area.flex != null) {
+          AreaHelper.setMinWithoutNotify(area: area, min: null);
+          AreaHelper.setMaxWithoutNotify(area: area, max: null);
           AreaHelper.setFlex(area: area, flex: 1);
-          AreaHelper.setMax(area: area, max: null);
-          AreaHelper.setMin(area: area, min: null);
         }
       }
       _flexSum = _flexCount;
