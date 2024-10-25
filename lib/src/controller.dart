@@ -38,7 +38,8 @@ class MultiSplitViewController extends ChangeNotifier {
     }
   }
 
-  Object _areasUpdateHash = Object();
+  /// Object to indicate that some area has been changed programmatically.
+  Object _areasHash = Object();
 
   double _flexCount = 0;
 
@@ -63,7 +64,7 @@ class MultiSplitViewController extends ChangeNotifier {
   void _updateAreas() {
     Set<dynamic> ids = {};
 
-    _areasUpdateHash = Object();
+    _areasHash = Object();
 
     _totalFlex = 0;
     _flexCount = 0;
@@ -144,7 +145,7 @@ class ControllerHelper {
 
   List<Area> get areas => controller._areas;
 
-  Object get areasUpdateHash => controller._areasUpdateHash;
+  Object get areasHash => controller._areasHash;
 
   void notifyListeners() => controller._forceNotifyListeners();
 

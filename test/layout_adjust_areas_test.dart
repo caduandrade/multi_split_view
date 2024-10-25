@@ -30,7 +30,7 @@ void main() {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         ControllerHelper controllerHelper = ControllerHelper(controller);
-        Object oldAreasHash = controllerHelper.areasUpdateHash;
+        Object oldAreasHash = controllerHelper.areasHash;
         LayoutConstraints(
                 controller: controller,
                 containerSize: 205,
@@ -48,13 +48,13 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
-        expect(oldAreasHash, controllerHelper.areasUpdateHash);
+        expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         ControllerHelper controllerHelper = ControllerHelper(controller);
-        Object oldAreasHash = controllerHelper.areasUpdateHash;
+        Object oldAreasHash = controllerHelper.areasHash;
         LayoutConstraints(
                 controller: controller,
                 containerSize: 204.999999999,
@@ -72,13 +72,13 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
-        expect(oldAreasHash, controllerHelper.areasUpdateHash);
+        expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value - 2', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         ControllerHelper controllerHelper = ControllerHelper(controller);
-        Object oldAreasHash = controllerHelper.areasUpdateHash;
+        Object oldAreasHash = controllerHelper.areasHash;
         LayoutConstraints(
                 controller: controller,
                 containerSize: 204.5,
@@ -96,13 +96,13 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
-        expect(oldAreasHash, isNot(equals(controllerHelper.areasUpdateHash)));
+        expect(oldAreasHash, isNot(equals(controllerHelper.areasHash)));
       });
       test('containerSize - decimal value - 3', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         ControllerHelper controllerHelper = ControllerHelper(controller);
-        Object oldAreasHash = controllerHelper.areasUpdateHash;
+        Object oldAreasHash = controllerHelper.areasHash;
         LayoutConstraints(
                 controller: controller,
                 containerSize: 205.000000001,
@@ -120,13 +120,13 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
-        expect(oldAreasHash, controllerHelper.areasUpdateHash);
+        expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value - 4', () {
         MultiSplitViewController controller = MultiSplitViewController(
             areas: [Area(data: 'a', size: 100), Area(data: 'b', size: 100)]);
         ControllerHelper controllerHelper = ControllerHelper(controller);
-        Object oldAreasHash = controllerHelper.areasUpdateHash;
+        Object oldAreasHash = controllerHelper.areasHash;
         LayoutConstraints(
                 controller: controller,
                 containerSize: 205.5,
@@ -144,7 +144,7 @@ void main() {
             data: 'b', min: null, max: null, flex: null, size: 100.5);
         expect(controller.flexCount, 0);
         expect(controller.totalFlex, 0);
-        expect(oldAreasHash, isNot(equals((controllerHelper.areasUpdateHash))));
+        expect(oldAreasHash, isNot(equals((controllerHelper.areasHash))));
       });
       test('sizeOverflowPolicy - shrinkFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
