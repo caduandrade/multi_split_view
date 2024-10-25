@@ -24,7 +24,7 @@ void main() {
                 minSizeRecoveryPolicy: MinSizeRecoveryPolicy.firstToLast);
         expect(controller.areas.length, 0);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('same areas hash', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -47,7 +47,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
         expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value', () {
@@ -71,7 +71,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
         expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value - 2', () {
@@ -95,7 +95,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
         expect(oldAreasHash, isNot(equals(controllerHelper.areasHash)));
       });
       test('containerSize - decimal value - 3', () {
@@ -119,7 +119,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
         expect(oldAreasHash, controllerHelper.areasHash);
       });
       test('containerSize - decimal value - 4', () {
@@ -143,7 +143,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100.5);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
         expect(oldAreasHash, isNot(equals((controllerHelper.areasHash))));
       });
       test('sizeOverflowPolicy - shrinkFirst', () {
@@ -165,7 +165,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeOverflowPolicy - shrinkLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -186,7 +186,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 50);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeOverflowPolicy - shrinkLast - min', () {
         MultiSplitViewController controller = MultiSplitViewController(areas: [
@@ -209,7 +209,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: 90, max: null, flex: null, size: 50);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeUnderflowPolicy - stretchFirst', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -230,7 +230,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeUnderflowPolicy - stretchLast', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -251,7 +251,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 150);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeUnderflowPolicy - stretchLast - max', () {
         MultiSplitViewController controller = MultiSplitViewController(areas: [
@@ -274,7 +274,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: 110, flex: null, size: 150);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('sizeUnderflowPolicy - stretchAll', () {
         MultiSplitViewController controller = MultiSplitViewController(
@@ -295,7 +295,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: null, max: null, flex: null, size: 125);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
       test('minSizeRecoveryPolicy - firstToLast', () {
         MultiSplitViewController controller = MultiSplitViewController(areas: [
@@ -318,7 +318,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: 100, max: null, flex: null, size: 50);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
 
         LayoutConstraints(
                 controller: controller,
@@ -336,7 +336,7 @@ void main() {
         TestHelper.testArea(controller.areas[1],
             data: 'b', min: 100, max: null, flex: null, size: 100);
         expect(controller.flexCount, 0);
-        expect(controller.totalFlex, 0);
+        expect(controller.flexSum, 0);
       });
     });
   });

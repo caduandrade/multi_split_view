@@ -57,12 +57,11 @@ class DividerUtil {
 
     final double availableSizeForFlexAreas =
         layoutConstraints.calculateAvailableSpaceForFlexAreas(controller);
-    final double pixelsPerFlex =
-        availableSizeForFlexAreas / controller.totalFlex;
+    final double pixelsPerFlex = availableSizeForFlexAreas / controller.flexSum;
 
     final double flexPerPixels = availableSizeForFlexAreas == 0
         ? 0
-        : controller.totalFlex / availableSizeForFlexAreas;
+        : controller.flexSum / availableSizeForFlexAreas;
 
     double movedPixels = pixelsToMove;
 
@@ -94,7 +93,7 @@ class DividerUtil {
           movedPixels = math.min(availablePixelsToMax, movedPixels);
         }
 
-        if (controller.totalFlex > 0) {
+        if (controller.flexSum > 0) {
           // avoid grow more then container
           final double shrinkAreaPixels =
               toPixels(area: shrinkArea, pixelsPerFlex: pixelsPerFlex);

@@ -195,8 +195,7 @@ class LayoutConstraints {
     final double availableSpaceForFlexAreas =
         calculateAvailableSpaceForFlexAreas(controller);
 
-    final double pixelPerFlex =
-        availableSpaceForFlexAreas / controller.totalFlex;
+    final double pixelPerFlex = availableSpaceForFlexAreas / controller.flexSum;
 
     for (int index = 0; index < controller.areasCount; index++) {
       Area area = controller.getArea(index);

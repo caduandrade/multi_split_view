@@ -41,13 +41,15 @@ class MultiSplitViewController extends ChangeNotifier {
   /// Object to indicate that some area has been changed programmatically.
   Object _areasHash = Object();
 
+  /// The count of areas configured as flex.
   double _flexCount = 0;
 
   double get flexCount => _flexCount;
 
-  double _totalFlex = 0;
+  /// Represents the total, cumulative value of all individual flex factors.
+  double _flexSum = 0;
 
-  double get totalFlex => _totalFlex;
+  double get flexSum => _flexSum;
 
   /// Applies the current data modifier.
   void _applyDataModifier() {
@@ -66,7 +68,7 @@ class MultiSplitViewController extends ChangeNotifier {
 
     _areasHash = Object();
 
-    _totalFlex = 0;
+    _flexSum = 0;
     _flexCount = 0;
     int index = 0;
     for (Area area in _areas) {
@@ -75,13 +77,13 @@ class MultiSplitViewController extends ChangeNotifier {
       }
       AreaHelper.setIndex(area: area, index: index);
       if (area.flex != null) {
-        _totalFlex += area.flex!;
+        _flexSum += area.flex!;
         _flexCount++;
       }
       index++;
     }
 
-    if (_flexCount > 0 && _totalFlex == 0) {
+    if (_flexCount > 0 && _flexSum == 0) {
       for (Area area in _areas) {
         if (area.flex != null) {
           AreaHelper.setFlex(area: area, flex: 1);
@@ -89,7 +91,7 @@ class MultiSplitViewController extends ChangeNotifier {
           AreaHelper.setMin(area: area, min: null);
         }
       }
-      _totalFlex = _flexCount;
+      _flexSum = _flexCount;
     }
     _applyDataModifier();
   }
