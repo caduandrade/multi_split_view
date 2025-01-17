@@ -28,7 +28,7 @@ class Area extends ChangeNotifier {
       dynamic id,
       this.data,
       this.builder})
-      : this.id = id != null ? id : _AreaId() {
+      : this.id = id != null ? id : AreaId._() {
     if (size != null && flex != null) {
       throw ArgumentError('Cannot provide both a size and a flex.');
     }
@@ -241,7 +241,10 @@ class AreaHelper {
 }
 
 /// Default area id object
-class _AreaId {
+@sealed
+class AreaId {
+  AreaId._();
+
   @override
   String toString() {
     return 'area id: $hashCode';
