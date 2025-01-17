@@ -231,7 +231,7 @@ class LayoutConstraints {
         thickness = area.size!;
       }
       if (antiAliasingWorkaround) {
-        thickness = thickness.roundToDouble();
+        thickness = thickness.floorToDouble();
       }
 
       if (onAreaLayout != null &&
